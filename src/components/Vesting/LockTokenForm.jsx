@@ -151,10 +151,14 @@ const LockTokenAddress = ({
 }) => {
   const handleNext = (e) => {
     e.preventDefault();
-    if (tokenAddress) {
+    if (
+      tokenAddress &&
+      tokenAddress?.length > 0 &&
+      (tokenAddress?.length >= 34 && tokenAddress?.length <= 52)
+    ) {
       setMoveToLockPage(true);
     } else {
-      toast.error("Please enter token address");
+      toast.error("Please enter the valid token address");
     }
   };
 
