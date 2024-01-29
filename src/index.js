@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { Connect } from "@stacks/connect-react";
 
 import { userSession } from "./components/Header/Header.component";
+import StacksProvider from "./providers/StacksProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -24,7 +25,9 @@ root.render(
         userSession,
       }}
     >
-      <App />
+      <StacksProvider>
+        <App />
+      </StacksProvider>
     </Connect>
   </React.StrictMode>
 );

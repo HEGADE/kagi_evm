@@ -3,8 +3,10 @@ import React from "react";
 import Header from "./components/Header/Header.component";
 import ContractCallVote from "./components/ContractCallVote";
 
-function App() {
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { TokenLock } from "./pages/TokenLock";
 
+function App() {
   // SCRIPT LOAD
   const runScript = () => {
     if (window.$) {
@@ -29,15 +31,13 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        {/* ConnectWallet file: `./src/components/ConnectWallet.js` */}
-        <Header />
-
-        {/* ContractCallVote file: `./src/components/ContractCallVote.js` */}
-        <ContractCallVote />
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Header />}>
+          <Route path="token-lock" element={<TokenLock />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
