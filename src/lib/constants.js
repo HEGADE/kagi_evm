@@ -8,3 +8,5 @@ export const contractOwnerAddress = "ST1ETGPP1H4D5WEGEDJXG5XVY5AA3K4N2EW4ZBYE1";
 export const deployedContractName = "ft-vesting";
 
 export const microstacksPerSTX = 1_000_000;
+
+export const NETWORK="TESTNET";

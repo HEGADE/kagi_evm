@@ -27,6 +27,7 @@ import { getFtPostCondition } from "../../utils/postconditions/ft-postcondition"
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
 import { tokenSchema } from "../../utils/validation/validation-schema";
 import { ValidationError } from "../UI/Errors";
+import toast from "react-hot-toast";
 
 const LockTokenInfo = ({ tokenAddress }) => {
   const { network, address } = useStacks();
@@ -152,6 +153,8 @@ const LockTokenAddress = ({
     e.preventDefault();
     if (tokenAddress) {
       setMoveToLockPage(true);
+    } else {
+      toast.error("Please enter token address");
     }
   };
 
@@ -166,6 +169,7 @@ const LockTokenAddress = ({
             <input
               type="text"
               id="address"
+              required
               onChange={(e) => setTokenAddress(e.target.value)}
             />
           </div>

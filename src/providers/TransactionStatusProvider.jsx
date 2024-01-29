@@ -2,9 +2,9 @@
 import { StacksTestnet, StacksMainnet } from "@stacks/network";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { NETWORK } from "../lib/constants";
 // import { NETWORK } from "../utils/config/constants";
 
-const NETWORK = "TESTNET";
 const TransactionToastsContext = createContext(undefined);
 
 export default function TransactionToastProvider({ children }) {

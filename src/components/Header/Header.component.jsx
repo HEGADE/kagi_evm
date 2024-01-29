@@ -1,6 +1,7 @@
 import React from "react";
 import { AppConfig, showConnect, UserSession } from "@stacks/connect";
 import { Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import { shortAddress } from "../../utils/format/address.format";
 
@@ -32,6 +33,7 @@ function disconnect() {
 const Header = () => {
   return (
     <>
+      <Toaster />
       <header className="header">
         <div className="header-actions">
           <div className="header-brand">

@@ -5,7 +5,8 @@ export const tokenSchema = yup.object().shape({
   taker: yup
     .string()
     .required("taker is required")
-    .min(34, "taker is invalid").max(52, "taker is invalid"),
+    .min(34, "taker is invalid")
+    .max(52, "taker is invalid"),
   amount: yup
     .number()
     .typeError("amount is required")
