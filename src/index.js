@@ -8,6 +8,7 @@ import { Connect } from "@stacks/connect-react";
 
 import { userSession } from "./components/Header/Header.component";
 import StacksProvider from "./providers/StacksProvider";
+import TransactionToastProvider from "./providers/TransactionStatusProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -26,7 +27,9 @@ root.render(
       }}
     >
       <StacksProvider>
-        <App />
+        <TransactionToastProvider>
+          <App />
+        </TransactionToastProvider>
       </StacksProvider>
     </Connect>
   </React.StrictMode>

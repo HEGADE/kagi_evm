@@ -20,25 +20,26 @@ const TokenLock = () => {
           </p>
           <div className="tab-switch">
             <p className="tab-switch-button login-register-form-trigger">
-              Liquidty Tokens
-            </p>
-            <p className="tab-switch-button login-register-form-trigger">
               Project Tokens
+            </p>
+            <p
+              style={{
+                visibility: "hidden",
+              }}
+              className="tab-switch-button login-register-form-trigger"
+            >
+              Liquidty Tokens
             </p>
           </div>
         </div>
-        <div className="landing-form">
+        <div
+          className="landing-form"
+          style={{
+            marginTop: "50px",
+          }}
+        >
           <div className="form-box login-register-form-element">
-            <img
-              className="form-box-decoration overflowing"
-              src="img/landing/rocket.png"
-              alt="rocket"
-            />
-            <h2 className="form-box-title">Liquidty Tokens</h2>
-            <p className="text-center mt-10">LP Tokens Generated from App</p>
-            <div className="form">
-              <LockTokenForm />
-            </div>
+            <LockTokenForm />
           </div>
           <div className="form-box login-register-form-element">
             <img
@@ -47,26 +48,11 @@ const TokenLock = () => {
               alt="rocket"
             />
             <h2 className="form-box-title">Project Tokens</h2>
-            <p className="text-center mt-10">LP Tokens Generated from App</p>
-            <div className="form">
-              <div className="form-row">
-                <div className="form-item">
-                  <div className="form-select">
-                    <label for="billing-country">Blockchain</label>
-                    <select id="billing-country">
-                      <option value="0">Select your blockchain</option>
-                      <option value="1">Bitcoin</option>
-                      <option value="2">Ethereum</option>
-                    </select>
-                    <svg className="form-select-icon icon-small-arrow">
-                      {/* <use xlink:href="#svg-small-arrow"></use> */}
-                    </svg>
-                  </div>
-                </div>
-              </div>
+            <p className="text-center mt-10">
+              Project Tokens Generated from App
+            </p>
 
-              <LockTokenForm />
-            </div>
+            {/* <LockTokenForm /> */}
           </div>
         </div>
       </div>
