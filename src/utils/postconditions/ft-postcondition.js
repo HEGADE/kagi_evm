@@ -1,6 +1,8 @@
 import {
   makeStandardFungiblePostCondition,
   FungibleConditionCode,
+  NonFungibleConditionCode,
+  makeStandardNonFungiblePostCondition,
   createAssetInfo,
 } from "@stacks/transactions";
 
@@ -27,3 +29,27 @@ export const getFtPostCondition = (
 
   return tokenPostCondition;
 };
+
+/*
+@param {string} address
+@param {number} amount
+@param {string} contractAddress
+@param {string} contractName
+@param {string} nonFungibleTokenName this should be actual token name
+*/
+export const getFtPostConditionNFT = (
+  address,
+  contractAddress,
+  contractName,
+  nonFungibleTokenName
+) => {
+  const tokenPostCondition = makeStandardNonFungiblePostCondition(
+    address,
+    NonFungibleConditionCode.Sends,
+    createAssetInfo(contractAddress, contractName, nonFungibleTokenName)
+  );
+
+  return tokenPostCondition;
+};
+
+

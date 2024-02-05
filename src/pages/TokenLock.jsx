@@ -5,11 +5,17 @@ import { LockTokenForm } from "../components/Vesting/LockTokenForm";
 const TokenLock = () => {
   const [margin, setMargin] = useState(false);
   const [moveToLockPage, setMoveToLockPage] = useState(false);
-
-  const handlePage=()=>{
-    setMargin(false)
-    setMoveToLockPage(false)
-  }
+  const [showTokenLockForm, setShowTokenLockForm] = useState(true);
+  const handlePageNFT = () => {
+    setMargin(false);
+    setMoveToLockPage(false);
+    setShowTokenLockForm((pre) => !pre);
+  };
+  const handlePageFT = () => {
+    setMargin(false);
+    setShowTokenLockForm((pre) => !pre);
+    setMoveToLockPage(false);
+  };
   return (
     <>
       <div
@@ -33,21 +39,46 @@ const TokenLock = () => {
             Tokens
           </p>
           <div className="tab-switch">
-            <p  onClick={handlePage} className="tab-switch-button login-register-form-trigger">
+            <p
+              onClick={handlePageFT}
+              className="tab-switch-button "
+
+            >
               Fungible Tokens
             </p>
-            <p  onClick={handlePage} className="tab-switch-button login-register-form-trigger">NFT</p>
+            <p
+              onClick={handlePageNFT}
+              className="tab-switch-button "
+
+            >
+              NFT
+            </p>
           </div>
         </div>
-        <div className="landing-form " style={{
-          marginTop: margin ? "-120px" : "1%"
-        }}>
-          <div className="form-box login-register-form-element">
-            <LockTokenForm setMoveToLockPage={setMoveToLockPage} moveToLockPage={moveToLockPage} setMargin={setMargin}  />
-          </div>
-          <div className="form-box login-register-form-element">
-            <LockTokenForm setMoveToLockPage={setMoveToLockPage} moveToLockPage={moveToLockPage} setMargin={setMargin}  nft={true} />
-          </div>
+        <div
+          className="landing-form "
+          style={{
+            marginTop: margin ? "-120px" : "1%",
+          }}
+        >
+          {showTokenLockForm ? (
+            <div className="form-box login-register-form-element">
+              <LockTokenForm
+                setMoveToLockPage={setMoveToLockPage}
+                moveToLockPage={moveToLockPage}
+                setMargin={setMargin}
+              />
+            </div>
+          ) : (
+            <div className="form-box login-register-form-element">
+              <LockTokenForm
+                setMoveToLockPage={setMoveToLockPage}
+                moveToLockPage={moveToLockPage}
+                setMargin={setMargin}
+                nft={true}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -23,13 +23,16 @@ import {
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { useStacks } from "../../providers/StacksProvider";
 import ButtonWithLoading from "../UI/LoaderButton";
-import { getFtPostCondition } from "../../utils/postconditions/ft-postcondition";
+import {
+  getFtPostCondition,
+  getFtPostConditionNFT,
+} from "../../utils/postconditions/ft-postcondition";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
 import { tokenSchema } from "../../utils/validation/validation-schema";
 import { ValidationError } from "../UI/Errors";
 import toast from "react-hot-toast";
 
-const LockTokenInfo = ({ tokenAddress }) => {
+const LockTokenInfo = ({ tokenAddress, nft }) => {
   const { network, address } = useStacks();
 
   const [loading, setLoading] = useState(false);
@@ -55,7 +58,7 @@ const LockTokenInfo = ({ tokenAddress }) => {
         amount,
         contractAddress,
         contractName,
-        "cryptic-ocean-coin"
+        assetName
       );
 
       const options = {
@@ -87,79 +90,195 @@ const LockTokenInfo = ({ tokenAddress }) => {
       setLoading(false);
     }
   };
+  const onSubmitNFT = async (data) => {
+    const { contractAddress, contractName } =
+      getContractAddressAndName(tokenAddress);
+    const { days,  tokenID,assetName, taker } = data;
+
+    setLoading(true);
+
+    try {
+      const nftPostCondition = getFtPostConditionNFT(
+        address,
+        contractAddress,
+        contractName,
+        assetName
+      );
+
+      const options = {
+        contractAddress: contractOwnerAddress,
+        contractName: deployedContractName,
+        functionName: "lock-nft",
+        functionArgs: [
+          principalCV(tokenAddress),
+          tupleCV({
+            "token-id": uintCV(tokenID),
+            "lock-expiry": uintCV(days),
+            taker: principalCV(taker),
+          }),
+        ],
+        postConditions: [nftPostCondition],
+        network,
+        appDetails,
+        onFinish: ({ txId }) => {
+          console.log("onFinish:", txId);
+          addTransactionToast(txId, `Approving ${assetName} lock`);
+        },
+      };
+
+      await openContractCall(options);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   console.log("error:", errors.assetName);
 
+  // lock-expiry: uint, token-id: uint, taker: principal
   return (
     <>
       <h2 className="form-box-title">Configure Lock</h2>
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-row">
-          <div className="form-item">
-            <div className="form-input">
-              {/* <label for="register-email">Asset Name</label> */}
-              <input
-                type="text"
-                id="balance"
-                {...register("assetName")}
-                placeholder="Asset Name"
-              />
-              <ValidationError err={errors.assetName} />
+      {!nft ? (
+        <form className="form" onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-email">Asset Name</label> */}
+                <input
+                  type="text"
+                  id="balance"
+                  {...register("assetName")}
+                  placeholder="Asset Name"
+                />
+                <ValidationError err={errors.assetName} />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="form-row">
-          <div className="form-item">
-            <div className="form-input">
-              {/* <label for="register-email">Taker Address</label> */}
-              <input
-                type="text"
-                id="balance"
-                placeholder="Taker Address"
-                {...register("taker")}
-              />
-              <ValidationError err={errors.taker} />
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-email">Taker Address</label> */}
+                <input
+                  type="text"
+                  id="balance"
+                  placeholder="Taker Address"
+                  {...register("taker")}
+                />
+                <ValidationError err={errors.taker} />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="form-row">
-          <div className="form-item">
-            <div className="form-input">
-              {/* <label for="register-username">Lock Amount</label> */}
-              <input
-                type="text"
-                id="lock-amount"
-                placeholder="Lock Amount"
-                {...register("amount")}
-              />
-              <ValidationError err={errors.amount} />
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-username">Lock Amount</label> */}
+                <input
+                  type="text"
+                  id="lock-amount"
+                  placeholder="Lock Amount"
+                  {...register("amount")}
+                />
+                <ValidationError err={errors.amount} />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="form-row">
-          <div className="form-item">
-            <div className="form-input">
-              {/* <label for="register-password">Locking Days</label> */}
-              <input
-                type="text"
-                id="days"
-                placeholder="Locking Days"
-                {...register("days")}
-              />
-              <ValidationError err={errors.days} />
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-password">Locking Days</label> */}
+                <input
+                  type="text"
+                  id="days"
+                  placeholder="Locking Days"
+                  {...register("days")}
+                />
+                <ValidationError err={errors.days} />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="form-row">
-          <div className="form-item">
-            <ButtonWithLoading
-              type="submit"
-              className="button medium primary"
-              text="Lock"
-              isLoading={loading}
-            />
+          <div className="form-row">
+            <div className="form-item">
+              <ButtonWithLoading
+                type="submit"
+                className="button medium primary"
+                text="Lock"
+                isLoading={loading}
+              />
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      ) : (
+        <form className="form" onSubmit={handleSubmit(onSubmitNFT)}>
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-email">Asset Name</label> */}
+                <input
+                  type="text"
+                  id="balance"
+                  {...register("assetName")}
+                  placeholder="Fungible Token name"
+                />
+                <ValidationError err={errors.assetName} />
+              </div>
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-email">Asset Name</label> */}
+                <input
+                  type="text"
+                  id="balance"
+                  {...register("tokenID")}
+                  placeholder="Token ID"
+                />
+                <ValidationError err={errors?.tokenID} />
+              </div>
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-email">Taker Address</label> */}
+                <input
+                  type="text"
+                  id="balance"
+                  placeholder="Taker Address"
+                  {...register("taker")}
+                />
+                <ValidationError err={errors.taker} />
+              </div>
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-item">
+              <div className="form-input">
+                {/* <label for="register-password">Locking Days</label> */}
+                <input
+                  type="text"
+                  id="days"
+                  placeholder="Locking Days"
+                  {...register("days")}
+                />
+                <ValidationError err={errors.days} />
+              </div>
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-item">
+              <ButtonWithLoading
+                type="submit"
+                className="button medium primary"
+                text="Lock"
+                isLoading={loading}
+              />
+            </div>
+          </div>
+        </form>
+      )}
     </>
   );
 };
@@ -169,7 +288,7 @@ const LockTokenAddress = ({
   tokenAddress,
   setMoveToLockPage,
   nft,
-  setMargin
+  setMargin,
 }) => {
   const tokens = {
     ft: "Fungible Token",
@@ -224,9 +343,13 @@ const LockTokenAddress = ({
   );
 };
 
-const LockTokenForm = ({ nft = false , setMargin,moveToLockPage, setMoveToLockPage}) => {
+const LockTokenForm = ({
+  nft = false,
+  setMargin,
+  moveToLockPage,
+  setMoveToLockPage,
+}) => {
   const [tokenAddress, setTokenAddress] = useState("");
- 
 
   return (
     <>
@@ -239,7 +362,7 @@ const LockTokenForm = ({ nft = false , setMargin,moveToLockPage, setMoveToLockPa
           setMoveToLockPage={setMoveToLockPage}
         />
       ) : (
-        <LockTokenInfo tokenAddress={tokenAddress} />
+        <LockTokenInfo nft={nft} tokenAddress={tokenAddress} />
       )}
     </>
   );
