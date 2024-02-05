@@ -6,6 +6,7 @@ import ContractCallVote from "./components/ContractCallVote";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TokenLock } from "./pages/TokenLock";
 import { WithdrawToken } from "./pages/WithdrawToken";
+import DashBoard from "./pages/DashBoard";
 
 function App() {
   // SCRIPT LOAD
@@ -35,8 +36,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Header />}>
-          <Route path="token-lock" element={<TokenLock />} />
+          <Route path="dash-board" element={<DashBoard />} />
           <Route path="token-withdraw" element={<WithdrawToken />} />
+          <Route path="token-lock" element={<TokenLock />} />
         </Route>
       </Routes>
     </Router>
