@@ -169,6 +169,7 @@ const LockTokenAddress = ({
   tokenAddress,
   setMoveToLockPage,
   nft,
+  setMargin
 }) => {
   const tokens = {
     ft: "Fungible Token",
@@ -182,6 +183,7 @@ const LockTokenAddress = ({
       tokenAddress?.length >= 34 &&
       tokenAddress?.length <= 52
     ) {
+      setMargin(true);
       setMoveToLockPage(true);
     } else {
       toast.error("Please enter the valid token address");
@@ -222,15 +224,16 @@ const LockTokenAddress = ({
   );
 };
 
-const LockTokenForm = ({ nft = false }) => {
+const LockTokenForm = ({ nft = false , setMargin,moveToLockPage, setMoveToLockPage}) => {
   const [tokenAddress, setTokenAddress] = useState("");
-  const [moveToLockPage, setMoveToLockPage] = useState(false);
+ 
 
   return (
     <>
       {!moveToLockPage ? (
         <LockTokenAddress
           nft={nft}
+          setMargin={setMargin}
           setTokenAddress={setTokenAddress}
           tokenAddress={tokenAddress}
           setMoveToLockPage={setMoveToLockPage}

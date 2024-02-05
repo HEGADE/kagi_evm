@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../components/Header/Header.component";
 import { LockTokenForm } from "../components/Vesting/LockTokenForm";
 
 const TokenLock = () => {
+  const [margin, setMargin] = useState(false);
+  const [moveToLockPage, setMoveToLockPage] = useState(false);
+
+  const handlePage=()=>{
+    setMargin(false)
+    setMoveToLockPage(false)
+  }
   return (
     <>
       <div
@@ -26,18 +33,20 @@ const TokenLock = () => {
             Tokens
           </p>
           <div className="tab-switch">
-            <p className="tab-switch-button login-register-form-trigger">
+            <p  onClick={handlePage} className="tab-switch-button login-register-form-trigger">
               Fungible Tokens
             </p>
-            <p className="tab-switch-button login-register-form-trigger">NFT</p>
+            <p  onClick={handlePage} className="tab-switch-button login-register-form-trigger">NFT</p>
           </div>
         </div>
-        <div className="landing-form ">
+        <div className="landing-form " style={{
+          marginTop: margin ? "-120px" : "1%"
+        }}>
           <div className="form-box login-register-form-element">
-            <LockTokenForm />
+            <LockTokenForm setMoveToLockPage={setMoveToLockPage} moveToLockPage={moveToLockPage} setMargin={setMargin}  />
           </div>
           <div className="form-box login-register-form-element">
-            <LockTokenForm nft={true} />
+            <LockTokenForm setMoveToLockPage={setMoveToLockPage} moveToLockPage={moveToLockPage} setMargin={setMargin}  nft={true} />
           </div>
         </div>
       </div>
