@@ -7,7 +7,12 @@ const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
 
-const ButtonWithLoading = ({ isLoading, text, ...rest }) => {
+const ButtonWithLoading = ({
+  isLoading,
+  text,
+  loaderColor = "white",
+  ...rest
+}) => {
   if (!userSession.isUserSignedIn()) {
     return <ConnectWallet />;
   }
@@ -22,7 +27,7 @@ const ButtonWithLoading = ({ isLoading, text, ...rest }) => {
             alignContent: "center",
           }}
         >
-          <ThreeDots color="white" width={"50px"} height={"50px"} />
+          <ThreeDots color={loaderColor} width={"50px"} height={"50px"} />
         </div>
       ) : (
         <button {...rest}>{text}</button>

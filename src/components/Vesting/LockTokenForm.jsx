@@ -225,6 +225,8 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
               <div className="form-input">
                 {/* <label for="register-email">Asset Name</label> */}
                 <input
+                  disabled
+                  value={data?.assetName}
                   type="text"
                   id="balance"
                   {...nftRegister("assetName")}
@@ -314,7 +316,7 @@ const LockTokenAddress = ({
     return fetchFromContract({
       network,
       address,
-      contract: tokenAddress,
+      contract: tokenAddress?.trim(),
       contractFunctionName: functionName,
     });
   };
@@ -331,7 +333,7 @@ const LockTokenAddress = ({
       try {
         let [assetName, decimals] = await Promise.all([
           fetch({ functionName: "get-name" }),
-          fetch({ functionName: "get-decimals" }),
+          !nft ? fetch({ functionName: "get-decimals" }) : [],
         ]);
 
         setData((pre) => {
@@ -345,13 +347,13 @@ const LockTokenAddress = ({
         setMargin(true);
         setMoveToLockPage(true);
       } catch (err) {
-        toast.error("Not Able to fetch The contract Details");
-        console.log("error fetch", err);
+        alert("Not Able to fetch the contract Details");
       } finally {
         setLoading(false);
       }
     } else {
       toast.error("Please enter the valid token address");
+      setLoading(false);
     }
   };
 
@@ -381,6 +383,7 @@ const LockTokenAddress = ({
       <div className="form-row" onClick={handleNext}>
         <div className="form-item">
           <ButtonWithLoading
+          loaderColor="blue"
             isLoading={loading}
             className="button medium primary"
             text="Next"
