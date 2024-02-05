@@ -10,7 +10,7 @@ const SideNavBar = () => {
       >
         <ul className="menu">
           <li className="menu-item active">
-            <a className="menu-item-link" href="index.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -25,7 +25,7 @@ const SideNavBar = () => {
             </a>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="lock-schedule.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -56,7 +56,7 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="pools.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -89,7 +89,7 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="create-token.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -109,7 +109,7 @@ const SideNavBar = () => {
             </a>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="tradeable-token-locks.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -124,7 +124,7 @@ const SideNavBar = () => {
             </a>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="smart-contract-audit.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -154,7 +154,7 @@ const SideNavBar = () => {
         </div>
         <ul className="menu">
           <li className="menu-item active">
-            <a className="menu-item-link" href="index.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -200,7 +200,7 @@ const SideNavBar = () => {
             </a>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="pools.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -233,7 +233,7 @@ const SideNavBar = () => {
             </a>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="create-token.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -253,7 +253,7 @@ const SideNavBar = () => {
             </a>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="tradeable-token-locks.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -268,7 +268,7 @@ const SideNavBar = () => {
             </a>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="smart-contract-audit.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"

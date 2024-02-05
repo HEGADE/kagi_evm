@@ -1,5 +1,6 @@
 import React from "react";
 import { WithdrawTable } from "./WithdrawTable";
+import { PageLoader } from "../UI/PageLoader";
 
 const Withdraw = () => {
   return (

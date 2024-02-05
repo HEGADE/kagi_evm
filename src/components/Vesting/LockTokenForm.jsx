@@ -11,9 +11,6 @@ import {
 } from "../../lib/constants";
 
 import {
-  createAssetInfo,
-  FungibleConditionCode,
-  makeStandardFungiblePostCondition,
   uintCV,
   tupleCV,
   principalCV,
@@ -28,7 +25,10 @@ import {
   getFtPostConditionNFT,
 } from "../../utils/postconditions/ft-postcondition";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
-import { tokenSchema } from "../../utils/validation/validation-schema";
+import {
+  nftSchema,
+  tokenSchema,
+} from "../../utils/validation/validation-schema";
 import { ValidationError } from "../UI/Errors";
 import toast from "react-hot-toast";
 
@@ -44,6 +44,13 @@ const LockTokenInfo = ({ tokenAddress, nft }) => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(tokenSchema),
+  });
+  const {
+    register: nftRegister,
+    handleSubmit: nftHandleSubmit,
+    formState: { errors: nftErrors },
+  } = useForm({
+    resolver: yupResolver(nftSchema),
   });
   const onSubmit = async (data) => {
     const { contractAddress, contractName } =
@@ -93,7 +100,7 @@ const LockTokenInfo = ({ tokenAddress, nft }) => {
   const onSubmitNFT = async (data) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
-    const { days,  tokenID,assetName, taker } = data;
+    const { days, tokenID, assetName, taker } = data;
 
     setLoading(true);
 
@@ -209,7 +216,7 @@ const LockTokenInfo = ({ tokenAddress, nft }) => {
           </div>
         </form>
       ) : (
-        <form className="form" onSubmit={handleSubmit(onSubmitNFT)}>
+        <form className="form" onSubmit={nftHandleSubmit(onSubmitNFT)}>
           <div className="form-row">
             <div className="form-item">
               <div className="form-input">
@@ -217,10 +224,10 @@ const LockTokenInfo = ({ tokenAddress, nft }) => {
                 <input
                   type="text"
                   id="balance"
-                  {...register("assetName")}
+                  {...nftRegister("assetName")}
                   placeholder="Fungible Token name"
                 />
-                <ValidationError err={errors.assetName} />
+                <ValidationError err={nftErrors.assetName} />
               </div>
             </div>
           </div>
@@ -231,10 +238,10 @@ const LockTokenInfo = ({ tokenAddress, nft }) => {
                 <input
                   type="text"
                   id="balance"
-                  {...register("tokenID")}
+                  {...nftRegister("tokenID")}
                   placeholder="Token ID"
                 />
-                <ValidationError err={errors?.tokenID} />
+                <ValidationError err={nftErrors?.tokenID} />
               </div>
             </div>
           </div>
@@ -246,9 +253,9 @@ const LockTokenInfo = ({ tokenAddress, nft }) => {
                   type="text"
                   id="balance"
                   placeholder="Taker Address"
-                  {...register("taker")}
+                  {...nftRegister("taker")}
                 />
-                <ValidationError err={errors.taker} />
+                <ValidationError err={nftErrors.taker} />
               </div>
             </div>
           </div>
@@ -261,9 +268,9 @@ const LockTokenInfo = ({ tokenAddress, nft }) => {
                   type="text"
                   id="days"
                   placeholder="Locking Days"
-                  {...register("days")}
+                  {...nftRegister("days")}
                 />
-                <ValidationError err={errors.days} />
+                <ValidationError err={nftErrors.days} />
               </div>
             </div>
           </div>

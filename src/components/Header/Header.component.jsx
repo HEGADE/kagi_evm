@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppConfig, showConnect, UserSession } from "@stacks/connect";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { shortAddress } from "../../utils/format/address.format";
+import { PageLoader } from "../UI/PageLoader";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -31,6 +32,21 @@ function disconnect() {
 // console.info("testnet address: ", userSession.loadUserData().profile.stxAddress.testnet);
 
 const Header = () => {
+  const location = useLocation();
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+  if (location.pathname === "/") {
+    return <Navigate to="/dash-board" />;
+  }
+  if (loading) return <PageLoader />;
+
   return (
     <>
       <Toaster />
