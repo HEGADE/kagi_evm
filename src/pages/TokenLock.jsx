@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "../components/Header/Header.component";
 import { LockTokenForm } from "../components/Vesting/LockTokenForm";
 
@@ -6,12 +6,19 @@ const TokenLock = () => {
   const [margin, setMargin] = useState(false);
   const [moveToLockPage, setMoveToLockPage] = useState(false);
   const [showTokenLockForm, setShowTokenLockForm] = useState(true);
+  const ftRef = useRef(null);
+  const nftRef = useRef(null);
+
   const handlePageNFT = () => {
+    nftRef.current.classList.add("active");
+    ftRef.current.classList.remove("active");
     setMargin(false);
     setMoveToLockPage(false);
     setShowTokenLockForm((pre) => !pre);
   };
   const handlePageFT = () => {
+    ftRef.current.classList.add("active");
+    nftRef.current.classList.remove("active");
     setMargin(false);
     setShowTokenLockForm((pre) => !pre);
     setMoveToLockPage(false);
@@ -40,16 +47,16 @@ const TokenLock = () => {
           </p>
           <div className="tab-switch">
             <p
+              ref={ftRef}
               onClick={handlePageFT}
               className="tab-switch-button "
-
             >
               Fungible Tokens
             </p>
             <p
+              ref={nftRef}
               onClick={handlePageNFT}
               className="tab-switch-button "
-
             >
               NFT
             </p>

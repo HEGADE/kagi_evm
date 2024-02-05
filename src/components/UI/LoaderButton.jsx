@@ -1,7 +1,17 @@
 import React from "react";
 import { ThreeDots } from "react-loader-spinner";
+import { AppConfig, UserSession } from "@stacks/connect";
+import ConnectWallet from "./ConnectWallet";
+
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+
+export const userSession = new UserSession({ appConfig });
 
 const ButtonWithLoading = ({ isLoading, text, ...rest }) => {
+  if (!userSession.isUserSignedIn()) {
+    return <ConnectWallet />;
+  }
+
   return (
     <>
       {isLoading ? (

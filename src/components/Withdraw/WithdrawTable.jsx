@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ButtonWithLoading from "../UI/LoaderButton";
 import { useStacks } from "../../providers/StacksProvider";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
@@ -15,6 +15,13 @@ import { openContractCall } from "@stacks/connect";
 import { withDrawData } from "../../lib/withdraw-data";
 import { shortAddress } from "../../utils/format/address.format";
 import { ContentLoader } from "../UI/ContentLoader";
+
+import { AppConfig, UserSession } from "@stacks/connect";
+import ConnectWallet from "../UI/ConnectWallet";
+
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+
+export const userSession = new UserSession({ appConfig });
 
 const WithdrawTable = () => {
   const { network, address } = useStacks();
@@ -55,9 +62,18 @@ const WithdrawTable = () => {
     }
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  if (!userSession.isUserSignedIn()) return <ConnectWallet />;
+
   if (loading) {
-   return <ContentLoader />;
+    return <ContentLoader />;
   }
+
   return (
     <>
       <div className="table-body same-color-rows">

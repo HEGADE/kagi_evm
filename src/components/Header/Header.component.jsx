@@ -5,12 +5,13 @@ import { Toaster } from "react-hot-toast";
 
 import { shortAddress } from "../../utils/format/address.format";
 import { PageLoader } from "../UI/PageLoader";
+import ConnectWallet from "../UI/ConnectWallet";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
 
-function authenticate() {
+export function authenticate() {
   showConnect({
     appDetails: {
       name: "Stacks React Starter",
@@ -34,18 +35,9 @@ function disconnect() {
 const Header = () => {
   const location = useLocation();
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, []);
-
   if (location.pathname === "/") {
     return <Navigate to="/dash-board" />;
   }
-  if (loading) return <PageLoader />;
 
   return (
     <>
@@ -82,14 +74,7 @@ const Header = () => {
           </div>
         </div>
         <div className="header-actions">
-          {!userSession.isUserSignedIn() && (
-            <button
-              className="button primary wallet-connect"
-              onClick={authenticate}
-            >
-              Connect Wallet
-            </button>
-          )}
+          <ConnectWallet />
           {!!userSession.isUserSignedIn() && (
             <button
               className="button primary wallet-connect"
