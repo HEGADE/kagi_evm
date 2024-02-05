@@ -383,7 +383,7 @@ const LockTokenAddress = ({
       <div className="form-row" onClick={handleNext}>
         <div className="form-item">
           <ButtonWithLoading
-          loaderColor="blue"
+            loaderColor="blue"
             isLoading={loading}
             className="button medium primary"
             text="Next"

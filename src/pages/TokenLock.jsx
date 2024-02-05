@@ -14,13 +14,13 @@ const TokenLock = () => {
     ftRef.current.classList.remove("active");
     setMargin(false);
     setMoveToLockPage(false);
-    setShowTokenLockForm((pre) => !pre);
+    setShowTokenLockForm(false);
   };
   const handlePageFT = () => {
     ftRef.current.classList.add("active");
     nftRef.current.classList.remove("active");
     setMargin(false);
-    setShowTokenLockForm((pre) => !pre);
+    setShowTokenLockForm(true);
     setMoveToLockPage(false);
   };
   return (
@@ -49,7 +49,7 @@ const TokenLock = () => {
             <p
               ref={ftRef}
               onClick={handlePageFT}
-              className="tab-switch-button "
+              className="tab-switch-button active "
             >
               Fungible Tokens
             </p>
