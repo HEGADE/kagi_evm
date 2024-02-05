@@ -96,8 +96,13 @@ const LockTokenInfo = ({ tokenAddress }) => {
         <div className="form-row">
           <div className="form-item">
             <div className="form-input">
-              <label for="register-email">Asset Name</label>
-              <input type="text" id="balance" {...register("assetName")} />
+              {/* <label for="register-email">Asset Name</label> */}
+              <input
+                type="text"
+                id="balance"
+                {...register("assetName")}
+                placeholder="Asset Name"
+              />
               <ValidationError err={errors.assetName} />
             </div>
           </div>
@@ -105,8 +110,13 @@ const LockTokenInfo = ({ tokenAddress }) => {
         <div className="form-row">
           <div className="form-item">
             <div className="form-input">
-              <label for="register-email">Taker Address</label>
-              <input type="text" id="balance" {...register("taker")} />
+              {/* <label for="register-email">Taker Address</label> */}
+              <input
+                type="text"
+                id="balance"
+                placeholder="Taker Address"
+                {...register("taker")}
+              />
               <ValidationError err={errors.taker} />
             </div>
           </div>
@@ -114,8 +124,13 @@ const LockTokenInfo = ({ tokenAddress }) => {
         <div className="form-row">
           <div className="form-item">
             <div className="form-input">
-              <label for="register-username">Lock Amount</label>
-              <input type="text" id="lock-amount" {...register("amount")} />
+              {/* <label for="register-username">Lock Amount</label> */}
+              <input
+                type="text"
+                id="lock-amount"
+                placeholder="Lock Amount"
+                {...register("amount")}
+              />
               <ValidationError err={errors.amount} />
             </div>
           </div>
@@ -123,8 +138,13 @@ const LockTokenInfo = ({ tokenAddress }) => {
         <div className="form-row">
           <div className="form-item">
             <div className="form-input">
-              <label for="register-password">Locking Days</label>
-              <input type="text" id="days" {...register("days")} />
+              {/* <label for="register-password">Locking Days</label> */}
+              <input
+                type="text"
+                id="days"
+                placeholder="Locking Days"
+                {...register("days")}
+              />
               <ValidationError err={errors.days} />
             </div>
           </div>
@@ -154,7 +174,8 @@ const LockTokenAddress = ({
     if (
       tokenAddress &&
       tokenAddress?.length > 0 &&
-      (tokenAddress?.length >= 34 && tokenAddress?.length <= 52)
+      tokenAddress?.length >= 34 &&
+      tokenAddress?.length <= 52
     ) {
       setMoveToLockPage(true);
     } else {
@@ -169,8 +190,9 @@ const LockTokenAddress = ({
       <div className="form-row">
         <div className="form-item">
           <div className="form-input">
-            <label for="login-username">Project Token Address</label>
+            {/* <label for="login-username">Project Token Address</label> */}
             <input
+              placeholder="Project Token Address"
               type="text"
               id="address"
               required
@@ -179,13 +201,9 @@ const LockTokenAddress = ({
           </div>
         </div>
       </div>
-      <div className="form-row">
+      <div className="form-row" onClick={handleNext}>
         <div className="form-item">
-          <button
-            type="button"
-            className="button medium secondary"
-            onClick={handleNext}
-          >
+          <button type="button" className="button medium secondary">
             Next
           </button>
         </div>

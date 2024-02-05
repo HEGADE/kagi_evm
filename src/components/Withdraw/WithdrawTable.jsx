@@ -20,6 +20,7 @@ import {
 } from "@stacks/transactions";
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { openContractCall } from "@stacks/connect";
+import { withDrawData } from "../../lib/withdraw-data";
 
 const WithdrawTable = () => {
   const { network, address } = useStacks();
@@ -61,7 +62,11 @@ const WithdrawTable = () => {
   return (
     <>
       <div className="table-body same-color-rows">
-        <div className="table-row medium">
+        {
+          withDrawData.map(token=>{
+
+            return <>
+            <div className="table-row medium">
           <div className="table-column">
             <div className="product-preview tiny">
               <a>
@@ -77,7 +82,7 @@ const WithdrawTable = () => {
                 </figure>
               </a>
               <div className="product-preview-info">
-                <p className="product-preview-title">BRC Launcher</p>
+                <p className="product-preview-title">{token.ftName}</p>
               </div>
             </div>
           </div>
@@ -115,10 +120,9 @@ const WithdrawTable = () => {
               <ButtonWithLoading
                 onClick={() =>
                   handleWithdraw({
-                    amount: 1000,
-                    tokenAddress:
-                      "ST1ETGPP1H4D5WEGEDJXG5XVY5AA3K4N2EW4ZBYE1.sip010-ft",
-                    assetName: "cryptic-ocean-coin",
+                    amount: token.amount,
+                    tokenAddress:token.ftContract,
+                    assetName: token.ftName,
                   })
                 }
                 text="withdraw"
@@ -127,6 +131,9 @@ const WithdrawTable = () => {
             </div>
           </div>
         </div>
+            </>
+          })
+        }
       </div>
     </>
   );

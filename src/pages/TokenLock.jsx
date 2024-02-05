@@ -35,7 +35,7 @@ const TokenLock = () => {
         <div
           className="landing-form"
           style={{
-            marginTop: "50px",
+            marginTop: "150px",
           }}
         >
           <div className="form-box login-register-form-element">
