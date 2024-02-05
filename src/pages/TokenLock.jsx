@@ -5,7 +5,14 @@ import { LockTokenForm } from "../components/Vesting/LockTokenForm";
 const TokenLock = () => {
   return (
     <>
-      <div className="landing">
+      <div
+        className="landing"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <div className="landing-decoration"></div>
         <div className="landing-info">
           <div className="logo">
@@ -20,39 +27,17 @@ const TokenLock = () => {
           </p>
           <div className="tab-switch">
             <p className="tab-switch-button login-register-form-trigger">
-              Project Tokens
+              Fungible Tokens
             </p>
-            <p
-              style={{
-                visibility: "hidden",
-              }}
-              className="tab-switch-button login-register-form-trigger"
-            >
-              Liquidty Tokens
-            </p>
+            <p className="tab-switch-button login-register-form-trigger">NFT</p>
           </div>
         </div>
-        <div
-          className="landing-form"
-          style={{
-            marginTop: "150px",
-          }}
-        >
+        <div className="landing-form ">
           <div className="form-box login-register-form-element">
             <LockTokenForm />
           </div>
           <div className="form-box login-register-form-element">
-            <img
-              className="form-box-decoration"
-              src="img/landing/rocket.png"
-              alt="rocket"
-            />
-            <h2 className="form-box-title">Project Tokens</h2>
-            <p className="text-center mt-10">
-              Project Tokens Generated from App
-            </p>
-
-            {/* <LockTokenForm /> */}
+            <LockTokenForm nft={true} />
           </div>
         </div>
       </div>

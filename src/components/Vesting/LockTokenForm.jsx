@@ -168,7 +168,12 @@ const LockTokenAddress = ({
   setTokenAddress,
   tokenAddress,
   setMoveToLockPage,
+  nft,
 }) => {
+  const tokens = {
+    ft: "Fungible Token",
+    nft: "Non Fungible Token",
+  };
   const handleNext = (e) => {
     e.preventDefault();
     if (
@@ -185,14 +190,19 @@ const LockTokenAddress = ({
 
   return (
     <>
-      <h2 className="form-box-title">Project Tokens</h2>
-      <p className="text-center mt-10">Project Tokens Generated from App</p>
-      <div className="form-row">
+      <h2 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h2>
+      <p className="text-center mt-10">
+        {" "}
+        {!nft ? tokens.ft : tokens.nft} Generated from App
+      </p>
+      <div className="form-row landing-form-next">
         <div className="form-item">
           <div className="form-input">
             {/* <label for="login-username">Project Token Address</label> */}
             <input
-              placeholder="Project Token Address"
+              placeholder={
+                !nft ? tokens.ft + " Address" : tokens.nft + " Address"
+              }
               type="text"
               id="address"
               required
@@ -212,7 +222,7 @@ const LockTokenAddress = ({
   );
 };
 
-const LockTokenForm = () => {
+const LockTokenForm = ({ nft = false }) => {
   const [tokenAddress, setTokenAddress] = useState("");
   const [moveToLockPage, setMoveToLockPage] = useState(false);
 
@@ -220,6 +230,7 @@ const LockTokenForm = () => {
     <>
       {!moveToLockPage ? (
         <LockTokenAddress
+          nft={nft}
           setTokenAddress={setTokenAddress}
           tokenAddress={tokenAddress}
           setMoveToLockPage={setMoveToLockPage}

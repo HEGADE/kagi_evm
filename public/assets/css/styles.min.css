@@ -7115,7 +7115,7 @@ figure > img {
 .landing-info {
     width: 584px;
     position: absolute;
-    top: 16%;
+    top: 22%;
     left: 13%;
 }
 .landing-info .logo {
@@ -7160,7 +7160,7 @@ figure > img {
     width: 484px;
     height: 100%;
     position: absolute;
-    top: 0;
+    top: 8%;
     right: 13%;
 }
 .landing-form .form-box {
@@ -7448,6 +7448,7 @@ figure > img {
     }
 }
 .navigation-widget {
+  height: 100%;
     width: 300px;
     padding-bottom: 40px;
     background-color: #fff;
@@ -20587,7 +20588,7 @@ body.dark {
 .dark .landing-info {
     width: 584px;
     position: absolute;
-    top: 16%;
+    top: 22%;
     left: 13%
 }
 
@@ -20637,7 +20638,7 @@ body.dark {
     width: 484px;
     height: 100%;
     position: absolute;
-    top: 0;
+    top: 8%;
     right: 13%
 }
 
@@ -20993,6 +20994,7 @@ body.dark {
 }
 
 .dark .navigation-widget {
+    height: 100%;
     width: 300px;
     padding-bottom: 40px;
     background-color: #1d2333;

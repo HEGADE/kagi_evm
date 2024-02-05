@@ -21,6 +21,7 @@ import {
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { openContractCall } from "@stacks/connect";
 import { withDrawData } from "../../lib/withdraw-data";
+import { shortAddress } from "../../utils/format/address.format";
 
 const WithdrawTable = () => {
   const { network, address } = useStacks();
@@ -87,10 +88,10 @@ const WithdrawTable = () => {
             </div>
           </div>
           <div className="table-column padded">
-            <p className="table-title">0x6A9E...4F66B3</p>
+            <p className="table-title">{shortAddress(token.ftContract.split('.')[0])}</p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">303232 $BRCL</p>
+            <p className="table-title">{token.amount} $BRCL</p>
           </div>
           <div className="table-column padded">
             <p className="table-title">Wed, 09 Mar 2022 12:09:47 GMT</p>
