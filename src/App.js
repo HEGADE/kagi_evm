@@ -1,7 +1,6 @@
 import React from "react";
 
 import Header from "./components/Header/Header.component";
-import ContractCallVote from "./components/ContractCallVote";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TokenLock } from "./pages/TokenLock";

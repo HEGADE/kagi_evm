@@ -65,7 +65,7 @@ const TokenLock = () => {
         <div
           className="landing-form "
           style={{
-            marginTop: margin ? "-120px" : "1%",
+            marginTop: margin ? "-140px" : "1%",
           }}
         >
           {showTokenLockForm ? (

@@ -149,7 +149,7 @@ textarea::placeholder {
     width: 100%;
 }
 .form-row + .form-row {
-    margin-top: 28px;
+    margin-top: 20px;
 }
 .form-row.space-between {
     display: -ms-flexbox;
