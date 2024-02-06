@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Header from "../components/Header/Header.component";
 import { LockTokenForm } from "../components/Vesting/LockTokenForm";
+import { MobileSideBar } from "../components/UI/SideNavBar";
 
 const TokenLock = () => {
   const [margin, setMargin] = useState(false);
@@ -25,6 +26,7 @@ const TokenLock = () => {
   };
   return (
     <>
+      <MobileSideBar />
       <div className="landing landing-container">
         <div className="landing-decoration"></div>
         <div className="landing-info">

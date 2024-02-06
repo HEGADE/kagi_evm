@@ -13,6 +13,8 @@ export default function TransactionToastProvider({ children }) {
 
   const [transactionIds, setTransactionIds] = useState(new Set());
 
+  const [transactionLoading, setTransactionLoading] = useState(false);
+
   useEffect(() => {
     const interval = setInterval(() => {
       updateAllTransactions(transactionIds);
@@ -20,6 +22,7 @@ export default function TransactionToastProvider({ children }) {
 
     return () => {
       clearInterval(interval);
+      setTransactionLoading(false);
     };
   }, [transactionIds]);
 
@@ -43,8 +46,10 @@ export default function TransactionToastProvider({ children }) {
 
     if (status === "success") {
       toast.success("Done!", { id: transactionId });
+      setTransactionLoading(false);
     } else {
       toast.error("Transaction failed", { id: transactionId });
+      setTransactionLoading(false);
     }
     setTransactionIds((transactionIds) => {
       const newTransactionIds = new Set(transactionIds);
@@ -54,6 +59,7 @@ export default function TransactionToastProvider({ children }) {
   }
 
   function addTransactionToast(transactionId, pendingMessage) {
+    setTransactionLoading(true);
     console.log(`listening to updates for transaction ${transactionId}`);
     toast.loading(pendingMessage, {
       id: transactionId,
@@ -62,7 +68,7 @@ export default function TransactionToastProvider({ children }) {
     setTransactionIds((transactionIds) => transactionIds.add(transactionId));
   }
 
-  const value = { addTransactionToast };
+  const value = { addTransactionToast, transactionLoading };
 
   return (
     <TransactionToastsContext.Provider value={value}>

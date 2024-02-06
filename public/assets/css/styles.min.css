@@ -11344,6 +11344,7 @@ figure > img {
     .header .header-actions .mobilemenu-trigger {
         display: -ms-flexbox;
         display: flex;
+        margin-top: -13px;
     }
     .d-none {
         display: none;

@@ -26,7 +26,7 @@ export const userSession = new UserSession({ appConfig });
 const WithdrawTable = () => {
   const { network, address } = useStacks();
 
-  const { addTransactionToast } = useTransactionToasts();
+  const { addTransactionToast,transactionLoading } = useTransactionToasts();
 
   const [loading, setLoading] = useState(true);
 
@@ -56,7 +56,6 @@ const WithdrawTable = () => {
         network,
         appDetails,
         onFinish: ({ txId }) => {
-          console.log("onFinish:", txId);
           addTransactionToast(txId, `Withdrawing ${assetName} `);
         },
       };
@@ -140,7 +139,7 @@ const WithdrawTable = () => {
                 <div className="table-column padded-left">
                   <div className="table-actions">
                     <ButtonWithLoading
-                      isLoading={isButtonLoading}
+                      isLoading={transactionLoading}
                       loaderColor="blue"
                       onClick={() =>
                         handleWithdraw({

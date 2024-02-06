@@ -30,9 +30,6 @@ function disconnect() {
   userSession.signUserOut("/");
 }
 
-// console.info("mainnet address: ", userSession.loadUserData().profile.stxAddress.mainnet);
-// console.info("testnet address: ", userSession.loadUserData().profile.stxAddress.testnet);
-
 const Header = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -65,7 +62,6 @@ const Header = () => {
           <div className="header-brand">
             <div className="logo">
               <svg className="icon-logo-vikinger small" />
-              {/* <use xlink:href="#svg-logo-vikinger"></use> */}
             </div>
             <h1 className="header-brand-text " style={{ cursor: "pointer" }}>
               {location.pathname === "/token-lock" ? (
