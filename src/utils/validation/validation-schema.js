@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const tokenSchema = yup.object().shape({
-  assetName: yup.string().required("Asset name is required"),
+  assetName: yup.string().optional(),
   taker: yup
     .string()
     .required("taker is required")

@@ -57,7 +57,8 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
     const { amount, days, assetName, taker } = data;
-
+    console.log("data:", data);
+return
     setLoading(true);
 
     try {
@@ -103,6 +104,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
       getContractAddressAndName(tokenAddress);
     const { days, tokenID, assetName, taker } = data;
 
+    console.log("data:", data);
     setLoading(true);
 
     try {

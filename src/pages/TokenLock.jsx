@@ -26,12 +26,8 @@ const TokenLock = () => {
   return (
     <>
       <div
-        className="landing"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          height: "100vh",
-        }}
+        className="landing landing-container"
+       
       >
         <div className="landing-decoration"></div>
         <div className="landing-info">
@@ -65,7 +61,7 @@ const TokenLock = () => {
         <div
           className="landing-form "
           style={{
-            marginTop: margin ? "-140px" : "1%",
+            marginTop: margin ? "0" : "1%",
           }}
         >
           {showTokenLockForm ? (

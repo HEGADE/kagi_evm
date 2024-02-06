@@ -1336,7 +1336,7 @@ textarea::placeholder {
 }
 body {
     font-size: 16px;
-    background-color: #f8f8fb;
+    background-color: #f8f8fb !important;
     overflow-x: hidden;
 }
 a,
@@ -5554,7 +5554,7 @@ figure > img {
     text-align: right;
 }
 .table .table-header-column.padded {
-    padding: 0 24px;
+    padding: 0 44px;
 }
 .table .table-header-column.padded-medium {
     padding: 0 46px;
@@ -5566,7 +5566,7 @@ figure > img {
     padding-left: 60px;
 }
 .table .table-header-column:first-child {
-    padding-left: 28px;
+    padding-left: 100px;
 }
 .table .table-header-column:last-child {
     padding-right: 28px;
@@ -5645,7 +5645,7 @@ figure > img {
     padding: 0 46px;
 }
 .table .table-column.padded-left {
-    padding-left: 24px;
+    padding-left: 0px;
 }
 .table .table-column.padded-big-left {
     padding-left: 60px;
@@ -5680,6 +5680,7 @@ figure > img {
     font-size: 1rem;
     font-weight: 600;
     width: max-content;
+    margin-bottom: 0;
 }
 .table .table-column .table-title .highlighted {
     color: #00c7d9;
@@ -7082,7 +7083,7 @@ figure > img {
     text-align: center;
 }
 .form-box .form {
-    margin-top: 76px;
+    margin-top: 20px;
 }
 .form-box .lined-text {
     margin-top: 40px;
@@ -7104,6 +7105,22 @@ figure > img {
     position: fixed;
     top: 0;
     left: 0;
+}
+
+.landing-container{
+
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+
+}
+
+@media (max-width:767px) {
+    .landing-container{
+        flex-direction: column;
+    }
+    
 }
 .landing .landing-decoration {
     width: 64%;
@@ -8514,6 +8531,8 @@ figure > img {
 }
 .product-preview.tiny .product-preview-info .product-preview-title {
     font-size: 1rem;
+    margin-bottom: 0;
+    width: max-content;
 }
 .product-preview.tiny .product-preview-info .product-preview-category {
     margin-top: 6px;

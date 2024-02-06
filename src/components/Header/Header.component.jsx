@@ -33,7 +33,17 @@ function disconnect() {
 // console.info("testnet address: ", userSession.loadUserData().profile.stxAddress.testnet);
 
 const Header = () => {
+  const [loading, setLoading] = useState(true);
+
   const location = useLocation();
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+  if (loading) return <PageLoader />;
 
   if (location.pathname === "/") {
     return <Navigate to="/dash-board" />;
