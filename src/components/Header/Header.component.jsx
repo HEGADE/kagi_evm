@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { shortAddress } from "../../utils/format/address.format";
 import { PageLoader } from "../UI/PageLoader";
 import ConnectWallet from "../UI/ConnectWallet";
-import { IconBackArrow, IconBulb } from "../UI/Icons";
+import { IconBackArrow, IconBulb, IconClose } from "../UI/Icons";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -35,6 +35,7 @@ function disconnect() {
 
 const Header = () => {
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const location = useLocation();
 
@@ -49,6 +50,12 @@ const Header = () => {
   if (location.pathname === "/") {
     return <Navigate to="/dash-board" />;
   }
+
+  const toggleSideBar = () => {
+    setOpen((pre) => !pre);
+    const sidebar = document.querySelector("#navigation-widget-mobile");
+    sidebar.classList.toggle("hidden");
+  };
 
   return (
     <>
@@ -120,10 +127,16 @@ const Header = () => {
           </div>
           <div className="action-item-wrap"></div>
           <div className="mobilemenu-trigger navigation-widget-mobile-trigger">
-            <div className="burger-icon inverted">
-              <div className="burger-icon-bar"></div>
-              <div className="burger-icon-bar"></div>
-              <div className="burger-icon-bar"></div>
+            <div className="burger-icon inverted" onClick={toggleSideBar}>
+              {!open ? (
+                <>
+                  <div className="burger-icon-bar"></div>
+                  <div className="burger-icon-bar"></div>
+                  <div className="burger-icon-bar"></div>
+                </>
+              ) : (
+                <IconClose />
+              )}
             </div>
           </div>
         </div>

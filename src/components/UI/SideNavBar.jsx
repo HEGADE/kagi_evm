@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 const SideNavBar = () => {
   const location = useLocation();
+  const mobileNavigationRef = useRef(null);
 
   return (
     <>
@@ -11,7 +12,12 @@ const SideNavBar = () => {
         data-simplebar
       >
         <ul className="menu">
-          <li className={"menu-item" + (location.pathname === "/dash-board" ? " active" : "") }>
+          <li
+            className={
+              "menu-item" +
+              (location.pathname === "/dash-board" ? " active" : "")
+            }
+          >
             <Link className="menu-item-link" to="/dash-board">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +47,12 @@ const SideNavBar = () => {
               My Token Lock Schedule
             </a>
           </li>
-          <li className={"menu-item" + (location.pathname === "/token-withdraw" ? " active" : "")}>
+          <li
+            className={
+              "menu-item" +
+              (location.pathname === "/token-withdraw" ? " active" : "")
+            }
+          >
             <Link className="menu-item-link" to="/token-withdraw">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +85,12 @@ const SideNavBar = () => {
               Pools
             </a>
           </li>
-          <li className={"menu-item" + (location.pathname === "/token-lock" ? " active" : "")}>
+          <li
+            className={
+              "menu-item" +
+              (location.pathname === "/token-lock" ? " active" : "")
+            }
+          >
             <Link className="menu-item-link" to="/token-lock">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -145,6 +161,7 @@ const SideNavBar = () => {
         </ul>
       </nav>
       <nav
+        ref={mobileNavigationRef}
         id="navigation-widget-mobile"
         className="navigation-widget navigation-widget-mobile sidebar left hidden"
         data-simplebar
@@ -155,8 +172,11 @@ const SideNavBar = () => {
           </svg>
         </div>
         <ul className="menu">
-          <li className="menu-item active">
-            <a className="menu-item-link" href="#">
+          <li  className={
+              "menu-item" +
+              (location.pathname === "/dash-board" ? " active" : "")
+            }>
+            <Link className="menu-item-link" to="/dash-board">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -168,10 +188,10 @@ const SideNavBar = () => {
                 <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z" />
               </svg>
               Dashboard
-            </a>
+            </Link>
           </li>
           <li className="menu-item">
-            <a className="menu-item-link" href="lock-schedule.html">
+            <a className="menu-item-link" href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -185,8 +205,11 @@ const SideNavBar = () => {
               My Token Lock Schedule
             </a>
           </li>
-          <li className="menu-item">
-            <a className="menu-item-link" href="claim-token.html">
+          <li  className={
+              "menu-item" +
+              (location.pathname === "/token-withdraw" ? " active" : "")
+            }>
+            <Link className="menu-item-link" to={"/token-withdraw"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -199,7 +222,7 @@ const SideNavBar = () => {
                 <path d="M11.414 11H14.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h3.086l-1 1H1.5A1.5 1.5 0 0 1 0 10.5v-7A1.5 1.5 0 0 1 1.5 2h13A1.5 1.5 0 0 1 16 3.5v7a1.5 1.5 0 0 1-1.5 1.5h-2.086z" />
               </svg>
               Claim Project Tokens
-            </a>
+            </Link>
           </li>
           <li className="menu-item">
             <a className="menu-item-link" href="#">
@@ -218,8 +241,11 @@ const SideNavBar = () => {
               Pools
             </a>
           </li>
-          <li className="menu-item">
-            <a className="menu-item-link" href="token-lock.html">
+          <li  className={
+              "menu-item" +
+              (location.pathname === "/token-lock" ? " active" : "")
+            }>
+            <Link className="menu-item-link" to={"/token-lock"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -232,7 +258,7 @@ const SideNavBar = () => {
                 <path d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415" />
               </svg>
               Token Lock
-            </a>
+            </Link>
           </li>
           <li className="menu-item">
             <a className="menu-item-link" href="#">
