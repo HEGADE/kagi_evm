@@ -32,8 +32,10 @@ import {
 import { ValidationError } from "../UI/Errors";
 import toast from "react-hot-toast";
 import { fetchFromContract } from "../../lib/fetch-data";
+import { transformString } from "../../utils/format/format-asset-name";
+import { IconBackArrow } from "../UI/Icons";
 
-const LockTokenInfo = ({ tokenAddress, nft, data }) => {
+const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   const { network, address } = useStacks();
 
   const [loading, setLoading] = useState(false);
@@ -49,6 +51,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
   });
   const {
     register: nftRegister,
+    reset: nftReset,
     handleSubmit: nftHandleSubmit,
     formState: { errors: nftErrors },
   } = useForm({
@@ -58,9 +61,10 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
     const { amount, days, assetName, taker } = data;
-    console.log("data:", data);
-    return;
+    console.log("days:", days, "assetName:", assetName);
+
     setLoading(true);
+    let finalAssetName = transformString(assetName);
 
     try {
       const tokenPostCondition = getFtPostCondition(
@@ -68,7 +72,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
         amount,
         contractAddress,
         contractName,
-        assetName
+        finalAssetName
       );
 
       const options = {
@@ -80,7 +84,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
           tupleCV({
             amount: uintCV(amount),
             "lock-expiry": uintCV(days),
-            "ft-name": stringAsciiCV(assetName),
+            "ft-name": stringAsciiCV(finalAssetName),
             taker: principalCV(taker),
           }),
         ],
@@ -95,7 +99,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
 
       await openContractCall(options);
     } catch (err) {
-      console.log(err);
+      console.log(err, "error submitting");
     } finally {
       setLoading(false);
     }
@@ -105,15 +109,16 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
       getContractAddressAndName(tokenAddress);
     const { days, tokenID, assetName, taker } = data;
 
-    console.log("data:", data);
     setLoading(true);
+
+    let finalAssetName = transformString(assetName);
 
     try {
       const nftPostCondition = getFtPostConditionNFT(
         address,
         contractAddress,
         contractName,
-        assetName
+        finalAssetName
       );
 
       const options = {
@@ -147,6 +152,12 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
   console.log("error:", errors.assetName);
 
   useEffect(() => {
+    if (nft) {
+      nftReset({
+        assetName: data?.assetName,
+      });
+      return;
+    }
     reset({
       assetName: data?.assetName,
     });
@@ -154,7 +165,10 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
   // lock-expiry: uint, token-id: uint, taker: principal
   return (
     <>
-      <h2 className="form-box-title">Configure Lock</h2>
+      <div>
+        <IconBackArrow onClick={handlePage} style={{ cursor: "pointer" }} />
+        <h2 className="form-box-title">Configure Lock</h2>
+      </div>
       {!nft ? (
         <form className="form" onSubmit={handleSubmit(onSubmit)}>
           <div className="form-row">
@@ -407,6 +421,7 @@ const LockTokenForm = ({
   setMargin,
   moveToLockPage,
   setMoveToLockPage,
+  handlePage,
 }) => {
   const [tokenAddress, setTokenAddress] = useState("");
   const [data, setData] = useState({
@@ -425,7 +440,12 @@ const LockTokenForm = ({
           setMoveToLockPage={setMoveToLockPage}
         />
       ) : (
-        <LockTokenInfo nft={nft} data={data} tokenAddress={tokenAddress} />
+        <LockTokenInfo
+          handlePage={handlePage}
+          nft={nft}
+          data={data}
+          tokenAddress={tokenAddress}
+        />
       )}
     </>
   );

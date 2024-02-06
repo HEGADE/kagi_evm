@@ -20,7 +20,7 @@ export const tokenSchema = yup.object().shape({
     .min(1, "days must be greater than 0"),
 });
 export const nftSchema = yup.object().shape({
-  assetName: yup.string().required("Asset name is required"),
+  assetName: yup.string().optional(),
   taker: yup
     .string()
     .required("taker is required")

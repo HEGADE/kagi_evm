@@ -25,11 +25,7 @@ const TokenLock = () => {
   };
   return (
     <>
-      <div
-        className="landing landing-container"
-       
-      >
-      
+      <div className="landing landing-container">
         <div className="landing-decoration"></div>
         <div className="landing-info">
           <div className="logo">
@@ -68,6 +64,7 @@ const TokenLock = () => {
           {showTokenLockForm ? (
             <div className="form-box login-register-form-element">
               <LockTokenForm
+                handlePage={handlePageFT}
                 setMoveToLockPage={setMoveToLockPage}
                 moveToLockPage={moveToLockPage}
                 setMargin={setMargin}
@@ -76,6 +73,7 @@ const TokenLock = () => {
           ) : (
             <div className="form-box login-register-form-element">
               <LockTokenForm
+                handlePage={handlePageNFT}
                 setMoveToLockPage={setMoveToLockPage}
                 moveToLockPage={moveToLockPage}
                 setMargin={setMargin}

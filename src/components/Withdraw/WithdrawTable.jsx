@@ -30,9 +30,13 @@ const WithdrawTable = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+
   const handleWithdraw = async ({ amount, assetName, tokenAddress }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
+
+    setIsButtonLoading(true);
 
     try {
       const tokenPostCondition = getFtPostCondition(
@@ -59,6 +63,8 @@ const WithdrawTable = () => {
       await openContractCall(options);
     } catch (err) {
       console.log("error", err);
+    } finally {
+      setIsButtonLoading(false);
     }
   };
 
@@ -134,6 +140,8 @@ const WithdrawTable = () => {
                 <div className="table-column padded-left">
                   <div className="table-actions">
                     <ButtonWithLoading
+                      isLoading={isButtonLoading}
+                      loaderColor="blue"
                       onClick={() =>
                         handleWithdraw({
                           amount: token.amount,
