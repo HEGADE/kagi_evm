@@ -42,6 +42,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(tokenSchema),
@@ -58,7 +59,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data }) => {
       getContractAddressAndName(tokenAddress);
     const { amount, days, assetName, taker } = data;
     console.log("data:", data);
-return
+    return;
     setLoading(true);
 
     try {
@@ -145,6 +146,11 @@ return
   };
   console.log("error:", errors.assetName);
 
+  useEffect(() => {
+    reset({
+      assetName: data?.assetName,
+    });
+  }, []);
   // lock-expiry: uint, token-id: uint, taker: principal
   return (
     <>
@@ -157,7 +163,6 @@ return
                 {/* <label for="register-email">Asset Name</label> */}
                 <input
                   disabled
-                  value={data?.assetName}
                   type="text"
                   id="balance"
                   {...register("assetName")}
@@ -382,6 +387,7 @@ const LockTokenAddress = ({
           </div>
         </div>
       </div>
+      <br />
       <div className="form-row" onClick={handleNext}>
         <div className="form-item">
           <ButtonWithLoading

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { AppConfig, showConnect, UserSession } from "@stacks/connect";
-import { Outlet, useLocation, Navigate } from "react-router-dom";
+import { Outlet, useLocation, Navigate, Link } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { shortAddress } from "../../utils/format/address.format";
 import { PageLoader } from "../UI/PageLoader";
 import ConnectWallet from "../UI/ConnectWallet";
+import { IconBackArrow } from "../UI/Icons";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -59,7 +60,18 @@ const Header = () => {
               <svg className="icon-logo-vikinger small" />
               {/* <use xlink:href="#svg-logo-vikinger"></use> */}
             </div>
-            <h1 className="header-brand-text">Token</h1>
+            <h1 className="header-brand-text " style={{ cursor: "pointer" }}>
+              {location.pathname === "/token-lock" ? (
+                <Link style={{
+                  color: "#fff",
+                  textDecoration: "none",
+                }} to={"/dash-board"}>
+                  <IconBackArrow />
+                </Link>
+              ) : (
+                "Token"
+              )}
+            </h1>
           </div>
         </div>
         <div className="header-actions"></div>

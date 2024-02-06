@@ -29,6 +29,7 @@ const TokenLock = () => {
         className="landing landing-container"
        
       >
+      
         <div className="landing-decoration"></div>
         <div className="landing-info">
           <div className="logo">
@@ -61,7 +62,7 @@ const TokenLock = () => {
         <div
           className="landing-form "
           style={{
-            marginTop: margin ? "0" : "1%",
+            marginTop: margin ? "-40px" : "1%",
           }}
         >
           {showTokenLockForm ? (

@@ -149,7 +149,7 @@ textarea::placeholder {
     width: 100%;
 }
 .form-row + .form-row {
-    margin-top: 20px;
+    margin-top: 0px;
 }
 .form-row.space-between {
     display: -ms-flexbox;
@@ -7137,6 +7137,13 @@ figure > img {
     position: absolute;
     top: 22%;
     left: 13%;
+}
+@media(max-width:766px) {
+    .landing-info{
+
+        margin-bottom: 60px;
+    }
+    
 }
 .landing-info .logo {
     display: -ms-flexbox;
