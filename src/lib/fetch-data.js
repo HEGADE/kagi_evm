@@ -24,3 +24,21 @@ export const fetchFromContract = async ({
 
   return cvToValue(result);
 };
+
+export const fetchFromVestingContract = async ({
+  network,
+  address,
+  contractFunctionName,
+  args = [],
+}) => {
+  const result = await callReadOnlyFunction({
+    contractAddress: contractOwnerAddress,
+    contractName: deployedContractName,
+    functionName: contractFunctionName,
+    functionArgs: args,
+    network,
+    senderAddress: address,
+  });
+
+  return cvToValue(result);
+};

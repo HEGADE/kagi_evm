@@ -35,7 +35,10 @@ import {
 } from "../../utils/validation/validation-schema";
 import { ValidationError } from "../UI/Errors";
 import toast from "react-hot-toast";
-import { fetchFromContract } from "../../lib/fetch-data";
+import {
+  fetchFromContract,
+  fetchFromVestingContract,
+} from "../../lib/fetch-data";
 import { transformString } from "../../utils/format/format-asset-name";
 import { IconBackArrow } from "../UI/Icons";
 import { getFinalAmount } from "../../utils/final-stx-amount";
@@ -56,7 +59,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(tokenSchema),
+    resolver: yupResolver(tokenSchema(data.currentBlockHeight)),
   });
   const {
     register: nftRegister,
@@ -64,7 +67,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     handleSubmit: nftHandleSubmit,
     formState: { errors: nftErrors },
   } = useForm({
-    resolver: yupResolver(nftSchema),
+    resolver: yupResolver(nftSchema(data.currentBlockHeight)),
   });
   const onSubmit = async (data) => {
     const { contractAddress, contractName } =
@@ -395,16 +398,24 @@ const LockTokenAddress = ({
       tokenAddress?.length <= 52
     ) {
       try {
-        let [assetName, decimals] = await Promise.all([
+        let [assetName, decimals, currentBlockHeight] = await Promise.all([
           fetch({ functionName: "get-name" }),
           !nft ? fetch({ functionName: "get-decimals" }) : [],
+          fetchFromVestingContract({
+            network,
+            address,
+            contractFunctionName: "get-current-block-height",
+          }),
         ]);
+
+        console.log("current Block height", currentBlockHeight);
 
         setData((pre) => {
           return {
             ...pre,
             assetName: assetName?.value,
             decimals: Number(decimals?.value),
+            currentBlockHeight: Number(currentBlockHeight?.value),
           };
         });
 
@@ -472,6 +483,7 @@ const LockTokenForm = ({
   const [data, setData] = useState({
     assetName: "",
     decimals: "",
+    currentBlockHeight: 0,
   });
   return (
     <>
