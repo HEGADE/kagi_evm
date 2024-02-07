@@ -27,12 +27,12 @@ const useFetchFtLockStats = () => {
         senderAddress: address,
       });
       console.log("result user", result);
-      console.log("resultCv user", cvToValue(result.value.list[0]));
+      console.log("resultCv user", cvToValue(result?.value?.list[0]));
       setData((pre) => {
         return {
           ...pre,
-          result: result.value.list.map((item)=>{
-            return cvToValue(item)
+          result: result?.value?.list?.map((item) => {
+            return cvToValue(item);
           }),
         };
       });
@@ -40,7 +40,7 @@ const useFetchFtLockStats = () => {
       console.log(err);
 
       setData((pre) => {
-        return { ...pre, error: err };
+        return { ...pre, error: err, result: [] };
       });
     } finally {
       setData((pre) => {

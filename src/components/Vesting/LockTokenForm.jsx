@@ -86,6 +86,8 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     );
 
     setLoading(true);
+    setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
+
 
     let lockDate = formatDate(new Date());
 
@@ -126,7 +128,6 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         onFinish: ({ txId }) => {
           console.log("onFinish:", txId);
           addTransactionToast(txId, `Locking ${assetName} token`);
-          setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
         },
       };
 
@@ -141,6 +142,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
     const { days, tokenID, assetName, taker } = data;
+    setTransactionSuccessfulMsg(`Successfully Locked ${assetName} NFT`);
 
     setLoading(true);
 
@@ -182,8 +184,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         onFinish: ({ txId }) => {
           console.log("onFinish:", txId);
 
-          addTransactionToast(txId, `Locking ${assetName} token`);
-          setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
+          addTransactionToast(txId, `Locking ${assetName} NFT`);
         },
       };
 

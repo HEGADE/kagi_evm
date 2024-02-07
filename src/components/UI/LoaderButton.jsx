@@ -8,6 +8,7 @@ const appConfig = new AppConfig(["store_write", "publish_data"]);
 export const userSession = new UserSession({ appConfig });
 
 const ButtonWithLoading = ({
+  ingBtn = false,
   isLoading,
   text,
   loaderColor = "white",
@@ -27,7 +28,13 @@ const ButtonWithLoading = ({
             alignContent: "center",
           }}
         >
-          <ThreeDots color={loaderColor} width={"50px"} height={"50px"} />
+          {!ingBtn ? (
+            <ThreeDots color={loaderColor} width={"50px"} height={"50px"} />
+          ) : (
+            <button {...rest} style={{ cursor: "not-allowed" }} disabled>
+              {text}ing...
+            </button>
+          )}
         </div>
       ) : (
         <button {...rest}>{text}</button>

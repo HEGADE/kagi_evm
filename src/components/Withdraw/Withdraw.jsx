@@ -1,15 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { WithdrawTable } from "./WithdrawTable";
 import { PageLoader } from "../UI/PageLoader";
 import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { ContentLoader } from "../UI/ContentLoader";
+import { WithdrawTableNFT } from "./WitdrawTableNFT";
+import { TableHeading } from "./TableHeading";
 
 const Withdraw = () => {
   const { data, fetchData } = useFetchFtLockStats();
 
+  const [selectToken, setSelectToken] = useState("ft");
+  const [selectTokenSort, setSelectTokenSort] = useState("ds");
+
   useEffect(() => {
-    fetchData({ functionName: "get-ft-lock-info" });
-  }, []);
+    if (selectToken === "ft") {
+      fetchData({ functionName: "get-ft-lock-info" });
+    } else {
+      fetchData({ functionName: "get-nft-lock-info" });
+    }
+  }, [selectToken]);
 
   return (
     <>
@@ -29,16 +38,12 @@ const Withdraw = () => {
                 <div className="form-select">
                   <label for="downloads-filter-category">Categories</label>
                   <select
+                    onChange={(e) => setSelectToken(e.target.value)}
                     id="downloads-filter-category"
                     name="tokens_filter_category"
                   >
-                    <option value="1">All</option>
-                    <option value="2">Blockchain</option>
-                    <option value="3">Defi</option>
-                    <option value="4">DAO</option>
-                    <option value="5">NFT</option>
-                    <option value="6">Launchpad</option>
-                    <option value="7">Others</option>
+                    <option value="ft">FT</option>
+                    <option value="nft">NFT</option>
                   </select>
                   <svg className="form-select-icon icon-small-arrow">
                     {/* <use xlink:href="#svg-small-arrow"></use> */}
@@ -50,15 +55,13 @@ const Withdraw = () => {
                     id="downloads-filter-order"
                     name="tokens_filter_order"
                   >
-                    <option value="1">All</option>
-                    <option value="2">Withdrawn</option>
-                    <option value="3">Not Withdrawn</option>
+                    <option value="ds">Descending</option>
+                    <option value="as">Ascending</option>
                   </select>
                   <svg className="form-select-icon icon-small-arrow">
                     {/* <use xlink:href="#svg-small-arrow"></use> */}
                   </svg>
                 </div>
-                <button className="button primary">Filter Tokens</button>
               </div>
             </form>
           </div>
@@ -81,39 +84,42 @@ const Withdraw = () => {
                       style={{ padding: "0px;" }}
                     >
                       <div className="table table-downloads split-rows">
-                        <div className="table-header">
-                          <div className="table-header-column">
-                            <p className="table-header-title">Token Name</p>
-                          </div>
-                          <div className="table-header-column padded">
-                            <p className="table-header-title">Tokens Address</p>
-                          </div>
-                          <div className="table-header-column padded">
-                            <p className="table-header-title">Tokens Locked</p>
-                          </div>
-                          <div className="table-header-column padded">
-                            <p className="table-header-title">Locked Time</p>
-                          </div>
-                          <div className="table-header-column padded">
-                            <p className="table-header-title">Unlocked Time</p>
-                          </div>
-                          <div className="table-header-column padded-left"></div>
-                        </div>
+                        <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
                           {data?.loading ? (
                             <ContentLoader />
                           ) : data?.result?.length > 0 ? (
                             data?.result?.map((token) => {
-                              return (
-                                <WithdrawTable
-                                  amount={token.amount?.value}
-                                  assetContact={token["ft-contract"]?.value}
-                                  assetName={token["ft-name"]?.value}
-                                  lockID={token["lock-id"]?.value}
-                                  key={token["lock-id"]?.value}
-                                  lockTime={token["locked-time"]?.value}
-                                />
-                              );
+                              if (selectToken === "ft") {
+                                return (
+                                  <WithdrawTable
+                                    assetContact={token["ft-contract"]?.value}
+                                    assetName={
+                                      token["ft-name"]?.value || "stacksies"
+                                    }
+                                    amount={token["amount"]?.value}
+                                    lockID={token["lock-id"]?.value}
+                                    key={token["lock-id"]?.value}
+                                    lockTime={token["locked-time"]?.value}
+                                    lockedTime={token["locked-time"]?.value}
+                                  />
+                                );
+                              } else {
+                                return (
+                                  <WithdrawTableNFT
+                                    assetContact={token["nft-contract"]?.value}
+                                    assetName={
+                                      token["nft-name"]?.value || "stacksies"
+                                    }
+                                    lockID={token["locking-id"]?.value}
+                                    key={token["token-id"]?.value}
+                                    assetID={token["token-id"]?.value}
+                                    lockTime={token["lock-expiry"]?.value}
+                                    lockedTime={token["locked-time"]?.value}
+                                    taker={token["taker"]?.value}
+                                  />
+                                );
+                              }
                             })
                           ) : null}
                         </div>
@@ -131,3 +137,32 @@ const Withdraw = () => {
 };
 
 export { Withdraw };
+
+{
+  /* <WithdrawTableNFT
+assetContact={token["nft-contract"]?.value}
+assetName={
+  token["nft-name"]?.value || "stacksies"
+}
+lockID={token["locking-id"]?.value}
+key={token["token-id"]?.value}
+assetID={token["token-id"]?.value}
+lockTime={token["lock-expiry"]?.value}
+lockedTime={token["locked-time"]?.value}
+taker={token["taker"]?.value}
+/> */
+}
+
+{
+  /* <WithdrawTable
+assetContact={token["ft-contract"]?.value}
+assetName={
+  token["ft-name"]?.value || "stacksies"
+}
+amount={token["amount"]?.value}
+lockID={token["locking-id"]?.value}
+key={token["lock-id"]?.value}
+lockTime={token["lock-expiry"]?.value}
+lockedTime={token["locked-time"]?.value}
+/> */
+}

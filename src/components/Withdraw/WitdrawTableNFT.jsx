@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import ButtonWithLoading from "../UI/LoaderButton";
 import { useStacks } from "../../providers/StacksProvider";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
-import { getFtPostCondition } from "../../utils/postconditions/ft-postcondition";
+import {
+  getFtPostCondition,
+  getFtPostConditionNFT,
+} from "../../utils/postconditions/ft-postcondition";
 import {
   appDetails,
   contractOwnerAddress,
@@ -15,8 +18,9 @@ import {
   makeStandardSTXPostCondition,
   FungibleConditionCode,
   createAssetInfo,
-  makeContractFungiblePostCondition,
-  makeContractSTXPostCondition
+  NonFungibleConditionCode,
+  makeContractNonFungiblePostCondition,
+  makeContractSTXPostCondition,
 } from "@stacks/transactions";
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { openContractCall } from "@stacks/connect";
@@ -32,12 +36,25 @@ const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
 
-const WithdrawTable = ({
+// (define-map nft-lockings
+//     uint
+//     {
+//       nft-contract: principal,
+//       token-id: uint,
+//       maker: principal,
+//       taker: principal,
+//       lock-expiry: uint,
+//       locked-time: (string-ascii 257),
+//     }
+//   )
+const WithdrawTableNFT = ({
   lockID,
   assetName,
-  amount,
   assetContact,
   lockTime,
+  assetID,
+  lockedTime,
+  taker,
 }) => {
   const { network, address } = useStacks();
 
@@ -51,41 +68,44 @@ const WithdrawTable = ({
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
-  const handleWithdraw = async ({ amount, assetName, tokenAddress }) => {
+  const handleWithdraw = async ({ assetName, tokenAddress }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
 
     setIsButtonLoading(true);
     setTransactionSuccessfulMsg(
-      `Successfully Withdrawn ${assetName} Token`
-    );
+        `Successfully withdrawn ${assetName} NFT`
+      );
+    console.log("tokenAddress", tokenAddress,"assetN",assetName,"contractAddress",contractAddress,"contractName",contractName,"lockID",lockID,"taker",taker);
     try {
+
       const stxPostCondition = makeContractSTXPostCondition(
         contractOwnerAddress,
         deployedContractName,
-        FungibleConditionCode.Equal,
+        FungibleConditionCode.GreaterEqual,
         0
       );
-      const tokenPostCondition = makeContractFungiblePostCondition(
+      
+
+      const nftPostCondition = makeContractNonFungiblePostCondition(
         contractOwnerAddress,
         deployedContractName,
-        FungibleConditionCode.Greater,
-        0,
-        createAssetInfo(contractAddress,contractName,assetName)
+        NonFungibleConditionCode.Sends,
+        createAssetInfo(contractAddress, contractName, assetName),
+        uintCV(assetID)
       );
 
       const options = {
         contractAddress: contractOwnerAddress,
         contractName: deployedContractName,
-        functionName: "unlock-ft",
+        functionName: "unlock-nft",
         functionArgs: [principalCV(tokenAddress), uintCV(lockID)],
-        postConditions: [stxPostCondition, tokenPostCondition],
+        postConditions: [stxPostCondition, nftPostCondition],
         network,
         appDetails,
         onFinish: ({ txId }) => {
-       
-          addTransactionToast(txId, `Withdrawing ${assetName} Token `);
-        
+          addTransactionToast(txId, `Withdrawing ${assetName} NFT `);
+          
         },
       };
       await openContractCall(options);
@@ -128,10 +148,11 @@ const WithdrawTable = ({
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{amount} $BRCL</p>
+            <p className="table-title">{lockID} </p>
           </div>
+
           <div className="table-column padded">
-            <p className="table-title">{lockTime}</p>
+            <p className="table-title">{lockedTime}</p>
           </div>
           <div className="table-column padded">
             <div id="clockdiv">
@@ -156,13 +177,11 @@ const WithdrawTable = ({
           <div className="table-column padded-left">
             <div className="table-actions">
               <ButtonWithLoading
+                ingBtn={true}
                 isLoading={isButtonLoading}
                 loaderColor="blue"
-                ingBtn={true}
                 onClick={() =>
-                
                   handleWithdraw({
-                    amount: amount,
                     tokenAddress: assetContact,
                     assetName: assetName?.toLowerCase(),
                   })
@@ -178,4 +197,4 @@ const WithdrawTable = ({
   );
 };
 
-export { WithdrawTable };
+export { WithdrawTableNFT };

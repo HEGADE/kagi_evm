@@ -104,7 +104,7 @@ const Header = () => {
         <div className="header-actions">
           <ConnectWallet />
           {!!userSession.isUserSignedIn() && <ConnectWalletWithDropDown />}
-          <div className="action-list">
+          <div className="action-list" style={{visibility:"hidden"}}>
             <div className="action-list-item-wrap">
               <div className="action-list-item header-dropdown-trigger ">
                 <IconBulb />
