@@ -63,7 +63,7 @@ export const ConnectWalletWithDropDown = () => {
             onClick={() => {
               copy(address);
 
-              toast.success("Address Copied!",{
+              toast.success("Address Copied!", {
                 duration: 2000,
                 position: "bottom-right",
               });
