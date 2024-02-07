@@ -61,7 +61,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
     const { amount, days, assetName, taker } = data;
-    console.log("days:", days, "assetName:", assetName);
+    console.log("days:", days, "assetName:", assetName, "taker:", taker,amount,"tokenAddress",tokenAddress);
 
     setLoading(true);
     let finalAssetName = transformString(assetName);

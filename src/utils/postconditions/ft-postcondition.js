@@ -25,6 +25,7 @@ export const getFtPostCondition = (
     FungibleConditionCode.Equal,
     amount,
     createAssetInfo(contractAddress, contractName, fungibleTokenName)
+    
   );
 
   return tokenPostCondition;

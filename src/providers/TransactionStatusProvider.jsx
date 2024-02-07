@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { StacksTestnet, StacksMainnet } from "@stacks/network";
+import { StacksTestnet, StacksMainnet,StacksDevnet } from "@stacks/network";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { NETWORK } from "../lib/constants";
@@ -9,7 +9,7 @@ const TransactionToastsContext = createContext(undefined);
 
 export default function TransactionToastProvider({ children }) {
   const network =
-    NETWORK === "TESTNET" ? new StacksTestnet() : new StacksMainnet();
+    NETWORK === "TESTNET" ? new StacksDevnet() : new StacksMainnet();
 
   const [transactionIds, setTransactionIds] = useState(new Set());
 
