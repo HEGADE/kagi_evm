@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 
 import { shortAddress } from "../../utils/format/address.format";
 import { PageLoader } from "../UI/PageLoader";
-import ConnectWallet from "../UI/ConnectWallet";
+import ConnectWallet, { ConnectWalletWithDropDown } from "../UI/ConnectWallet";
 import { IconBackArrow, IconBulb, IconClose } from "../UI/Icons";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
@@ -103,17 +103,7 @@ const Header = () => {
         </div>
         <div className="header-actions">
           <ConnectWallet />
-          {!!userSession.isUserSignedIn() && (
-            <button
-              className="button primary wallet-connect"
-              onClick={disconnect}
-            >
-              {shortAddress(
-                userSession.loadUserData().profile.stxAddress.testnet,
-                8
-              )}
-            </button>
-          )}
+          {!!userSession.isUserSignedIn() && <ConnectWalletWithDropDown />}
           <div className="action-list">
             <div className="action-list-item-wrap">
               <div className="action-list-item header-dropdown-trigger ">

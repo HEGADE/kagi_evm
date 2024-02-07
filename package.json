@@ -4,8 +4,11 @@
   "private": true,
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@mantine/core": "^7.5.1",
+    "@mantine/hooks": "^7.5.1",
     "@stacks/connect": "^7.4.0",
     "@stacks/connect-react": "^22.2.0",
+    "@tabler/icons-react": "^2.47.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

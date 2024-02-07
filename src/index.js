@@ -1,5 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import '@mantine/core/styles.css';
+
+import { createTheme, MantineProvider } from "@mantine/core";
+
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -10,28 +14,33 @@ import { userSession } from "./components/Header/Header.component";
 import StacksProvider from "./providers/StacksProvider";
 import TransactionToastProvider from "./providers/TransactionStatusProvider";
 
+const theme = createTheme({
+  /** Put your mantine theme override here */
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Connect
-      authOptions={{
-        appDetails: {
-          name: "Stacks React Template",
-          icon: window.location.origin + "/logo.png",
-        },
-        redirectTo: "/",
-        onFinish: () => {
-          window.location.reload();
-        },
-        userSession,
-      }}
-    >
-      <StacksProvider>
-        <TransactionToastProvider>
-          <App />
-        </TransactionToastProvider>
-      </StacksProvider>
-    </Connect>
+    <MantineProvider theme={theme}>
+      <Connect
+        authOptions={{
+          appDetails: {
+            name: "Stacks React Template",
+            icon: window.location.origin + "/logo.png",
+          },
+          redirectTo: "/",
+          onFinish: () => {
+            window.location.reload();
+          },
+          userSession,
+        }}
+      >
+        <StacksProvider>
+          <TransactionToastProvider>
+            <App />
+          </TransactionToastProvider>
+        </StacksProvider>
+      </Connect>
+    </MantineProvider>
   </React.StrictMode>
 );
 

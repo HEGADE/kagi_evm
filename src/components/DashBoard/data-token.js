@@ -1,20 +1,20 @@
 export const tokenData = [
   {
-    tokenName: "BTC1",
+    tokenName: "BTC",
     totalTokenAmount: 1000,
     lockTime: 30,
     tokenAmount: 100,
     ticker: "BTC",
   },
   {
-    tokenName: "BTC2",
+    tokenName: "BTC",
     totalTokenAmount: 1000,
     lockTime: 30,
     tokenAmount: 100,
     ticker: "BTC",
   },
   {
-    tokenName: "BTC3",
+    tokenName: "BTC",
     totalTokenAmount: 1000,
     lockTime: 30,
     tokenAmount: 100,
