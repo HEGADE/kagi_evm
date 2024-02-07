@@ -25,7 +25,6 @@ export const getFtPostCondition = (
     FungibleConditionCode.Equal,
     amount,
     createAssetInfo(contractAddress, contractName, fungibleTokenName)
-    
   );
 
   return tokenPostCondition;
@@ -42,15 +41,15 @@ export const getFtPostConditionNFT = (
   address,
   contractAddress,
   contractName,
-  nonFungibleTokenName
+  nonFungibleTokenName,
+  tokenID
 ) => {
   const tokenPostCondition = makeStandardNonFungiblePostCondition(
     address,
     NonFungibleConditionCode.Sends,
-    createAssetInfo(contractAddress, contractName, nonFungibleTokenName)
+    createAssetInfo(contractAddress, contractName, nonFungibleTokenName),
+    tokenID
   );
 
   return tokenPostCondition;
 };
-
-

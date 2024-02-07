@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { WithdrawTable } from "./WithdrawTable";
 import { PageLoader } from "../UI/PageLoader";
+import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
+import { ContentLoader } from "../UI/ContentLoader";
 
 const Withdraw = () => {
+  const { data, fetchData } = useFetchFtLockStats();
+
+  useEffect(() => {
+    fetchData({ functionName: "get-ft-lock-info" });
+  }, []);
+
   return (
     <>
       <div class="content-grid">
@@ -91,8 +99,24 @@ const Withdraw = () => {
                           </div>
                           <div className="table-header-column padded-left"></div>
                         </div>
-
-                        <WithdrawTable />
+                        <div className="table-body same-color-rows">
+                          {data?.loading ? (
+                            <ContentLoader />
+                          ) : data?.result?.length > 0 ? (
+                            data?.result?.map((token) => {
+                              return (
+                                <WithdrawTable
+                                  amount={token.amount?.value}
+                                  assetContact={token["ft-contract"]?.value}
+                                  assetName={token["ft-name"]?.value}
+                                  lockID={token["lock-id"]?.value}
+                                  key={token["lock-id"]?.value}
+                                  lockTime={token["locked-time"]?.value}
+                                />
+                              );
+                            })
+                          ) : null}
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -45,7 +45,8 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   const { network, address } = useStacks();
 
   const [loading, setLoading] = useState(false);
-  const { addTransactionToast } = useTransactionToasts();
+  const { addTransactionToast, setTransactionSuccessfulMsg } =
+    useTransactionToasts();
 
   const res = data;
 
@@ -121,7 +122,8 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         appDetails,
         onFinish: ({ txId }) => {
           console.log("onFinish:", txId);
-          addTransactionToast(txId, `Approving ${assetName} lock`);
+          addTransactionToast(txId, `Locking ${assetName} token`);
+          setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
         },
       };
 
@@ -139,14 +141,23 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
 
     setLoading(true);
 
+    let lockDate = formatDate(new Date());
+
     let finalAssetName = transformString(assetName);
 
     try {
+      const stxPostCondition = makeStandardSTXPostCondition(
+        address,
+        FungibleConditionCode.Equal,
+        0
+      );
+
       const nftPostCondition = getFtPostConditionNFT(
         address,
         contractAddress,
         contractName,
-        finalAssetName
+        finalAssetName,
+        uintCV(tokenID)
       );
 
       const options = {
@@ -159,14 +170,17 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
             "token-id": uintCV(tokenID),
             "lock-expiry": uintCV(days),
             taker: principalCV(taker),
+            "locked-time": stringAsciiCV(lockDate),
           }),
         ],
-        postConditions: [nftPostCondition],
+        postConditions: [stxPostCondition, nftPostCondition],
         network,
         appDetails,
         onFinish: ({ txId }) => {
           console.log("onFinish:", txId);
-          addTransactionToast(txId, `Approving ${assetName} lock`);
+
+          addTransactionToast(txId, `Locking ${assetName} token`);
+          setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
         },
       };
 
@@ -331,6 +345,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
           <div className="form-row">
             <div className="form-item">
               <ButtonWithLoading
+                loaderColor="blue"
                 type="submit"
                 className="button medium primary"
                 text="Lock"
@@ -396,7 +411,9 @@ const LockTokenAddress = ({
         setMargin(true);
         setMoveToLockPage(true);
       } catch (err) {
-        alert("Not Able to fetch the contract Details");
+        toast.error("No data Found for the given contract", {
+          position: "bottom-right",
+        });
       } finally {
         setLoading(false);
       }

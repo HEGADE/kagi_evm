@@ -9,7 +9,12 @@ import {
   deployedContractName,
 } from "../../lib/constants";
 
-import { uintCV, principalCV } from "@stacks/transactions";
+import {
+  uintCV,
+  principalCV,
+  makeStandardSTXPostCondition,
+  FungibleConditionCode,
+} from "@stacks/transactions";
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { openContractCall } from "@stacks/connect";
 import { withDrawData } from "../../lib/withdraw-data";
@@ -18,15 +23,22 @@ import { ContentLoader } from "../UI/ContentLoader";
 
 import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "../UI/ConnectWallet";
+import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
 
-const WithdrawTable = () => {
+const WithdrawTable = ({
+  lockID,
+  assetName,
+  amount,
+  assetContact,
+  lockTime,
+}) => {
   const { network, address } = useStacks();
 
-  const { addTransactionToast,transactionLoading } = useTransactionToasts();
+  const { addTransactionToast, transactionLoading } = useTransactionToasts();
 
   const [loading, setLoading] = useState(true);
 
@@ -39,20 +51,25 @@ const WithdrawTable = () => {
     setIsButtonLoading(true);
 
     try {
+      const stxPostCondition = makeStandardSTXPostCondition(
+        address,
+        FungibleConditionCode.Equal,
+        0
+      );
       const tokenPostCondition = getFtPostCondition(
         address,
         amount,
         contractAddress,
         contractName,
-        "cryptic-ocean-coin"
+        assetName
       );
 
       const options = {
         contractAddress: contractOwnerAddress,
         contractName: deployedContractName,
         functionName: "unlock-ft",
-        functionArgs: [principalCV(tokenAddress), uintCV(amount)],
-        postConditions: [tokenPostCondition],
+        functionArgs: [principalCV(tokenAddress), uintCV(lockID)],
+        postConditions: [stxPostCondition, tokenPostCondition],
         network,
         appDetails,
         onFinish: ({ txId }) => {
@@ -67,97 +84,82 @@ const WithdrawTable = () => {
     }
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
   if (!userSession.isUserSignedIn()) return <ConnectWallet />;
-
-  if (loading) {
-    return <ContentLoader />;
-  }
 
   return (
     <>
-      <div className="table-body same-color-rows">
-        {withDrawData.map((token) => {
-          return (
-            <>
-              <div className="table-row medium" key={token.LockID}>
-                <div className="table-column">
-                  <div className="product-preview tiny">
-                    <a>
-                      <figure
-                        className="product-preview-image short liquid"
-                        style={{ background: "url('img/btc-logo.svg')" }}
-                      >
-                        <img
-                          src="img/btc-logo.svg"
-                          alt="item-11"
-                          style={{ display: "none" }}
-                        />
-                      </figure>
-                    </a>
-                    <div className="product-preview-info">
-                      <p className="product-preview-title">{token.ftName}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="table-column padded">
-                  <p className="table-title">
-                    {shortAddress(token.ftContract.split(".")[0])}
-                  </p>
-                </div>
-                <div className="table-column padded">
-                  <p className="table-title">{token.amount} $BRCL</p>
-                </div>
-                <div className="table-column padded">
-                  <p className="table-title">Wed, 09 Mar 2022 12:09:47 GMT</p>
-                </div>
-                <div className="table-column padded">
-                  <div id="clockdiv">
-                    <div>
-                      <span className="days">99</span>
-                      <div className="smalltext">D</div>
-                    </div>
-                    <div>
-                      <span className="hours">23</span>
-                      <div className="smalltext">H</div>
-                    </div>
-                    <div>
-                      <span className="minutes">54</span>
-                      <div className="smalltext">M</div>
-                    </div>
-                    <div>
-                      <span className="seconds">57</span>
-                      <div className="smalltext">S</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="table-column padded-left">
-                  <div className="table-actions">
-                    <ButtonWithLoading
-                      isLoading={transactionLoading}
-                      loaderColor="blue"
-                      onClick={() =>
-                        handleWithdraw({
-                          amount: token.amount,
-                          tokenAddress: token.ftContract,
-                          assetName: token.ftName,
-                        })
-                      }
-                      text="withdraw"
-                      className="button secondary"
-                    />
-                  </div>
-                </div>
+      <>
+        {" "}
+        <div className="table-row medium">
+          <div className="table-column" key={lockID}>
+            <div className="product-preview tiny">
+              <a>
+                <figure
+                  className="product-preview-image short liquid"
+                  style={{ background: "url('img/btc-logo.svg')" }}
+                >
+                  <img
+                    src="img/btc-logo.svg"
+                    alt="item-11"
+                    style={{ display: "none" }}
+                  />
+                </figure>
+              </a>
+              <div className="product-preview-info">
+                <p className="product-preview-title">{assetName}</p>
               </div>
-            </>
-          );
-        })}
-      </div>
+            </div>
+          </div>
+          <div className="table-column padded">
+            <p className="table-title">
+              {shortAddress(assetContact?.split(".")[0])}
+            </p>
+          </div>
+          <div className="table-column padded">
+            <p className="table-title">{amount} $BRCL</p>
+          </div>
+          <div className="table-column padded">
+            <p className="table-title">{lockTime}</p>
+          </div>
+          <div className="table-column padded">
+            <div id="clockdiv">
+              <div>
+                <span className="days">99</span>
+                <div className="smalltext">D</div>
+              </div>
+              <div>
+                <span className="hours">23</span>
+                <div className="smalltext">H</div>
+              </div>
+              <div>
+                <span className="minutes">54</span>
+                <div className="smalltext">M</div>
+              </div>
+              <div>
+                <span className="seconds">57</span>
+                <div className="smalltext">S</div>
+              </div>
+            </div>
+          </div>
+          <div className="table-column padded-left">
+            <div className="table-actions">
+              <ButtonWithLoading
+                isLoading={isButtonLoading}
+                loaderColor="blue"
+                onClick={() =>
+                  handleWithdraw({
+                    amount: amount,
+                    tokenAddress: assetContact,
+                    assetName: assetName?.toLowerCase(),
+                  })
+                }
+                text="withdraw"
+                className="button secondary"
+              />
+            </div>
+          </div>
+        </div>
+      </>
     </>
   );
 };

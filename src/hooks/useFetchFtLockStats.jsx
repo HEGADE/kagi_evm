@@ -1,8 +1,8 @@
 import { callReadOnlyFunction, cvToValue } from "@stacks/transactions";
 import { contractOwnerAddress, deployedContractName } from "../lib/constants";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useStacks } from "../providers/StacksProvider";
-
+import { principalCV } from "@stacks/transactions";
 const useFetchFtLockStats = () => {
   const { network, address } = useStacks();
 
@@ -12,7 +12,7 @@ const useFetchFtLockStats = () => {
     result: null,
   });
 
-  const fetchData = async () => {
+  const fetchData = async ({ functionName }) => {
     setData((pre) => {
       return { ...pre, loading: true };
     });
@@ -21,17 +21,19 @@ const useFetchFtLockStats = () => {
       const result = await callReadOnlyFunction({
         contractAddress: contractOwnerAddress,
         contractName: deployedContractName,
-        functionName: "get-ft-lock-info",
-        functionArgs: [address],
+        functionName: functionName,
+        functionArgs: [principalCV(address)],
         network,
         senderAddress: address,
       });
-      console.log("result", result);
-      console.log("resultCv", cvToValue(result));
+      console.log("result user", result);
+      console.log("resultCv user", cvToValue(result.value.list[0]));
       setData((pre) => {
         return {
           ...pre,
-          result: cvToValue(result),
+          result: result.value.list.map((item)=>{
+            return cvToValue(item)
+          }),
         };
       });
     } catch (err) {
@@ -47,11 +49,7 @@ const useFetchFtLockStats = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return { data };
+  return { data, fetchData };
 };
 
 export { useFetchFtLockStats };

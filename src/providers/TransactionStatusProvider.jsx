@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { StacksTestnet, StacksMainnet,StacksDevnet } from "@stacks/network";
+import { StacksTestnet, StacksMainnet, StacksDevnet } from "@stacks/network";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { NETWORK } from "../lib/constants";
@@ -14,6 +14,8 @@ export default function TransactionToastProvider({ children }) {
   const [transactionIds, setTransactionIds] = useState(new Set());
 
   const [transactionLoading, setTransactionLoading] = useState(false);
+
+  const [transactionSuccessfulMsg, setTransactionSuccessfulMsg] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,7 +47,7 @@ export default function TransactionToastProvider({ children }) {
     }
 
     if (status === "success") {
-      toast.success("Done!", { id: transactionId });
+      toast.success(transactionSuccessfulMsg, { id: transactionId ,duration:3000});
       setTransactionLoading(false);
     } else {
       toast.error("Transaction failed", { id: transactionId });
@@ -68,7 +70,11 @@ export default function TransactionToastProvider({ children }) {
     setTransactionIds((transactionIds) => transactionIds.add(transactionId));
   }
 
-  const value = { addTransactionToast, transactionLoading };
+  const value = {
+    addTransactionToast,
+    transactionLoading,
+    setTransactionSuccessfulMsg,
+  };
 
   return (
     <TransactionToastsContext.Provider value={value}>
