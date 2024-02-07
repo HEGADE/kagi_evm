@@ -14,7 +14,11 @@ import {
   uintCV,
   tupleCV,
   principalCV,
+  makeStandardSTXPostCondition,
   stringAsciiCV,
+  FungibleConditionCode,
+  makeStandardFungiblePostCondition,
+  createAssetInfo,
 } from "@stacks/transactions";
 
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
@@ -34,12 +38,16 @@ import toast from "react-hot-toast";
 import { fetchFromContract } from "../../lib/fetch-data";
 import { transformString } from "../../utils/format/format-asset-name";
 import { IconBackArrow } from "../UI/Icons";
+import { getFinalAmount } from "../../utils/final-stx-amount";
+import { formatDate } from "../../utils/format/format-date-time";
 
 const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   const { network, address } = useStacks();
 
   const [loading, setLoading] = useState(false);
   const { addTransactionToast } = useTransactionToasts();
+
+  const res = data;
 
   const {
     register,
@@ -61,18 +69,37 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
     const { amount, days, assetName, taker } = data;
-    console.log("days:", days, "assetName:", assetName, "taker:", taker,amount,"tokenAddress",tokenAddress);
+    console.log(
+      "days:",
+      days,
+      "assetName:",
+      assetName,
+      "taker:",
+      taker,
+      amount,
+      "tokenAddress",
+      tokenAddress
+    );
 
     setLoading(true);
-    let finalAssetName = transformString(assetName);
+
+    let lockDate = formatDate(new Date());
+
+    let finalAmount = getFinalAmount(res.decimals, amount);
+
+    console.log("finalAmount", finalAmount, "lock", lockDate);
 
     try {
-      const tokenPostCondition = getFtPostCondition(
+      const stxPostCondition = makeStandardSTXPostCondition(
         address,
-        amount,
-        contractAddress,
-        contractName,
-        finalAssetName
+        FungibleConditionCode.Equal,
+        0
+      );
+      const tokenPostCondition = makeStandardFungiblePostCondition(
+        address,
+        FungibleConditionCode.Equal,
+        finalAmount,
+        createAssetInfo(contractAddress, contractName, assetName)
       );
 
       const options = {
@@ -82,13 +109,14 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         functionArgs: [
           principalCV(tokenAddress),
           tupleCV({
-            amount: uintCV(amount),
+            amount: uintCV(finalAmount),
             "lock-expiry": uintCV(days),
-            "ft-name": stringAsciiCV(finalAssetName),
+            "ft-name": stringAsciiCV(assetName),
             taker: principalCV(taker),
+            "locked-time": stringAsciiCV(lockDate),
           }),
         ],
-        postConditions: [tokenPostCondition],
+        postConditions: [stxPostCondition, tokenPostCondition],
         network,
         appDetails,
         onFinish: ({ txId }) => {
@@ -154,12 +182,12 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   useEffect(() => {
     if (nft) {
       nftReset({
-        assetName: data?.assetName,
+        assetName: transformString(data?.assetName.toLowerCase()),
       });
       return;
     }
     reset({
-      assetName: data?.assetName,
+      assetName: transformString(data?.assetName?.toLowerCase()),
     });
   }, []);
   // lock-expiry: uint, token-id: uint, taker: principal

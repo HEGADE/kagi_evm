@@ -8,6 +8,7 @@ import { WithdrawToken } from "./pages/WithdrawToken";
 import DashBoard from "./pages/DashBoard";
 import ContactUs from "./pages/ContactUs";
 import { CreateToken } from "./pages/CreateToken";
+import { TraceableTokens } from "./pages/TraceableTokens";
 
 function App() {
   // SCRIPT LOAD
@@ -42,6 +43,7 @@ function App() {
           <Route path="token-lock" element={<TokenLock />} />
           <Route path="smart-contact-audit" element={<ContactUs />} />
           <Route path="create-token" element={<CreateToken />} />
+          <Route path="tradeable-token" element={<TraceableTokens />} />
         </Route>
       </Routes>
     </Router>
