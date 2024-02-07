@@ -106,8 +106,13 @@ const SideNavBar = () => {
               Token Lock
             </Link>
           </li>
-          <li className="menu-item">
-            <a className="menu-item-link" href="#">
+          <li
+            className={
+              "menu-item" +
+              (location.pathname === "/create-token" ? " active" : "")
+            }
+          >
+            <Link className="menu-item-link" to={"/create-token"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -124,7 +129,7 @@ const SideNavBar = () => {
                 <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
               </svg>
               Create Token
-            </a>
+            </Link>
           </li>
           <li className="menu-item">
             <a className="menu-item-link" href="#">
@@ -141,10 +146,12 @@ const SideNavBar = () => {
               Tradeable Token Locks
             </a>
           </li>
-          <li className={
+          <li
+            className={
               "menu-item" +
               (location.pathname === "/smart-contact-audit" ? " active" : "")
-            }>
+            }
+          >
             <Link className="menu-item-link" to={"/smart-contact-audit"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -269,8 +276,13 @@ const SideNavBar = () => {
               Token Lock
             </Link>
           </li>
-          <li className="menu-item">
-            <a className="menu-item-link" href="#">
+          <li
+            className={
+              "menu-item" +
+              (location.pathname === "/create-token" ? " active" : "")
+            }
+          >
+            <Link className="menu-item-link" to={"/create-token"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -287,7 +299,7 @@ const SideNavBar = () => {
                 <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
               </svg>
               Create Token
-            </a>
+            </Link>
           </li>
           <li className="menu-item">
             <a className="menu-item-link" href="#">
@@ -304,10 +316,12 @@ const SideNavBar = () => {
               Tradeable Token Locks
             </a>
           </li>
-          <li className={
+          <li
+            className={
               "menu-item" +
               (location.pathname === "/smart-contact-audit" ? " active" : "")
-            }>
+            }
+          >
             <Link className="menu-item-link" to={"/smart-contact-audit"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
