@@ -4,12 +4,19 @@ import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { ContentLoader } from "../UI/ContentLoader";
 import { WithdrawTableNFT } from "./WitdrawTableNFT";
 import { TableHeading } from "./TableHeading";
+import { useStacks } from "../../providers/StacksProvider";
+import { IconRefresh } from "../UI/Icons";
 
 const Withdraw = () => {
   const { data, fetchData } = useFetchFtLockStats();
+  const { currentBlockHeight } = useStacks();
 
   const [selectToken, setSelectToken] = useState("ft");
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
+  const [search, setSearch] = useState("");
+
+  const functionName =
+    selectToken === "ft" ? "get-ft-lock-info" : "get-nft-lock-info";
 
   let sorted = [];
 
@@ -38,9 +45,9 @@ const Withdraw = () => {
 
   useEffect(() => {
     if (selectToken === "ft") {
-      fetchData({ functionName: "get-ft-lock-info" });
+      fetchData({ functionName });
     } else {
-      fetchData({ functionName: "get-nft-lock-info" });
+      fetchData({ functionName });
     }
   }, [selectToken]);
 
@@ -53,7 +60,10 @@ const Withdraw = () => {
               <h2 className="section-title">
                 My Token Locks: <span className="highlighted"> </span>
               </h2>
-              <p className="section-pretitle">Withraw your token locks</p>
+              <p className="section-pretitle">Withdraw your token locks</p>
+              <p className="section-pretitle" color="blue">
+                Current Block Height: {currentBlockHeight}
+              </p>
             </div>
           </div>
           <div className="section-filters-bar v2">
@@ -86,6 +96,33 @@ const Withdraw = () => {
                   <svg className="form-select-icon icon-small-arrow">
                     {/* <use xlink:href="#svg-small-arrow"></use> */}
                   </svg>
+                </div>
+                <div className="form-select">
+                  <label for="downloads-filter-order">Search</label>
+                  <input
+                    type="text"
+                    id="downloads-filter-order"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+
+                  <svg className="form-select-icon icon-small-arrow">
+                    {/* <use xlink:href="#svg-small-arrow"></use> */}
+                  </svg>
+                </div>
+                <div
+                  className="form-select"
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onClick={() => {
+                    fetchData({ functionName });
+                  }}
+                >
+                  <IconRefresh />
                 </div>
               </div>
             </form>

@@ -31,6 +31,10 @@ export const fetchFromVestingContract = async ({
   contractFunctionName,
   args = [],
 }) => {
+
+
+  console.log("args", args, "address", address,contractFunctionName,network);
+
   const result = await callReadOnlyFunction({
     contractAddress: contractOwnerAddress,
     contractName: deployedContractName,

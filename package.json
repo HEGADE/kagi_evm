@@ -2,6 +2,9 @@
   "name": "vesting-tokens-app",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@mantine/core": "^7.5.1",
