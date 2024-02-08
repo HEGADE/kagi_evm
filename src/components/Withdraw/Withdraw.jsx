@@ -164,6 +164,9 @@ const Withdraw = () => {
                                     key={token["lock-id"]?.value}
                                     lockTime={token["lock-expiry"]?.value}
                                     lockedTime={token["locked-time"]?.value}
+                                    lockedBlockHeight={
+                                      token["locked-block-height"]?.value
+                                    }
 
                                   />
                                 );
@@ -180,6 +183,9 @@ const Withdraw = () => {
                                     lockTime={token["lock-expiry"]?.value}
                                     lockedTime={token["locked-time"]?.value}
                                     taker={token["taker"]?.value}
+                                    lockedBlockHeight={
+                                      token["locked-block-height"]?.value
+                                    }
                                   />
                                 );
                               }

@@ -4,6 +4,7 @@ import { useStacks } from "../../providers/StacksProvider";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
 import { getFtPostCondition } from "../../utils/postconditions/ft-postcondition";
 import {
+  AVG_BLOCK_MINED_PER_DAY,
   appDetails,
   contractOwnerAddress,
   deployedContractName,
@@ -16,7 +17,7 @@ import {
   FungibleConditionCode,
   createAssetInfo,
   makeContractFungiblePostCondition,
-  makeContractSTXPostCondition
+  makeContractSTXPostCondition,
 } from "@stacks/transactions";
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { openContractCall } from "@stacks/connect";
@@ -27,6 +28,7 @@ import { ContentLoader } from "../UI/ContentLoader";
 import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "../UI/ConnectWallet";
 import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
+import { addDaysToGivenDate } from "../../utils/format/format-date-time";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -39,24 +41,32 @@ const WithdrawTable = ({
   assetContact,
   lockTime,
   lockedTime,
+  lockedBlockHeight,
 }) => {
   const { network, address } = useStacks();
 
-  const {
-    addTransactionToast,
-    transactionLoading,
-  } = useTransactionToasts({success:`Successfully Withdrawn ${assetName} Token`});
+  const { addTransactionToast } = useTransactionToasts({
+    success: `Successfully Withdrawn ${assetName} Token`,
+  });
 
   const [loading, setLoading] = useState(true);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+
+  const unlockTokenInDays =
+    (lockTime - lockedBlockHeight) / AVG_BLOCK_MINED_PER_DAY;
+
+  const unlockDateTime = addDaysToGivenDate(
+    String(lockedTime),
+    unlockTokenInDays
+  );
 
   const handleWithdraw = async ({ amount, assetName, tokenAddress }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
 
     setIsButtonLoading(true);
-   
+
     try {
       const stxPostCondition = makeContractSTXPostCondition(
         contractOwnerAddress,
@@ -69,7 +79,7 @@ const WithdrawTable = ({
         deployedContractName,
         FungibleConditionCode.Greater,
         0,
-        createAssetInfo(contractAddress,contractName,assetName)
+        createAssetInfo(contractAddress, contractName, assetName)
       );
 
       const options = {
@@ -81,9 +91,7 @@ const WithdrawTable = ({
         network,
         appDetails,
         onFinish: ({ txId }) => {
-       
           addTransactionToast(txId, `Withdrawing ${assetName} Token `);
-        
         },
       };
       await openContractCall(options);
@@ -132,12 +140,14 @@ const WithdrawTable = ({
             <p className="table-title">{lockedTime}</p>
           </div>
           <div className="table-column padded">
-            <div id="clockdiv" style={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              alignItems: "center",
-              
-            }}>
+            <div
+              id="clockdiv"
+              style={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+              }}
+            >
               {/* <div>
                 <span className="days">99</span>
                 <div className="smalltext">D</div>
@@ -154,7 +164,7 @@ const WithdrawTable = ({
                 <span className="seconds">57</span>
                 <div className="smalltext">S</div>
               </div> */}
-              <p className="table-title">{lockTime}</p>
+              <p className="table-title">{unlockDateTime}</p>
             </div>
           </div>
           <div className="table-column padded-left">
@@ -164,7 +174,6 @@ const WithdrawTable = ({
                 loaderColor="blue"
                 ingBtn={true}
                 onClick={() =>
-                
                   handleWithdraw({
                     amount: amount,
                     tokenAddress: assetContact,

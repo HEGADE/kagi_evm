@@ -9,4 +9,6 @@ export const deployedContractName = "ft-vesting";
 
 export const microstacksPerSTX = 1_000_000;
 
+export const  AVG_BLOCK_MINED_PER_DAY=2
+
 export const NETWORK="TESTNET";

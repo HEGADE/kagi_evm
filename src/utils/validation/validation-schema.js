@@ -17,7 +17,7 @@ export const tokenSchema =(currentBlockHeight)=> yup.object().shape({
     .typeError("days are required")
 
     .required("days is required")
-    .min(currentBlockHeight, "days must be greater than block height " + currentBlockHeight),
+    .min(1, "days must be greater than 0"  ),
 });
 export const nftSchema = (currentBlockHeight) =>
   yup.object().shape({
@@ -38,7 +38,7 @@ export const nftSchema = (currentBlockHeight) =>
 
       .required("days is required")
       .min(
-        currentBlockHeight,
-        "days must be greater than block height " + currentBlockHeight
+        1,
+        "days must be greater than 0" 
       ),
   });

@@ -7,6 +7,7 @@ import {
   getFtPostConditionNFT,
 } from "../../utils/postconditions/ft-postcondition";
 import {
+  AVG_BLOCK_MINED_PER_DAY,
   appDetails,
   contractOwnerAddress,
   deployedContractName,
@@ -31,6 +32,7 @@ import { ContentLoader } from "../UI/ContentLoader";
 import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "../UI/ConnectWallet";
 import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
+import { addDaysToGivenDate } from "../../utils/format/format-date-time";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -55,6 +57,7 @@ const WithdrawTableNFT = ({
   assetID,
   lockedTime,
   taker,
+  lockedBlockHeight,
 }) => {
   const { network, address } = useStacks();
 
@@ -65,6 +68,15 @@ const WithdrawTableNFT = ({
   const [loading, setLoading] = useState(true);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+
+  
+  const unlockTokenInDays =
+    (lockTime - lockedBlockHeight) / AVG_BLOCK_MINED_PER_DAY;
+
+  const unlockDateTime = addDaysToGivenDate(
+    String(lockedTime),
+    unlockTokenInDays
+  );
 
   const handleWithdraw = async ({ assetName, tokenAddress }) => {
     const { contractAddress, contractName } =
@@ -185,7 +197,7 @@ const WithdrawTableNFT = ({
                 <span className="seconds">57</span>
                 <div className="smalltext">S</div>
               </div> */}
-              <p className="table-title">{lockTime}</p>
+              <p className="table-title">{unlockDateTime}</p>
             </div>
           </div>
           <div className="table-column padded-left">
