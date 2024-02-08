@@ -76,26 +76,18 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
     const { amount, days, assetName, taker } = data;
-    console.log(
-      "days:",
-      days,
-      "assetName:",
-      assetName,
-      "taker:",
-      taker,
-      amount,
-      "tokenAddress",
-      tokenAddress
-    );
 
     setLoading(true);
-    // setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
 
     let lockDate = formatDate(new Date());
 
     let finalAmount = getFinalAmount(res.decimals, amount);
 
-    console.log("finalAmount", finalAmount, "lock", lockDate);
+    if (finalAmount > res?.balance) {
+      toast.error("Insufficient Balance", {
+        position: "bottom-right",
+      });
+    }
 
     try {
       const stxPostCondition = makeStandardSTXPostCondition(
@@ -213,10 +205,23 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   // lock-expiry: uint, token-id: uint, taker: principal
   return (
     <>
-      <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         <IconBackArrow onClick={handlePage} style={{ cursor: "pointer" }} />
-        <h2 className="form-box-title">Configure Lock</h2>
+        <p
+          style={{
+            color: "dodgerblue",
+            visibility: nft ? "hidden" : "visible",
+          }}
+        >
+          Token Balance:- {data?.balance}
+        </p>
       </div>
+      <h2 className="form-box-title">Configure Lock</h2>
       {!nft ? (
         <form className="form" onSubmit={handleSubmit(onSubmit)}>
           <div className="form-row">
@@ -281,7 +286,6 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
               <ButtonWithLoading
                 type="submit"
                 loaderColor="blue"
-
                 className="button medium primary"
                 text="Lock"
                 isLoading={loading}
@@ -384,12 +388,13 @@ const LockTokenAddress = ({
     nft: "Non Fungible Token",
   };
 
-  const fetch = async ({ functionName }) => {
+  const fetch = async ({ functionName, args = [] }) => {
     return fetchFromContract({
       network,
       address,
       contract: tokenAddress?.trim(),
       contractFunctionName: functionName,
+      args,
     });
   };
 
@@ -403,17 +408,22 @@ const LockTokenAddress = ({
       tokenAddress?.length <= 52
     ) {
       try {
-        let [assetName, decimals, currentBlockHeight] = await Promise.all([
-          fetch({ functionName: "get-name" }),
-          !nft ? fetch({ functionName: "get-decimals" }) : [],
-          fetchFromVestingContract({
-            network,
-            address,
-            contractFunctionName: "get-current-block-height",
-          }),
-        ]);
-
-        console.log("current Block height", currentBlockHeight);
+        let [assetName, decimals, currentBlockHeight, balance] =
+          await Promise.all([
+            fetch({ functionName: "get-name" }),
+            !nft ? fetch({ functionName: "get-decimals" }) : [],
+            fetchFromVestingContract({
+              network,
+              address,
+              contractFunctionName: "get-current-block-height",
+            }),
+            !nft
+              ? fetch({
+                  functionName: "get-balance",
+                  args: [principalCV(address)],
+                })
+              : 0,
+          ]);
 
         setData((pre) => {
           return {
@@ -421,6 +431,7 @@ const LockTokenAddress = ({
             assetName: assetName?.value,
             decimals: Number(decimals?.value),
             currentBlockHeight: Number(currentBlockHeight?.value),
+            balance: Number(balance?.value),
           };
         });
 
@@ -489,6 +500,7 @@ const LockTokenForm = ({
     assetName: "",
     decimals: "",
     currentBlockHeight: 0,
+    balance: 0,
   });
   return (
     <>
