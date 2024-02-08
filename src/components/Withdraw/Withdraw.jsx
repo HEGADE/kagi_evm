@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { WithdrawTable } from "./WithdrawTable";
-import { PageLoader } from "../UI/PageLoader";
 import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { ContentLoader } from "../UI/ContentLoader";
 import { WithdrawTableNFT } from "./WitdrawTableNFT";
@@ -11,6 +10,31 @@ const Withdraw = () => {
 
   const [selectToken, setSelectToken] = useState("ft");
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
+
+  let sorted = [];
+
+  if (data.result?.length) {
+    sorted = data.result.sort((a, b) => {
+      const timeA = new Date(a["locked-time"]?.value);
+      const timeB = new Date(b["locked-time"]?.value);
+
+      if (selectTokenSort === "ds") {
+        if (timeA < timeB) {
+          return 1;
+        }
+        if (timeA > timeB) {
+          return -1;
+        }
+      } else {
+        if (timeA < timeB) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+      return 0;
+    });
+  }
 
   useEffect(() => {
     if (selectToken === "ft") {
@@ -52,6 +76,7 @@ const Withdraw = () => {
                 <div className="form-select">
                   <label for="downloads-filter-order">Filer By</label>
                   <select
+                    onChange={(e) => setSelectTokenSort(e.target.value)}
                     id="downloads-filter-order"
                     name="tokens_filter_order"
                   >
@@ -88,8 +113,8 @@ const Withdraw = () => {
                         <div className="table-body same-color-rows">
                           {data?.loading ? (
                             <ContentLoader />
-                          ) : data?.result?.length > 0 ? (
-                            data?.result?.map((token) => {
+                          ) : sorted?.length > 0 ? (
+                            sorted?.map((token) => {
                               if (selectToken === "ft") {
                                 return (
                                   <WithdrawTable
@@ -137,32 +162,3 @@ const Withdraw = () => {
 };
 
 export { Withdraw };
-
-{
-  /* <WithdrawTableNFT
-assetContact={token["nft-contract"]?.value}
-assetName={
-  token["nft-name"]?.value || "stacksies"
-}
-lockID={token["locking-id"]?.value}
-key={token["token-id"]?.value}
-assetID={token["token-id"]?.value}
-lockTime={token["lock-expiry"]?.value}
-lockedTime={token["locked-time"]?.value}
-taker={token["taker"]?.value}
-/> */
-}
-
-{
-  /* <WithdrawTable
-assetContact={token["ft-contract"]?.value}
-assetName={
-  token["ft-name"]?.value || "stacksies"
-}
-amount={token["amount"]?.value}
-lockID={token["locking-id"]?.value}
-key={token["lock-id"]?.value}
-lockTime={token["lock-expiry"]?.value}
-lockedTime={token["locked-time"]?.value}
-/> */
-}

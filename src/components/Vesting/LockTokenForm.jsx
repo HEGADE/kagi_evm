@@ -48,8 +48,11 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   const { network, address } = useStacks();
 
   const [loading, setLoading] = useState(false);
-  const { addTransactionToast, setTransactionSuccessfulMsg } =
-    useTransactionToasts();
+  const { addTransactionToast } = useTransactionToasts({
+    success: `Successfully Locked ${data?.assetName.toLowerCase()} ${
+      nft ? "NFT" : "token"
+    } `,
+  });
 
   const res = data;
 
@@ -86,8 +89,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     );
 
     setLoading(true);
-    setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
-
+    // setTransactionSuccessfulMsg(`Successfully Locked ${assetName} token`);
 
     let lockDate = formatDate(new Date());
 
@@ -142,7 +144,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
     const { days, tokenID, assetName, taker } = data;
-    setTransactionSuccessfulMsg(`Successfully Locked ${assetName} NFT`);
+    // setTransactionSuccessfulMsg(`Successfully Locked ${assetName} NFT`);
 
     setLoading(true);
 
@@ -278,6 +280,8 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
             <div className="form-item">
               <ButtonWithLoading
                 type="submit"
+                loaderColor="blue"
+
                 className="button medium primary"
                 text="Lock"
                 isLoading={loading}

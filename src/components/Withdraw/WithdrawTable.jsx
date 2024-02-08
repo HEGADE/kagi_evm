@@ -44,8 +44,7 @@ const WithdrawTable = ({
   const {
     addTransactionToast,
     transactionLoading,
-    setTransactionSuccessfulMsg,
-  } = useTransactionToasts();
+  } = useTransactionToasts({success:`Successfully Withdrawn ${assetName} Token`});
 
   const [loading, setLoading] = useState(true);
 
@@ -56,9 +55,7 @@ const WithdrawTable = ({
       getContractAddressAndName(tokenAddress);
 
     setIsButtonLoading(true);
-    setTransactionSuccessfulMsg(
-      `Successfully Withdrawn ${assetName} Token`
-    );
+   
     try {
       const stxPostCondition = makeContractSTXPostCondition(
         contractOwnerAddress,

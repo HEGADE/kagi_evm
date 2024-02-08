@@ -6,7 +6,7 @@ import { NETWORK } from "../lib/constants";
 // import { NETWORK } from "../utils/config/constants";
 
 const TransactionToastsContext = createContext(undefined);
-
+let successMsg = "";
 export default function TransactionToastProvider({ children }) {
   const network =
     NETWORK === "TESTNET" ? new StacksDevnet() : new StacksMainnet();
@@ -47,7 +47,7 @@ export default function TransactionToastProvider({ children }) {
     }
 
     if (status === "success") {
-      toast.success(transactionSuccessfulMsg, { id: transactionId ,duration:3000});
+      toast.success(successMsg, { id: transactionId, duration: 3000 });
       setTransactionLoading(false);
     } else {
       toast.error("Transaction failed", { id: transactionId });
@@ -83,7 +83,8 @@ export default function TransactionToastProvider({ children }) {
   );
 }
 
-export function useTransactionToasts() {
+export function useTransactionToasts({ success }) {
+  successMsg = success;
   const context = useContext(TransactionToastsContext);
   if (context === undefined) {
     throw new Error(

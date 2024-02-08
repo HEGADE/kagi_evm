@@ -58,11 +58,9 @@ const WithdrawTableNFT = ({
 }) => {
   const { network, address } = useStacks();
 
-  const {
-    addTransactionToast,
-    transactionLoading,
-    setTransactionSuccessfulMsg,
-  } = useTransactionToasts();
+  const { addTransactionToast, transactionLoading } = useTransactionToasts({
+    success: `Successfully withdrawn ${assetName} NFT`,
+  });
 
   const [loading, setLoading] = useState(true);
 
@@ -73,19 +71,28 @@ const WithdrawTableNFT = ({
       getContractAddressAndName(tokenAddress);
 
     setIsButtonLoading(true);
-    setTransactionSuccessfulMsg(
-        `Successfully withdrawn ${assetName} NFT`
-      );
-    console.log("tokenAddress", tokenAddress,"assetN",assetName,"contractAddress",contractAddress,"contractName",contractName,"lockID",lockID,"taker",taker);
-    try {
 
+    console.log(
+      "tokenAddress",
+      tokenAddress,
+      "assetN",
+      assetName,
+      "contractAddress",
+      contractAddress,
+      "contractName",
+      contractName,
+      "lockID",
+      lockID,
+      "taker",
+      taker
+    );
+    try {
       const stxPostCondition = makeContractSTXPostCondition(
         contractOwnerAddress,
         deployedContractName,
         FungibleConditionCode.GreaterEqual,
         0
       );
-      
 
       const nftPostCondition = makeContractNonFungiblePostCondition(
         contractOwnerAddress,
@@ -105,7 +112,6 @@ const WithdrawTableNFT = ({
         appDetails,
         onFinish: ({ txId }) => {
           addTransactionToast(txId, `Withdrawing ${assetName} NFT `);
-          
         },
       };
       await openContractCall(options);
@@ -148,7 +154,7 @@ const WithdrawTableNFT = ({
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{lockID} </p>
+            <p className="table-title">{shortAddress(taker)} </p>
           </div>
 
           <div className="table-column padded">
