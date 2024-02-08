@@ -59,7 +59,7 @@ const WithdrawTableNFT = ({
   taker,
   lockedBlockHeight,
 }) => {
-  const { network, address } = useStacks();
+  const { network, currentBlockHeight } = useStacks();
 
   const { addTransactionToast, transactionLoading } = useTransactionToasts({
     success: `Successfully withdrawn ${assetName} NFT`,
@@ -69,7 +69,6 @@ const WithdrawTableNFT = ({
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
-  
   const unlockTokenInDays =
     (lockTime - lockedBlockHeight) / AVG_BLOCK_MINED_PER_DAY;
 
@@ -84,20 +83,6 @@ const WithdrawTableNFT = ({
 
     setIsButtonLoading(true);
 
-    console.log(
-      "tokenAddress",
-      tokenAddress,
-      "assetN",
-      assetName,
-      "contractAddress",
-      contractAddress,
-      "contractName",
-      contractName,
-      "lockID",
-      lockID,
-      "taker",
-      taker
-    );
     try {
       const stxPostCondition = makeContractSTXPostCondition(
         contractOwnerAddress,
@@ -206,6 +191,7 @@ const WithdrawTableNFT = ({
                 ingBtn={true}
                 isLoading={isButtonLoading}
                 loaderColor="blue"
+                disabled={lockTime < currentBlockHeight ? true : false}
                 onClick={() =>
                   handleWithdraw({
                     tokenAddress: assetContact,

@@ -12,6 +12,7 @@ const ButtonWithLoading = ({
   isLoading,
   text,
   loaderColor = "white",
+  disabled = false,
   ...rest
 }) => {
   if (!userSession.isUserSignedIn()) {
@@ -37,7 +38,15 @@ const ButtonWithLoading = ({
           )}
         </div>
       ) : (
-        <button {...rest}>{text}</button>
+        <button
+          {...rest}
+          disabled={disabled}
+          style={{
+            cursor: disabled ? "not-allowed" : "pointer",
+          }}
+        >
+          {text}
+        </button>
       )}
     </>
   );

@@ -43,7 +43,7 @@ const WithdrawTable = ({
   lockedTime,
   lockedBlockHeight,
 }) => {
-  const { network, address } = useStacks();
+  const { network, currentBlockHeight } = useStacks();
 
   const { addTransactionToast } = useTransactionToasts({
     success: `Successfully Withdrawn ${assetName} Token`,
@@ -172,6 +172,7 @@ const WithdrawTable = ({
               <ButtonWithLoading
                 isLoading={isButtonLoading}
                 loaderColor="blue"
+                disabled={lockTime < currentBlockHeight ? true : false}
                 ingBtn={true}
                 onClick={() =>
                   handleWithdraw({
