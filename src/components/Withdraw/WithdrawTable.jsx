@@ -49,8 +49,6 @@ const WithdrawTable = ({
     success: `Successfully Withdrawn ${assetName} Token`,
   });
 
-  const [loading, setLoading] = useState(true);
-
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const unlockTokenInDays =

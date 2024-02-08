@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import ButtonWithLoading from "../UI/LoaderButton";
 import { useStacks } from "../../providers/StacksProvider";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
-import {
-  getFtPostCondition,
-  getFtPostConditionNFT,
-} from "../../utils/postconditions/ft-postcondition";
+
 import {
   AVG_BLOCK_MINED_PER_DAY,
   appDetails,
@@ -16,7 +13,6 @@ import {
 import {
   uintCV,
   principalCV,
-  makeStandardSTXPostCondition,
   FungibleConditionCode,
   createAssetInfo,
   NonFungibleConditionCode,
@@ -25,30 +21,16 @@ import {
 } from "@stacks/transactions";
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { openContractCall } from "@stacks/connect";
-import { withDrawData } from "../../lib/withdraw-data";
 import { shortAddress } from "../../utils/format/address.format";
-import { ContentLoader } from "../UI/ContentLoader";
 
 import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "../UI/ConnectWallet";
-import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { addDaysToGivenDate } from "../../utils/format/format-date-time";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
 
-// (define-map nft-lockings
-//     uint
-//     {
-//       nft-contract: principal,
-//       token-id: uint,
-//       maker: principal,
-//       taker: principal,
-//       lock-expiry: uint,
-//       locked-time: (string-ascii 257),
-//     }
-//   )
 const WithdrawTableNFT = ({
   lockID,
   assetName,
@@ -61,11 +43,9 @@ const WithdrawTableNFT = ({
 }) => {
   const { network, currentBlockHeight } = useStacks();
 
-  const { addTransactionToast, transactionLoading } = useTransactionToasts({
+  const { addTransactionToast } = useTransactionToasts({
     success: `Successfully withdrawn ${assetName} NFT`,
   });
-
-  const [loading, setLoading] = useState(true);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
