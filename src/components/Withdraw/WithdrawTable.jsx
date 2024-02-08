@@ -38,6 +38,7 @@ const WithdrawTable = ({
   amount,
   assetContact,
   lockTime,
+  lockedTime,
 }) => {
   const { network, address } = useStacks();
 
@@ -128,11 +129,16 @@ const WithdrawTable = ({
             <p className="table-title">{amount} $BRCL</p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{lockTime}</p>
+            <p className="table-title">{lockedTime}</p>
           </div>
           <div className="table-column padded">
-            <div id="clockdiv">
-              <div>
+            <div id="clockdiv" style={{
+              display: "flex",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+              
+            }}>
+              {/* <div>
                 <span className="days">99</span>
                 <div className="smalltext">D</div>
               </div>
@@ -147,7 +153,8 @@ const WithdrawTable = ({
               <div>
                 <span className="seconds">57</span>
                 <div className="smalltext">S</div>
-              </div>
+              </div> */}
+              <p className="table-title">{lockTime}</p>
             </div>
           </div>
           <div className="table-column padded-left">
