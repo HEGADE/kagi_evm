@@ -24,7 +24,7 @@ const FtTableHeading = () => {
           <p className="table-header-title">Locked Time</p>
         </div>
         <div className="table-header-column padded">
-          <p className="table-header-title">Unlocked Time</p>
+          <p className="table-header-title">Unlockable Period</p>
         </div>
         <div className="table-header-column padded-left"></div>
       </div>
@@ -48,7 +48,7 @@ const NFTTableHeading = () => {
           <p className="table-header-title">Locked Time</p>
         </div>
         <div className="table-header-column padded">
-          <p className="table-header-title">Unlocked Time</p>
+          <p className="table-header-title">Unlockable Period</p>
         </div>
         <div className="table-header-column padded-left"></div>
       </div>
