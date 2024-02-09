@@ -20,7 +20,6 @@ import {
   makeStandardFungiblePostCondition,
   createAssetInfo,
 } from "@stacks/transactions";
-
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { useStacks } from "../../providers/StacksProvider";
 import ButtonWithLoading from "../UI/LoaderButton";
@@ -453,6 +452,7 @@ const LockTokenAddress = ({
       tokenAddress?.length <= 52
     ) {
       try {
+        principalCV(tokenAddress);
         let [assetName, decimals, currentBlockHeight, balance] =
           await Promise.all([
             fetch({ functionName: "get-name" }),

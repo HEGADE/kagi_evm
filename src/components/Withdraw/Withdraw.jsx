@@ -226,10 +226,12 @@ const Withdraw = () => {
                                   justifyContent: "center",
                                 }}
                               >
-                                <h3>
+                                <h6
+                               
+                                >
                                   No {selectToken?.toLocaleUpperCase()} lock
                                   found
-                                </h3>
+                                </h6>
                               </div>
                             </div>
                           )}

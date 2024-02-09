@@ -1,14 +1,21 @@
 import * as yup from "yup";
-
+import { principalCV } from "@stacks/transactions";
 export const tokenSchema = (balance) =>
   yup.object().shape({
     assetName: yup.string().optional(),
     taker: yup
       .string()
       .required("taker is required")
-      .matches(/^ST[0-9A-HJ-NP-Z]{32,52}$/gi, "taker is invalid.")
-      .min(34, "taker is invalid")
-      .max(52, "taker is invalid"),
+
+      .test("forValidAddress", "taker is invalid", (value) => {
+        try {
+          principalCV(String(value));
+          return true;
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }),
     amount: yup
       .number()
       .integer("Decimal places are not allowed")
@@ -31,10 +38,15 @@ export const nftSchema = (currentBlockHeight) =>
       .string()
       .required("taker is required")
       .required("taker is required")
-      .matches(/^ST[0-9A-HJ-NP-Z]{32,52}$/gi, "taker is invalid.")
-
-      .min(34, "taker is invalid")
-      .max(52, "taker is invalid"),
+      .test("forValidAddress", "taker is invalid", (value) => {
+        try {
+          principalCV(String(value));
+          return true;
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }),
     tokenID: yup
       .number()
       .integer("Decimal places are not allowed")
