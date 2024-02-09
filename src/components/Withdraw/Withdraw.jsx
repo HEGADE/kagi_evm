@@ -6,6 +6,8 @@ import { WithdrawTableNFT } from "./WitdrawTableNFT";
 import { TableHeading } from "./TableHeading";
 import { useStacks } from "../../providers/StacksProvider";
 import { IconRefresh } from "../UI/Icons";
+import { Skeleton } from "@mantine/core";
+import { SkeletonTabular } from "../UI/Skeletons";
 
 const Withdraw = () => {
   const { data, fetchData } = useFetchFtLockStats();
@@ -149,7 +151,12 @@ const Withdraw = () => {
                         <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
                           {data?.loading ? (
-                            <ContentLoader />
+                            <SkeletonTabular
+                              className="table-row medium"
+                              height={60}
+                              width="100%"
+                              howMany={3}
+                            />
                           ) : sorted?.length > 0 ? (
                             sorted?.map((token) => {
                               if (selectToken === "ft") {
@@ -167,7 +174,6 @@ const Withdraw = () => {
                                     lockedBlockHeight={
                                       token["locked-block-height"]?.value
                                     }
-
                                   />
                                 );
                               } else {

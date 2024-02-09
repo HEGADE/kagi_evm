@@ -13,6 +13,7 @@ const ButtonWithLoading = ({
   text,
   loaderColor = "white",
   disabled = false,
+  marginLft = 0,
   ...rest
 }) => {
   if (!userSession.isUserSignedIn()) {
@@ -27,10 +28,16 @@ const ButtonWithLoading = ({
             display: "flex",
             justifyContent: "center",
             alignContent: "center",
+            marginLeft: marginLft,
           }}
         >
           {!ingBtn ? (
-            <ThreeDots color={loaderColor} width={"50px"} height={"50px"} />
+            <ThreeDots
+              style={{ margin: "10px" }}
+              color={loaderColor}
+              width={"50px"}
+              height={"50px"}
+            />
           ) : (
             <button {...rest} style={{ cursor: "not-allowed" }} disabled>
               {text}ing...

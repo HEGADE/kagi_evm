@@ -43,9 +43,11 @@ const useFetchFtLockStats = () => {
         return { ...pre, error: err, result: [] };
       });
     } finally {
-      setData((pre) => {
-        return { ...pre, loading: false };
-      });
+      setTimeout(() => {
+        setData((pre) => {
+          return { ...pre, loading: false };
+        });
+      }, 3000);
     }
   };
 

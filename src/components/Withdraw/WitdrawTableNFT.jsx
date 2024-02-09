@@ -169,6 +169,7 @@ const WithdrawTableNFT = ({
             <div className="table-actions">
               <ButtonWithLoading
                 ingBtn={true}
+                marginLft="28px"
                 isLoading={isButtonLoading}
                 loaderColor="blue"
                 disabled={lockTime > currentBlockHeight ? true : false}

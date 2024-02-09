@@ -132,7 +132,7 @@ const WithdrawTable = ({
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{amount} $BRCL</p>
+            <p className="table-title">{amount} </p>
           </div>
           <div className="table-column padded">
             <p className="table-title">{lockedTime}</p>
@@ -170,8 +170,9 @@ const WithdrawTable = ({
               <ButtonWithLoading
                 isLoading={isButtonLoading}
                 loaderColor="blue"
+                marginLft="28px"
+
                 disabled={lockTime > currentBlockHeight ? true : false}
-                ingBtn={true}
                 onClick={() =>
                   handleWithdraw({
                     amount: amount,
