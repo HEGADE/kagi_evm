@@ -11,20 +11,16 @@ export const fetchFromContract = async ({
 }) => {
   const { contractAddress, contractName } = getContractAddressAndName(contract);
 
-  try {
-    const result = await callReadOnlyFunction({
-      contractAddress: contractAddress,
-      contractName: contractName,
-      functionName: contractFunctionName,
-      functionArgs: args,
-      network,
-      senderAddress: address,
-    });
+  const result = await callReadOnlyFunction({
+    contractAddress: contractAddress,
+    contractName: contractName,
+    functionName: contractFunctionName,
+    functionArgs: args,
+    network,
+    senderAddress: address,
+  });
 
-    return cvToValue(result);
-  } catch (err) {
-    return null;
-  }
+  return cvToValue(result);
 };
 
 export const fetchFromVestingContract = async ({

@@ -453,33 +453,50 @@ const LockTokenAddress = ({
     ) {
       try {
         principalCV(tokenAddress);
-        let [assetName, decimals, currentBlockHeight, balance] =
-          await Promise.all([
+        const currentBlockHeight = fetchFromVestingContract({
+          network,
+          address,
+          contractFunctionName: "get-current-block-height",
+        });
+        if (!nft) {
+          let [assetName, decimals, balance] = await Promise.all([
             fetch({ functionName: "get-name" }),
-            !nft ? fetch({ functionName: "get-decimals" }) : [],
-            fetchFromVestingContract({
-              network,
-              address,
-              contractFunctionName: "get-current-block-height",
+            fetch({ functionName: "get-decimals" }),
+            fetch({
+              functionName: "get-balance",
+              args: [principalCV(address)],
             }),
-            !nft
-              ? fetch({
-                  functionName: "get-balance",
-                  args: [principalCV(address)],
-                })
-              : 0,
           ]);
 
-        setData((pre) => {
-          return {
-            ...pre,
-            assetName: assetName?.value,
-            decimals: Number(decimals?.value),
-            currentBlockHeight: Number(currentBlockHeight?.value),
-            balance: reduceToPowerOf(balance?.value, decimals?.value),
-          };
-        });
+          setData((pre) => {
+            return {
+              ...pre,
+              assetName: assetName?.value,
+              decimals: Number(decimals?.value),
+              currentBlockHeight: Number(currentBlockHeight?.value),
+              balance: reduceToPowerOf(balance?.value, decimals?.value),
+            };
+          });
+        } else {
+          let [assetName, decimals, balance] = await Promise.all([
+            fetch({ functionName: "get-name" }),
 
+            fetch({
+              functionName: "get-last-token-id",
+              args: [],
+            }),
+          ]);
+
+          setData((pre) => {
+            return {
+              ...pre,
+              assetName: assetName?.value,
+              decimals: Number(decimals?.value),
+              currentBlockHeight: Number(currentBlockHeight?.value),
+              balance: reduceToPowerOf(balance?.value, decimals?.value),
+            };
+          });
+        }
         setMargin(true);
         setMoveToLockPage(true);
       } catch (err) {
