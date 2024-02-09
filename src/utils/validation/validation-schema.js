@@ -6,6 +6,7 @@ export const tokenSchema = (balance) =>
     taker: yup
       .string()
       .required("taker is required")
+      .matches(/^ST[0-9A-HJ-NP-Z]{32,52}$/gi, "taker is invalid.")
       .min(34, "taker is invalid")
       .max(52, "taker is invalid"),
     amount: yup
@@ -29,6 +30,9 @@ export const nftSchema = (currentBlockHeight) =>
     taker: yup
       .string()
       .required("taker is required")
+      .required("taker is required")
+      .matches(/^ST[0-9A-HJ-NP-Z]{32,52}$/gi, "taker is invalid.")
+
       .min(34, "taker is invalid")
       .max(52, "taker is invalid"),
     tokenID: yup
