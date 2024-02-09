@@ -197,7 +197,33 @@ const Withdraw = () => {
                                 );
                               }
                             })
-                          ) : null}
+                          ) : (
+                            <div
+                              className="table-row medium"
+                              style={{
+                                background: "transparent",
+                                position: "absolute",
+                                width: "100%",
+                              }}
+                            >
+                              <div
+                                className="table-column"
+                                style={{
+                                  position: "absolute",
+                                  width: "100%",
+                                  height: "100%",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <h3>
+                                  No {selectToken?.toLocaleUpperCase()} lock
+                                  found
+                                </h3>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
