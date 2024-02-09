@@ -151,6 +151,9 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         onFinish: ({ txId }) => {
           console.log("onFinish:", txId);
           addTransactionToast(txId, `Locking ${assetName} FT`);
+          setTimeout(() => {
+            handlePage();
+          }, 2000);
         },
       };
 
@@ -208,6 +211,9 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
           console.log("onFinish:", txId);
 
           addTransactionToast(txId, `Locking ${assetName} NFT`);
+          setTimeout(() => {
+            handlePage();
+          }, 2000);
         },
       };
 
