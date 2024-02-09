@@ -20,6 +20,7 @@ const Withdraw = () => {
   const functionName =
     selectToken === "ft" ? "get-ft-lock-info" : "get-nft-lock-info";
 
+  const currentAsset = selectToken === "ft" ? "ft-name" : "nft-name";
   let sorted = [];
 
   if (data.result?.length) {
@@ -44,6 +45,13 @@ const Withdraw = () => {
       return 0;
     });
   }
+
+  sorted = sorted.filter((item) =>
+    item[currentAsset]?.value
+      .toString()
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   useEffect(() => {
     if (selectToken === "ft") {
@@ -86,7 +94,7 @@ const Withdraw = () => {
                   </svg>
                 </div>
                 <div className="form-select">
-                  <label for="downloads-filter-order">Filer By</label>
+                  <label for="downloads-filter-order">Filer By Date</label>
                   <select
                     onChange={(e) => setSelectTokenSort(e.target.value)}
                     id="downloads-filter-order"
@@ -104,6 +112,7 @@ const Withdraw = () => {
                   <input
                     type="text"
                     id="downloads-filter-order"
+                    placeholder="Search by asset Name"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
