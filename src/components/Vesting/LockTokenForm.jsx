@@ -42,9 +42,13 @@ import { transformString } from "../../utils/format/format-asset-name";
 import { IconBackArrow } from "../UI/Icons";
 import { getFinalAmount, reduceToPowerOf } from "../../utils/final-stx-amount";
 import { formatDate } from "../../utils/format/format-date-time";
+import { useEvent } from "../../store/event.store";
 
 const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   const { network, address } = useStacks();
+
+  const isEventEmitted = useEvent((state) => state.emitted);
+  const restEvent = useEvent((state) => state.reset);
 
   const [loading, setLoading] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
@@ -78,6 +82,13 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     mode: "onChange",
     resolver: yupResolver(nftSchema(data.currentBlockHeight)),
   });
+
+  useEffect(() => {
+    if (isEventEmitted) {
+      handlePage();
+    }
+    return () => restEvent();
+  }, [isEventEmitted]);
 
   useEffect(() => {
     let sub = watch(async (data, { name, type }) => {
@@ -150,9 +161,6 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         onFinish: ({ txId }) => {
           console.log("onFinish:", txId);
           addTransactionToast(txId, `Locking ${assetName} FT`);
-          setTimeout(() => {
-            handlePage();
-          }, 2000);
         },
       };
 
@@ -210,9 +218,6 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
           console.log("onFinish:", txId);
 
           addTransactionToast(txId, `Locking ${assetName} NFT`);
-          setTimeout(() => {
-            handlePage();
-          }, 2000);
         },
       };
 
@@ -511,6 +516,8 @@ const LockTokenAddress = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {}, []);
 
   return (
     <>

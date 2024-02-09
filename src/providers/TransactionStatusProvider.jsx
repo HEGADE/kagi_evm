@@ -3,6 +3,7 @@ import { StacksTestnet, StacksMainnet, StacksDevnet } from "@stacks/network";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { NETWORK } from "../lib/constants";
+import { useEvent } from "../store/event.store";
 // import { NETWORK } from "../utils/config/constants";
 
 const TransactionToastsContext = createContext(undefined);
@@ -16,6 +17,8 @@ export default function TransactionToastProvider({ children }) {
   const [transactionLoading, setTransactionLoading] = useState(false);
 
   const [transactionSuccessfulMsg, setTransactionSuccessfulMsg] = useState("");
+
+  const emitEvent = useEvent((state) => state.emitEvent);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,6 +56,7 @@ export default function TransactionToastProvider({ children }) {
         position: "bottom-right",
         style: { fontWeight: "bold" },
       });
+      emitEvent();
       setTransactionLoading(false);
     } else {
       toast.error("Transaction failed", { id: transactionId });
