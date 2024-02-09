@@ -29,6 +29,7 @@ import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "../UI/ConnectWallet";
 import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { addDaysToGivenDate } from "../../utils/format/format-date-time";
+import { reduceToPowerOf } from "../../utils/final-stx-amount";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -38,6 +39,7 @@ const WithdrawTable = ({
   lockID,
   assetName,
   amount,
+  taker,
   assetContact,
   lockTime,
   lockedTime,
@@ -132,7 +134,24 @@ const WithdrawTable = ({
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{amount} </p>
+            <p className="table-title">{shortAddress(taker)}</p>
+          </div>
+          <div
+            className="table-column padded"
+            style={{
+              textAlign: "center",
+              width: "max-content"
+            }}
+          >
+            {/* decimal 6 should be come from contract */}
+            <p
+              className="table-title"
+              style={{
+                display: "contents",
+              }}
+            >
+              {reduceToPowerOf(amount, 6)}{" "}
+            </p>
           </div>
           <div className="table-column padded">
             <p className="table-title">{lockedTime}</p>
@@ -171,7 +190,6 @@ const WithdrawTable = ({
                 isLoading={isButtonLoading}
                 loaderColor="blue"
                 marginLft="28px"
-
                 disabled={lockTime > currentBlockHeight ? true : false}
                 onClick={() =>
                   handleWithdraw({

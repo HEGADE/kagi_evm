@@ -47,7 +47,12 @@ export default function TransactionToastProvider({ children }) {
     }
 
     if (status === "success") {
-      toast.success(successMsg, { id: transactionId, duration: 3000 });
+      toast.success(successMsg, {
+        id: transactionId,
+        duration: 5000,
+        position: "bottom-right",
+        style: { fontWeight: "bold" },
+      });
       setTransactionLoading(false);
     } else {
       toast.error("Transaction failed", { id: transactionId });
@@ -66,6 +71,9 @@ export default function TransactionToastProvider({ children }) {
     toast.loading(pendingMessage, {
       id: transactionId,
       position: "bottom-right",
+      style: {
+        fontWeight: "bold",
+      },
     });
     setTransactionIds((transactionIds) => transactionIds.add(transactionId));
   }

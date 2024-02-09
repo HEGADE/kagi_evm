@@ -15,6 +15,9 @@ const FtTableHeading = () => {
           <p className="table-header-title">Tokens Address</p>
         </div>
         <div className="table-header-column padded">
+          <p className="table-header-title">Taker Address</p>
+        </div>
+        <div className="table-header-column padded">
           <p className="table-header-title">Tokens Locked</p>
         </div>
         <div className="table-header-column padded">
