@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const tokenSchema = (currentBlockHeight) =>
+export const tokenSchema = (balance) =>
   yup.object().shape({
     assetName: yup.string().optional(),
     taker: yup
@@ -13,7 +13,8 @@ export const tokenSchema = (currentBlockHeight) =>
       .integer("Decimal places are not allowed")
       .typeError("amount is required")
       .required("amount is required")
-      .min(1, "amount must be greater than 1"),
+      .min(1, "amount must be greater than 1")
+      .max(balance, "Insufficient Balance"),
     days: yup
       .number()
       .integer("Decimal places are not allowed")

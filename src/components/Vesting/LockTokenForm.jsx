@@ -41,7 +41,7 @@ import {
 } from "../../lib/fetch-data";
 import { transformString } from "../../utils/format/format-asset-name";
 import { IconBackArrow } from "../UI/Icons";
-import { getFinalAmount } from "../../utils/final-stx-amount";
+import { getFinalAmount, reduceToPowerOf } from "../../utils/final-stx-amount";
 import { formatDate } from "../../utils/format/format-date-time";
 
 const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
@@ -60,16 +60,21 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+
+    getFieldState,
+    formState: { errors, isValid },
   } = useForm({
-    resolver: yupResolver(tokenSchema(data.currentBlockHeight)),
+    mode: "onChange",
+    resolver: yupResolver(tokenSchema(data.balance)),
   });
+
   const {
     register: nftRegister,
     reset: nftReset,
     handleSubmit: nftHandleSubmit,
-    formState: { errors: nftErrors },
+    formState: { errors: nftErrors, isValid: nftIsValid },
   } = useForm({
+    mode: "onChange",
     resolver: yupResolver(nftSchema(data.currentBlockHeight)),
   });
   const onSubmit = async (data) => {
@@ -77,17 +82,11 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
       getContractAddressAndName(tokenAddress);
     const { amount, days, assetName, taker } = data;
 
-    setLoading(true);
-
     let lockDate = formatDate(new Date());
 
     let finalAmount = getFinalAmount(res.decimals, amount);
 
-    if (finalAmount > res?.balance) {
-      toast.error("Insufficient Balance", {
-        position: "bottom-right",
-      });
-    }
+    setLoading(true);
 
     try {
       const stxPostCondition = makeStandardSTXPostCondition(
@@ -218,7 +217,14 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
             visibility: nft ? "hidden" : "visible",
           }}
         >
-          Token Balance:- {data?.balance}
+          <span
+            style={{
+              color: "black",
+            }}
+          >
+            Token Balance:-
+          </span>{" "}
+          {data?.balance}
         </p>
       </div>
       <h2 className="form-box-title">Configure Lock</h2>
@@ -249,6 +255,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
                   placeholder="Taker Address"
                   {...register("taker")}
                 />
+
                 <ValidationError err={errors.taker} />
               </div>
             </div>
@@ -285,6 +292,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
             <div className="form-item">
               <ButtonWithLoading
                 type="submit"
+                disabled={!isValid}
                 loaderColor="blue"
                 className="button medium primary"
                 text="Lock"
@@ -357,6 +365,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
           <div className="form-row">
             <div className="form-item">
               <ButtonWithLoading
+                disabled={!nftIsValid}
                 loaderColor="blue"
                 type="submit"
                 className="button medium primary"
@@ -431,7 +440,7 @@ const LockTokenAddress = ({
             assetName: assetName?.value,
             decimals: Number(decimals?.value),
             currentBlockHeight: Number(currentBlockHeight?.value),
-            balance: Number(balance?.value),
+            balance: reduceToPowerOf(balance?.value, decimals?.value),
           };
         });
 
