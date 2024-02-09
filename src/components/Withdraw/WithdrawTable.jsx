@@ -46,7 +46,7 @@ const WithdrawTable = ({
   const { network, currentBlockHeight } = useStacks();
 
   const { addTransactionToast } = useTransactionToasts({
-    success: `Successfully Withdrawn ${assetName} Token`,
+    success: `Successfully withdrawn ${assetName} FT`,
   });
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
@@ -89,7 +89,7 @@ const WithdrawTable = ({
         network,
         appDetails,
         onFinish: ({ txId }) => {
-          addTransactionToast(txId, `Withdrawing ${assetName} Token `);
+          addTransactionToast(txId, `Withdrawing ${assetName} FT `);
         },
       };
       await openContractCall(options);
@@ -170,7 +170,7 @@ const WithdrawTable = ({
               <ButtonWithLoading
                 isLoading={isButtonLoading}
                 loaderColor="blue"
-                disabled={lockTime < currentBlockHeight ? true : false}
+                disabled={lockTime > currentBlockHeight ? true : false}
                 ingBtn={true}
                 onClick={() =>
                   handleWithdraw({

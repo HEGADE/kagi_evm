@@ -171,7 +171,7 @@ const WithdrawTableNFT = ({
                 ingBtn={true}
                 isLoading={isButtonLoading}
                 loaderColor="blue"
-                disabled={lockTime < currentBlockHeight ? true : false}
+                disabled={lockTime > currentBlockHeight ? true : false}
                 onClick={() =>
                   handleWithdraw({
                     tokenAddress: assetContact,

@@ -48,9 +48,10 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   const { network, address } = useStacks();
 
   const [loading, setLoading] = useState(false);
+  const [btnDisabled, setBtnDisabled] = useState(false);
   const { addTransactionToast } = useTransactionToasts({
-    success: `Successfully Locked ${data?.assetName.toLowerCase()} ${
-      nft ? "NFT" : "token"
+    success: `Successfully locked ${data?.assetName.toLowerCase()} ${
+      nft ? "NFT" : "FT"
     } `,
   });
 
@@ -61,7 +62,6 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     handleSubmit,
     reset,
 
-    getFieldState,
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
@@ -71,12 +71,42 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
   const {
     register: nftRegister,
     reset: nftReset,
+    setError,
     handleSubmit: nftHandleSubmit,
+    watch,
     formState: { errors: nftErrors, isValid: nftIsValid },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(nftSchema(data.currentBlockHeight)),
   });
+
+  useEffect(() => {
+    let sub = watch(async (data, { name, type }) => {
+      if (name === "tokenID") {
+        if (!isFinite(data.tokenID)) return;
+        let res = await fetchFromContract({
+          address,
+          contractFunctionName: "get-owner",
+          args: [uintCV(data.tokenID)],
+          network,
+          contract: tokenAddress,
+        });
+        if (address !== String(res?.value?.value)) {
+          setError("tokenID", {
+            message: "NFT does not belong to you",
+            type: "onChange",
+          });
+          setBtnDisabled(false);
+        } else {
+          console.log("valid");
+          setBtnDisabled(true);
+        }
+      }
+    });
+
+    return () => sub.unsubscribe();
+  }, [watch("tokenID")]);
+
   const onSubmit = async (data) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
@@ -120,7 +150,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         appDetails,
         onFinish: ({ txId }) => {
           console.log("onFinish:", txId);
-          addTransactionToast(txId, `Locking ${assetName} token`);
+          addTransactionToast(txId, `Locking ${assetName} FT`);
         },
       };
 
@@ -365,7 +395,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
           <div className="form-row">
             <div className="form-item">
               <ButtonWithLoading
-                disabled={!nftIsValid}
+                disabled={!btnDisabled || !nftIsValid}
                 loaderColor="blue"
                 type="submit"
                 className="button medium primary"
