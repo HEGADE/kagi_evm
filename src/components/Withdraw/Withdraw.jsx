@@ -8,14 +8,16 @@ import { useStacks } from "../../providers/StacksProvider";
 import { IconRefresh } from "../UI/Icons";
 import { Skeleton } from "@mantine/core";
 import { SkeletonTabular } from "../UI/Skeletons";
+import { useTableData } from "../../store/table-data.store";
 
 const Withdraw = () => {
-  const { data, fetchData } = useFetchFtLockStats();
+  const { fetchData } = useFetchFtLockStats();
   const { currentBlockHeight } = useStacks();
+  let data = useTableData((state) => state.data);
 
   const [selectToken, setSelectToken] = useState("ft");
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
 
   const functionName =
     selectToken === "ft" ? "get-ft-lock-info" : "get-nft-lock-info";
@@ -24,6 +26,7 @@ const Withdraw = () => {
   let sorted = [];
 
   if (data.result?.length) {
+    console.log(data.result, "this the data");
     sorted = data.result.sort((a, b) => {
       const timeA = new Date(a["locked-time"]?.value);
       const timeB = new Date(b["locked-time"]?.value);
@@ -46,12 +49,15 @@ const Withdraw = () => {
     });
   }
 
-  sorted = sorted.filter((item) =>
-    item[currentAsset]?.value
+  sorted = sorted.filter((item) => {
+    if (!search) {
+      return item;
+    }
+    return item[currentAsset]?.value
       .toString()
       .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+      .includes(search.toLowerCase());
+  });
 
   useEffect(() => {
     if (selectToken === "ft") {
@@ -193,7 +199,7 @@ const Withdraw = () => {
                                     assetName={
                                       token["nft-name"]?.value || "stacksies"
                                     }
-                                    lockID={token["locking-id"]?.value}
+                                    lockID={token["lock-id"]?.value}
                                     key={token["token-id"]?.value}
                                     assetID={token["token-id"]?.value}
                                     lockTime={token["lock-expiry"]?.value}
@@ -226,9 +232,7 @@ const Withdraw = () => {
                                   justifyContent: "center",
                                 }}
                               >
-                                <h6
-                               
-                                >
+                                <h6>
                                   No {selectToken?.toLocaleUpperCase()} lock
                                   found
                                 </h6>

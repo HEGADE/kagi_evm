@@ -253,7 +253,6 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
         <IconBackArrow onClick={handlePage} style={{ cursor: "pointer" }} />
         <p
           style={{
-            color: "dodgerblue",
             visibility: nft ? "hidden" : "visible",
           }}
         >

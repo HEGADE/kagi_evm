@@ -3,19 +3,15 @@ import { contractOwnerAddress, deployedContractName } from "../lib/constants";
 import React, { useState } from "react";
 import { useStacks } from "../providers/StacksProvider";
 import { principalCV } from "@stacks/transactions";
+import { useTableData } from "../store/table-data.store";
 const useFetchFtLockStats = () => {
   const { network, address } = useStacks();
+  const data = useTableData((state) => state.data);
 
-  const [data, setData] = useState({
-    loading: true,
-    error: null,
-    result: null,
-  });
+  const setData = useTableData((state) => state.setData);
 
   const fetchData = async ({ functionName }) => {
-    setData((pre) => {
-      return { ...pre, loading: true };
-    });
+    setData({ loading: true });
 
     try {
       const result = await callReadOnlyFunction({
@@ -28,30 +24,25 @@ const useFetchFtLockStats = () => {
       });
       console.log("result user", result);
       console.log("resultCv user", cvToValue(result?.value?.list[0]));
-      setData((pre) => {
-        return {
-          ...pre,
-          result: result?.value?.list?.map((item) => {
-            return cvToValue(item);
-          }),
-        };
+      setData({
+        result: result?.value?.list?.map((item) => {
+          return cvToValue(item);
+        }),
       });
     } catch (err) {
       console.log(err);
 
-      setData((pre) => {
-        return { ...pre, error: err, result: [] };
-      });
+      setData({ error: err, result: [] });
     } finally {
       setTimeout(() => {
-        setData((pre) => {
-          return { ...pre, loading: false };
+        setData({
+          loading: false,
         });
       }, 3000);
     }
   };
 
-  return { data, fetchData };
+  return { data, fetchData, setData };
 };
 
 export { useFetchFtLockStats };

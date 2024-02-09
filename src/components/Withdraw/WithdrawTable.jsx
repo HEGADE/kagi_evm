@@ -30,6 +30,8 @@ import ConnectWallet from "../UI/ConnectWallet";
 import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { addDaysToGivenDate } from "../../utils/format/format-date-time";
 import { reduceToPowerOf } from "../../utils/final-stx-amount";
+import { useEvent } from "../../store/event.store";
+import { useTableData } from "../../store/table-data.store";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -46,6 +48,14 @@ const WithdrawTable = ({
   lockedBlockHeight,
 }) => {
   const { network, currentBlockHeight } = useStacks();
+
+  const [withdrawID, setWithdrawID] = useState("");
+
+  const setData = useTableData((state) => state.setData);
+  const data = useTableData((state) => state.data);
+
+  const isEventEmitted = useEvent((state) => state.emitted);
+  const restEvent = useEvent((state) => state.reset);
 
   const { addTransactionToast } = useTransactionToasts({
     success: `Successfully withdrawn ${assetName} FT`,
@@ -66,6 +76,7 @@ const WithdrawTable = ({
       getContractAddressAndName(tokenAddress);
 
     setIsButtonLoading(true);
+    setWithdrawID(lockID);
 
     try {
       const stxPostCondition = makeContractSTXPostCondition(
@@ -101,6 +112,19 @@ const WithdrawTable = ({
       setIsButtonLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isEventEmitted) {
+      setData({
+        result: data.result.filter(
+          (item) => !(item?.["lock-id"]?.value === lockID)
+        ),
+      });
+    }
+    return () => {
+      restEvent();
+    };
+  }, [isEventEmitted]);
 
   if (!userSession.isUserSignedIn()) return <ConnectWallet />;
 

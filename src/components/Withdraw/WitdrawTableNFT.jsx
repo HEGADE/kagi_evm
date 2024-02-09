@@ -26,6 +26,8 @@ import { shortAddress } from "../../utils/format/address.format";
 import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "../UI/ConnectWallet";
 import { addDaysToGivenDate } from "../../utils/format/format-date-time";
+import { useTableData } from "../../store/table-data.store";
+import { useEvent } from "../../store/event.store";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -42,6 +44,12 @@ const WithdrawTableNFT = ({
   lockedBlockHeight,
 }) => {
   const { network, currentBlockHeight } = useStacks();
+
+  const setData = useTableData((state) => state.setData);
+  const data = useTableData((state) => state.data);
+
+  const isEventEmitted = useEvent((state) => state.emitted);
+  const restEvent = useEvent((state) => state.reset);
 
   const { addTransactionToast } = useTransactionToasts({
     success: `Successfully withdrawn ${assetName} NFT`,
@@ -99,6 +107,19 @@ const WithdrawTableNFT = ({
     }
   };
 
+  useEffect(() => {
+    if (isEventEmitted) {
+      setData({
+        result: data.result.filter(
+          (item) => !(item?.["lock-id"]?.value === lockID)
+        ),
+      });
+    }
+    return () => {
+      restEvent();
+    };
+  }, [isEventEmitted]);
+  
   if (!userSession.isUserSignedIn()) return <ConnectWallet />;
 
   return (
@@ -168,7 +189,6 @@ const WithdrawTableNFT = ({
           <div className="table-column padded-left">
             <div className="table-actions">
               <ButtonWithLoading
-                ingBtn={true}
                 marginLft="28px"
                 isLoading={isButtonLoading}
                 loaderColor="blue"
