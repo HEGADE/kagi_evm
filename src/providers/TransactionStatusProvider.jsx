@@ -19,6 +19,7 @@ export default function TransactionToastProvider({ children }) {
   const [transactionSuccessfulMsg, setTransactionSuccessfulMsg] = useState("");
 
   const emitEvent = useEvent((state) => state.emitEvent);
+  const resetEvent = useEvent((state) => state.reset);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,6 +29,7 @@ export default function TransactionToastProvider({ children }) {
     return () => {
       clearInterval(interval);
       setTransactionLoading(false);
+      resetEvent();
     };
   }, [transactionIds]);
 

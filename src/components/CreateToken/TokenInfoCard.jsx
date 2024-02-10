@@ -1,9 +1,20 @@
 import React from "react";
+import ButtonWithLoading from "../UI/LoaderButton";
 
-const TokenInfoCard = ({ name, symbol, decimal, supply, url }) => {
+const TokenInfoCard = ({
+  name,
+  symbol,
+  decimal,
+  supply,
+  url,
+  isLoading,
+  isValid,
+  handleSubmit,
+  onSubmitContract,
+}) => {
   return (
     <>
-      <div className="grid-column">
+      <form className="grid-column" onSubmit={handleSubmit(onSubmitContract)}>
         <div className="sidebar-box">
           <p className="sidebar-box-title">Deploy</p>
           <div className="sidebar-box-items">
@@ -22,7 +33,7 @@ const TokenInfoCard = ({ name, symbol, decimal, supply, url }) => {
                     <span className="bold">Token Symbol</span>
                   </p>
                 </div>
-                <p className="price-title"> ${symbol}</p>
+                <p className="price-title"> {symbol}</p>
               </div>
               <div className="totals-line">
                 <div className="totals-line-info">
@@ -51,10 +62,16 @@ const TokenInfoCard = ({ name, symbol, decimal, supply, url }) => {
             </div>
           </div>
           <div className="sidebar-box-items">
-            <p className="button primary">Deploy Token</p>
+            <ButtonWithLoading
+              isLoading={isLoading}
+              loaderColor="blue"
+              disabled={!isValid}
+              text="Deploy Token"
+              className="button secondary"
+            />
           </div>
         </div>
-      </div>
+      </form>
     </>
   );
 };
