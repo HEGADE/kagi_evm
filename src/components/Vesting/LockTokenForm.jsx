@@ -261,9 +261,9 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
               color: "black",
             }}
           >
-            Token Balance:-
+            Token:-
           </span>{" "}
-          {data?.balance}
+          {data?.balance} {data?.symbol}
         </p>
       </div>
       <h2 className="form-box-title">Configure Lock</h2>
@@ -463,13 +463,14 @@ const LockTokenAddress = ({
           contractFunctionName: "get-current-block-height",
         });
         if (!nft) {
-          let [assetName, decimals, balance] = await Promise.all([
+          let [assetName, decimals, balance, symbol] = await Promise.all([
             fetch({ functionName: "get-name" }),
             fetch({ functionName: "get-decimals" }),
             fetch({
               functionName: "get-balance",
               args: [principalCV(address)],
             }),
+            fetch({ functionName: "get-symbol" }),
           ]);
 
           setData((pre) => {
@@ -479,6 +480,7 @@ const LockTokenAddress = ({
               decimals: Number(decimals?.value),
               currentBlockHeight: Number(currentBlockHeight?.value),
               balance: reduceToPowerOf(balance?.value, decimals?.value),
+              symbol: symbol?.value,
             };
           });
         } else {
@@ -569,6 +571,7 @@ const LockTokenForm = ({
     decimals: "",
     currentBlockHeight: 0,
     balance: 0,
+    symbol: "",
   });
   return (
     <>

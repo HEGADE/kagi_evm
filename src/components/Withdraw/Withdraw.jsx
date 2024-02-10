@@ -197,7 +197,13 @@ const Withdraw = () => {
                                   <WithdrawTableNFT
                                     assetContact={token["nft-contract"]?.value}
                                     assetName={
-                                      token["nft-name"]?.value || "stacksies"
+                                      token["nft-contract"]?.value.split(
+                                        "."
+                                      )[1] === "sip009-nft"
+                                        ? "stacksies"
+                                        : token["nft-contract"]?.value.split(
+                                            "."
+                                          )[1]
                                     }
                                     lockID={token["lock-id"]?.value}
                                     key={token["token-id"]?.value}

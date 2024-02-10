@@ -55,10 +55,8 @@ const CreateTokenFormNFT = ({ currentForm }) => {
       let url = `${explorerUrl}/txid/${txId}?chain=testnet`;
       if (txId) {
         copy(url);
-        alert("Transaction URL copied to ClipBoard");
-        setTimeout(() => {
-          addTransactionToast(txId, `Deploying ${data?.name} NFT`);
-        }, 2000);
+        // alert("Transaction URL copied to ClipBoard");
+        addTransactionToast(txId, `Deploying ${data?.name} NFT`);
       }
     } catch (err) {
       toast.error(err?.message || "Some error occurred");

@@ -51,10 +51,8 @@ const CreateTokenFormFT = () => {
       let url = `${explorerUrl}/txid/${txId}?chain=testnet`;
       if (txId) {
         copy(url);
-        alert("Transaction URL copied to ClipBoard");
-        setTimeout(() => {
-          addTransactionToast(txId, `Deploying ${data?.name}`);
-        }, 2000);
+        // alert("Transaction URL copied to ClipBoard");
+        addTransactionToast(txId, `Deploying ${data?.name}`);
       }
     } catch (err) {
       toast.error(err?.message || "Some error occurred");
