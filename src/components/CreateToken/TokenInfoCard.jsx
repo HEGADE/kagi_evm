@@ -3,6 +3,7 @@ import ButtonWithLoading from "../UI/LoaderButton";
 
 const TokenInfoCard = ({
   name,
+  currentForm,
   symbol,
   decimal,
   supply,
@@ -27,30 +28,36 @@ const TokenInfoCard = ({
                 </div>
                 <p className="price-title">{name}</p>
               </div>
-              <div className="totals-line">
-                <div className="totals-line-info">
-                  <p className="totals-line-title">
-                    <span className="bold">Token Symbol</span>
-                  </p>
+              {currentForm !== "NFT" && (
+                <div className="totals-line">
+                  <div className="totals-line-info">
+                    <p className="totals-line-title">
+                      <span className="bold">Token Symbol</span>
+                    </p>
+                  </div>
+                  <p className="price-title"> {symbol}</p>
                 </div>
-                <p className="price-title"> {symbol}</p>
-              </div>
-              <div className="totals-line">
-                <div className="totals-line-info">
-                  <p className="totals-line-title">
-                    <span className="bold">Decimal</span>
-                  </p>
+              )}
+              {currentForm !== "NFT" && (
+                <div className="totals-line">
+                  <div className="totals-line-info">
+                    <p className="totals-line-title">
+                      <span className="bold">Decimal</span>
+                    </p>
+                  </div>
+                  <p className="price-title"> {decimal}</p>
                 </div>
-                <p className="price-title"> {decimal}</p>
-              </div>
-              <div className="totals-line">
-                <div className="totals-line-info">
-                  <p className="totals-line-title">
-                    <span className="bold">Token Supply</span>
-                  </p>
+              )}
+              {currentForm !== "NFT" && (
+                <div className="totals-line">
+                  <div className="totals-line-info">
+                    <p className="totals-line-title">
+                      <span className="bold">Token Supply</span>
+                    </p>
+                  </div>
+                  <p className="price-title">{supply}</p>
                 </div>
-                <p className="price-title">{supply}</p>
-              </div>
+              )}
               <div className="totals-line">
                 <div className="totals-line-info">
                   <p className="totals-line-title">

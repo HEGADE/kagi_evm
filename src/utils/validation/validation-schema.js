@@ -99,3 +99,19 @@ export const CreateTokenSchemaFT = yup.object().shape({
 
     .min(1, "Decimal must be greater than 0"),
 });
+
+export const createNFTSchema = yup.object().shape({
+  url: yup.string().url("Invalid URL").required("URL is required"),
+  name: yup
+    .string()
+    .matches(
+      /^[a-zA-Z0-9 ]+$/gi,
+      "Only letters and numbers are allowed in name"
+    )
+    .test("forValidName", "name should not only contain number", (value) => {
+      if (!isNaN(value)) {
+        return false;
+      }
+      return true;
+    }),
+});

@@ -2,10 +2,16 @@ import React, { useState } from "react";
 import { TokenInfoCard } from "../TokenInfoCard";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { CreateTokenSchemaFT } from "../../../utils/validation/validation-schema";
+import {
+  CreateTokenSchemaFT,
+  createNFTSchema,
+} from "../../../utils/validation/validation-schema";
 import { ValidationError } from "../../UI/Errors";
 import { copy } from "../../../utils/copy-text";
-import { createDeployableTokenContractFT } from "../../../utils/deploy-contract/createDeployableFT";
+import {
+  createDeployableTokenContractFT,
+  createDeployableTokenContractNFT,
+} from "../../../utils/deploy-contract/createDeployableFT";
 import toast from "react-hot-toast";
 import { useTransactionToasts } from "../../../providers/TransactionStatusProvider";
 import { NETWORK } from "../../../lib/constants";
@@ -15,7 +21,7 @@ const explorerUrl =
   NETWORK === "TESTNET"
     ? "https://explorer.hiro.so"
     : "https://explorer.hiro.so";
-const CreateTokenFormFT = () => {
+const CreateTokenFormNFT = ({ currentForm }) => {
   const {
     register,
     watch,
@@ -23,15 +29,13 @@ const CreateTokenFormFT = () => {
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(CreateTokenSchemaFT),
+    resolver: yupResolver(createNFTSchema),
   });
 
   let { name, symbol, decimals, supply, url } = watch();
 
   const { addTransactionToast } = useTransactionToasts({
-    success: `Successfully deployed ${name?.toLowerCase()} ${
-      false ? "NFT" : "FT"
-    } `,
+    success: `Successfully deployed ${name?.toLowerCase()} NFT `,
   });
 
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -41,7 +45,7 @@ const CreateTokenFormFT = () => {
   const onSubmit = async (data) => {
     setButtonLoading(true);
     try {
-      const contactToDeploy = createDeployableTokenContractFT(data, NETWORK);
+      const contactToDeploy = createDeployableTokenContractNFT(data, NETWORK);
       let txId = await deployContract({
         contractCode: contactToDeploy,
         contractName: data?.name,
@@ -53,7 +57,7 @@ const CreateTokenFormFT = () => {
         copy(url);
         alert("Transaction URL copied to ClipBoard");
         setTimeout(() => {
-          addTransactionToast(txId, `Deploying ${data?.name}`);
+          addTransactionToast(txId, `Deploying ${data?.name} NFT`);
         }, 2000);
       }
     } catch (err) {
@@ -87,51 +91,9 @@ const CreateTokenFormFT = () => {
                   <br />
                   <br />
                 </div>
-                <div className="form-row split">
-                  <div className="form-item">
-                    <div className="form-input small">
-                      <input
-                        placeholder="Token Symbol"
-                        type="text"
-                        id="symbol"
-                        name="symbol"
-                        {...register("symbol", { required: true })}
-                      />
-                      <ValidationError err={errors.symbol} />
-                    </div>
-                  </div>
-                </div>
+
                 <br />
-                <div className="form-row">
-                  <div className="form-item">
-                    <div className="form-input small">
-                      <input
-                        placeholder="Token Decimals"
-                        type="text"
-                        id="decimal"
-                        name="decimal"
-                        {...register("decimals", { required: true })}
-                      />
-                      <ValidationError err={errors.decimals} />
-                    </div>
-                    <br />
-                  </div>
-                </div>
-                <div className="form-row split">
-                  <div className="form-item">
-                    <div className="form-input small">
-                      <input
-                        placeholder="Token Supply"
-                        type="text"
-                        id="supply"
-                        name="supply"
-                        {...register("supply", { required: true })}
-                      />
-                      <ValidationError err={errors.supply} />
-                    </div>
-                    <br />
-                  </div>
-                </div>
+
                 <div className="form-row">
                   <div className="form-item">
                     {/* FORM INPUT */}
@@ -152,6 +114,7 @@ const CreateTokenFormFT = () => {
           </div>
         </div>
         <TokenInfoCard
+          currentForm={currentForm}
           isLoading={buttonLoading}
           handleSubmit={handleSubmit}
           onSubmitContract={onSubmit}
@@ -167,4 +130,4 @@ const CreateTokenFormFT = () => {
   );
 };
 
-export { CreateTokenFormFT };
+export { CreateTokenFormNFT };
