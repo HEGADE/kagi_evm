@@ -29,15 +29,19 @@ export default function StacksProvider({ children }) {
   const address = userData?.profile?.stxAddress?.testnet;
 
   const fetch = async (addr) => {
-    let currentBlockHeight = await fetchFromVestingContract({
-      network,
-      address: addr,
-      contractFunctionName: "get-current-block-height",
-    });
+    try {
+      let currentBlockHeight = await fetchFromVestingContract({
+        network,
+        address: addr,
+        contractFunctionName: "get-current-block-height",
+      });
 
-    console.log("current Block height", currentBlockHeight);
+      console.log("current Block height", currentBlockHeight);
 
-    setCurrentBlockHeight(Number(currentBlockHeight?.value));
+      setCurrentBlockHeight(Number(currentBlockHeight?.value));
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
