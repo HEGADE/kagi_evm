@@ -28,6 +28,7 @@ import ConnectWallet from "../UI/ConnectWallet";
 import { addDaysToGivenDate } from "../../utils/format/format-date-time";
 import { useTableData } from "../../store/table-data.store";
 import { useEvent } from "../../store/event.store";
+import { CountdownTimer } from "../UI/Ticker";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -119,7 +120,7 @@ const WithdrawTableNFT = ({
       restEvent();
     };
   }, [isEventEmitted]);
-  
+
   if (!userSession.isUserSignedIn()) return <ConnectWallet />;
 
   return (
@@ -159,31 +160,8 @@ const WithdrawTableNFT = ({
             <p className="table-title">{lockedTime}</p>
           </div>
           <div className="table-column padded">
-            <div
-              id="clockdiv"
-              style={{
-                display: "flex",
-                justifyContent: "space-evenly",
-                alignItems: "center",
-              }}
-            >
-              {/* <div>
-                <span className="days">99</span>
-                <div className="smalltext">D</div>
-              </div>
-              <div>
-                <span className="hours">23</span>
-                <div className="smalltext">H</div>
-              </div>
-              <div>
-                <span className="minutes">54</span>
-                <div className="smalltext">M</div>
-              </div>
-              <div>
-                <span className="seconds">57</span>
-                <div className="smalltext">S</div>
-              </div> */}
-              <p className="table-title">{unlockDateTime}</p>
+            <div id="clockdiv">
+              <CountdownTimer targetDateTime={unlockDateTime} />
             </div>
           </div>
           <div className="table-column padded-left">

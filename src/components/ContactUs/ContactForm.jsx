@@ -16,7 +16,11 @@ export const ContactForm = () => {
           <div className="grid-column">
             <div className="widget-box">
               <div className="widget-box-content">
-                <form className="form">
+                <form
+                  className="form"
+                  action="https://formsubmit.co/your@email.com"
+                  method="POST"
+                >
                   <div className="form-row split">
                     <div className="form-item">
                       <div className="form-input small">
@@ -80,7 +84,7 @@ export const ContactForm = () => {
                     </div>
                   </div>
                   <br />
-                    <br />
+                  <br />
                   <div className="form-row split">
                     <div className="form-item">
                       <div className="form-select">
@@ -135,7 +139,7 @@ export const ContactForm = () => {
                     </div>
                   </div>
                   <br />
-                    <br />
+                  <br />
                   <div className="form-row">
                     <div className="form-item">
                       <div className="form-input small medium-textarea">

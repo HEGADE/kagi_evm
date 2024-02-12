@@ -163,11 +163,7 @@ const WithdrawTable = ({
           </div>
           <div
             className="table-column padded"
-            style={{
-              textAlign: "center",
-              width: "max-content",
-              padding: "0px 20px !important",
-            }}
+        
           >
             {/* decimal 6 should be come from contract */}
             <p
