@@ -47,8 +47,9 @@ const WithdrawTableNFT = ({
 }) => {
   const { network, currentBlockHeight, address } = useStacks();
 
-  const setData = useTableData((state) => state.setData);
-  const data = useTableData((state) => state.data);
+  const [ftInfo, setFtInfo] = useState({
+    unlocked,
+  });
 
   const isEventEmitted = useEvent((state) => state.emitted);
   const restEvent = useEvent((state) => state.reset);
@@ -114,19 +115,9 @@ const WithdrawTableNFT = ({
   useEffect(() => {
     if (isEventEmitted && withdrawID !== undefined) {
       console.log("withdraw id", withdrawID);
-      setData({
-        result: data.result.map((item) => {
-          if (item?.["lock-id"]?.value === withdrawID) {
-            return {
-              ...item,
-              unlocked: {
-                type: "bool",
-                value: true,
-              },
-            };
-          }
-          return item;
-        }),
+      setFtInfo({
+        ...ftInfo,
+        unlocked: true,
       });
     }
     return () => {
@@ -173,7 +164,9 @@ const WithdrawTableNFT = ({
             <p className="table-title">{lockedTime}</p>
           </div> */}
           <div className="table-column padded">
-            <p className="table-title">{unlocked ? "unlocked" : "locked"}</p>
+            <p className="table-title">
+              {ftInfo.unlocked ? "unlocked" : "locked"}
+            </p>
           </div>
           {/* <div className="table-column padded">
             <div id="clockdiv">
@@ -182,7 +175,7 @@ const WithdrawTableNFT = ({
           </div> */}
 
           <div className="table-column padded-left">
-            {!unlocked ? (
+            {!ftInfo.unlocked ? (
               <div className="table-actions">
                 {taker === address ? (
                   <ButtonWithLoading
