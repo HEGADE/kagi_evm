@@ -39,12 +39,13 @@ const WithdrawTableNFT = ({
   assetName,
   assetContact,
   lockTime,
+  unlocked,
   assetID,
   lockedTime,
   taker,
   lockedBlockHeight,
 }) => {
-  const { network, currentBlockHeight } = useStacks();
+  const { network, currentBlockHeight, address } = useStacks();
 
   const setData = useTableData((state) => state.setData);
   const data = useTableData((state) => state.data);
@@ -57,6 +58,8 @@ const WithdrawTableNFT = ({
   });
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [withdrawID, setWithdrawID] = useState(undefined);
 
   const unlockTokenInDays =
     (lockTime - lockedBlockHeight) / AVG_BLOCK_MINED_PER_DAY;
@@ -71,7 +74,8 @@ const WithdrawTableNFT = ({
       getContractAddressAndName(tokenAddress);
 
     setIsButtonLoading(true);
-
+    setIsPending(true);
+    setWithdrawID(lockID);
     try {
       const stxPostCondition = makeContractSTXPostCondition(
         contractOwnerAddress,
@@ -107,13 +111,22 @@ const WithdrawTableNFT = ({
       setIsButtonLoading(false);
     }
   };
-
   useEffect(() => {
-    if (isEventEmitted) {
+    if (isEventEmitted && withdrawID !== undefined) {
+      console.log("withdraw id", withdrawID);
       setData({
-        result: data.result.filter(
-          (item) => !(item?.["lock-id"]?.value === lockID)
-        ),
+        result: data.result.map((item) => {
+          if (item?.["lock-id"]?.value === withdrawID) {
+            return {
+              ...item,
+              unlocked: {
+                type: "bool",
+                value: true,
+              },
+            };
+          }
+          return item;
+        }),
       });
     }
     return () => {
@@ -156,31 +169,43 @@ const WithdrawTableNFT = ({
             <p className="table-title">{shortAddress(taker)} </p>
           </div>
 
-          <div className="table-column padded">
+          {/* <div className="table-column padded">
             <p className="table-title">{lockedTime}</p>
-          </div>
+          </div> */}
           <div className="table-column padded">
+            <p className="table-title">{unlocked ? "unlocked" : "locked"}</p>
+          </div>
+          {/* <div className="table-column padded">
             <div id="clockdiv">
               <CountdownTimer targetDateTime={unlockDateTime} />
             </div>
-          </div>
+          </div> */}
+
           <div className="table-column padded-left">
-            <div className="table-actions">
-              <ButtonWithLoading
-                marginLft="28px"
-                isLoading={isButtonLoading}
-                loaderColor="blue"
-                disabled={lockTime > currentBlockHeight ? true : false}
-                onClick={() =>
-                  handleWithdraw({
-                    tokenAddress: assetContact,
-                    assetName: assetName?.toLowerCase(),
-                  })
-                }
-                text="withdraw"
-                className="button secondary"
-              />
-            </div>
+            {!unlocked ? (
+              <div className="table-actions">
+                {taker === address ? (
+                  <ButtonWithLoading
+                    marginLft="28px"
+                    isLoading={isButtonLoading}
+                    loaderColor="blue"
+                    disabled={
+                      lockTime > currentBlockHeight || isPending ? true : false
+                    }
+                    onClick={() =>
+                      handleWithdraw({
+                        tokenAddress: assetContact,
+                        assetName: assetName?.toLowerCase(),
+                      })
+                    }
+                    text="withdraw"
+                    className="button secondary"
+                  />
+                ) : (
+                  <small>Your not a taker</small>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
       </>

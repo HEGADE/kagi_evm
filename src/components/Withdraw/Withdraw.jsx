@@ -181,6 +181,8 @@ const Withdraw = () => {
                                     assetName={
                                       token["ft-name"]?.value || "stacksies"
                                     }
+                                    maker={token["maker"]?.value}
+                                    unlocked={token["unlocked"]?.value}
                                     amount={token["amount"]?.value}
                                     lockID={token["lock-id"]?.value}
                                     key={token["lock-id"]?.value}
@@ -206,11 +208,13 @@ const Withdraw = () => {
                                           )[1]
                                     }
                                     lockID={token["lock-id"]?.value}
+                                    unlocked={token["unlocked"]?.value}
                                     key={token["token-id"]?.value}
                                     assetID={token["token-id"]?.value}
                                     lockTime={token["lock-expiry"]?.value}
                                     lockedTime={token["locked-time"]?.value}
                                     taker={token["taker"]?.value}
+                                    maker={token["maker"]?.value}
                                     lockedBlockHeight={
                                       token["locked-block-height"]?.value
                                     }

@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { principalCV, StringAsciiCV } from "@stacks/transactions";
+
 export const tokenSchema = (balance) =>
   yup.object().shape({
     assetName: yup.string().optional(),

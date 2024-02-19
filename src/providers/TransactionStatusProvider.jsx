@@ -8,6 +8,7 @@ import { useEvent } from "../store/event.store";
 
 const TransactionToastsContext = createContext(undefined);
 let successMsg = "";
+let successMsgs = {};
 export default function TransactionToastProvider({ children }) {
   const network =
     NETWORK === "TESTNET" ? new StacksDevnet() : new StacksMainnet();
@@ -45,14 +46,15 @@ export default function TransactionToastProvider({ children }) {
     const url = `${apiUrl}/extended/v1/tx/${transactionId}`;
     const res = await fetch(url);
     const json = await res.json();
-
+    console.log(successMsgs, "msgs");
+    const transactionSuccess = successMsgs[transactionId];
     const status = json["tx_status"];
     if (status === "pending") {
       return;
     }
 
     if (status === "success") {
-      toast.success(successMsg, {
+      toast.success(transactionSuccess, {
         id: transactionId,
         duration: 5000,
         position: "bottom-right",
@@ -74,6 +76,7 @@ export default function TransactionToastProvider({ children }) {
   function addTransactionToast(transactionId, pendingMessage) {
     setTransactionLoading(true);
     console.log(`listening to updates for transaction ${transactionId}`);
+    successMsgs[transactionId] = successMsg;
     toast.loading(pendingMessage, {
       id: transactionId,
       position: "bottom-right",

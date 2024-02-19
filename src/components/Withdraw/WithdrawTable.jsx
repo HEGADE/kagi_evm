@@ -43,14 +43,16 @@ const WithdrawTable = ({
   assetName,
   amount,
   taker,
+  maker,
+  unlocked,
   assetContact,
   lockTime,
   lockedTime,
   lockedBlockHeight,
 }) => {
-  const { network, currentBlockHeight } = useStacks();
+  const { network, currentBlockHeight, address } = useStacks();
 
-  const [withdrawID, setWithdrawID] = useState("");
+  const [withdrawID, setWithdrawID] = useState(undefined);
 
   const setData = useTableData((state) => state.setData);
   const data = useTableData((state) => state.data);
@@ -63,6 +65,7 @@ const WithdrawTable = ({
   });
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const unlockTokenInDays =
     (lockTime - lockedBlockHeight) / AVG_BLOCK_MINED_PER_DAY;
@@ -75,8 +78,9 @@ const WithdrawTable = ({
   const handleWithdraw = async ({ amount, assetName, tokenAddress }) => {
     const { contractAddress, contractName } =
       getContractAddressAndName(tokenAddress);
-
+    console.log("lock id", lockID);
     setIsButtonLoading(true);
+    setIsPending(true);
     setWithdrawID(lockID);
 
     try {
@@ -115,11 +119,19 @@ const WithdrawTable = ({
   };
 
   useEffect(() => {
-    if (isEventEmitted) {
+    if (isEventEmitted && withdrawID !== undefined) {
       setData({
-        result: data.result.filter(
-          (item) => !(item?.["lock-id"]?.value === lockID)
-        ),
+        result: data.result.map((item) => {
+          if (item?.["lock-id"]?.value === withdrawID) {
+            return {
+              ...item,
+              unlocked: {
+                type: "bool",
+                value: true,
+              },
+            };
+          } else return item;
+        }),
       });
     }
     return () => {
@@ -161,10 +173,7 @@ const WithdrawTable = ({
           <div className="table-column padded">
             <p className="table-title">{shortAddress(taker)}</p>
           </div>
-          <div
-            className="table-column padded"
-        
-          >
+          <div className="table-column padded">
             {/* decimal 6 should be come from contract */}
             <p
               className="table-title"
@@ -176,32 +185,39 @@ const WithdrawTable = ({
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{lockedTime}</p>
+            <p className="table-title">{unlocked ? "Unlocked" : "Locked"}</p>
           </div>
-          <div className="table-column padded">
+          {/* <div className="table-column padded">
             <div id="clockdiv">
               <CountdownTimer targetDateTime={unlockDateTime} />
-              {/* <p className="table-title">{unlockDateTime}</p> */}
             </div>
-          </div>
+          </div> */}
           <div className="table-column padded-left">
-            <div className="table-actions">
-              <ButtonWithLoading
-                isLoading={isButtonLoading}
-                loaderColor="blue"
-                marginLft="28px"
-                disabled={lockTime > currentBlockHeight ? true : false}
-                onClick={() =>
-                  handleWithdraw({
-                    amount: amount,
-                    tokenAddress: assetContact,
-                    assetName: assetName?.toLowerCase(),
-                  })
-                }
-                text="withdraw"
-                className="button secondary"
-              />
-            </div>
+            {!unlocked ? (
+              <div className="table-actions">
+                {taker === address ? (
+                  <ButtonWithLoading
+                    isLoading={isButtonLoading}
+                    loaderColor="blue"
+                    marginLft="28px"
+                    disabled={
+                      lockTime > currentBlockHeight || isPending ? true : false
+                    }
+                    onClick={() =>
+                      handleWithdraw({
+                        amount: amount,
+                        tokenAddress: assetContact,
+                        assetName: assetName?.toLowerCase(),
+                      })
+                    }
+                    text="withdraw"
+                    className="button secondary"
+                  />
+                ) : (
+                  <small>Your not a taker</small>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
       </>
