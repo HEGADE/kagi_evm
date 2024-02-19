@@ -114,7 +114,6 @@ const WithdrawTableNFT = ({
   };
   useEffect(() => {
     if (isEventEmitted && withdrawID !== undefined) {
-      console.log("withdraw id", withdrawID);
       setFtInfo({
         ...ftInfo,
         unlocked: true,
