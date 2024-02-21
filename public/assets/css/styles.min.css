@@ -5554,7 +5554,7 @@ figure > img {
     text-align: right;
 }
 .table .table-header-column.padded {
-    padding: 0 44px;
+    padding: 0 26px;
 }
 .table .table-header-column.padded-medium {
     padding: 0 46px;
@@ -5566,7 +5566,7 @@ figure > img {
     padding-left: 60px;
 }
 .table .table-header-column:first-child {
-    padding-left: 100px;
+    padding-left: 87px;
 }
 .table .table-header-column:last-child {
     padding-right: 28px;

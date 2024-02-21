@@ -181,11 +181,14 @@ const WithdrawTable = ({
               {ftInfo.unlocked ? "Unlocked" : "Locked"}
             </p>
           </div>
-          {/* <div className="table-column padded">
+          <div className="table-column padded">
+            <p className="table-title">{lockedTime}</p>
+          </div>
+          <div className="table-column padded">
             <div id="clockdiv">
               <CountdownTimer targetDateTime={unlockDateTime} />
             </div>
-          </div> */}
+          </div>
           <div className="table-column padded-left">
             {!ftInfo.unlocked ? (
               <div className="table-actions">

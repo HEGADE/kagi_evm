@@ -162,7 +162,7 @@ const Withdraw = () => {
                       className="simplebar-content"
                       style={{ padding: "0px;" }}
                     >
-                      <div className="table table-downloads split-rows">
+                      <div className="table table-downloads table-responsive split-rows">
                         <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
                           {data?.loading ? (

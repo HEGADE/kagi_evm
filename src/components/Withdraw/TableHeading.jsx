@@ -23,9 +23,12 @@ const FtTableHeading = () => {
         <div className="table-header-column padded">
           <p className="table-header-title">Status</p>
         </div>
-        {/* <div className="table-header-column padded">
+        <div className="table-header-column padded">
+          <p className="table-header-title"> Locked Time</p>
+        </div>
+        <div className="table-header-column padded">
           <p className="table-header-title"> Unlocked Time</p>
-        </div> */}
+        </div>
         <div className="table-header-column padded-left"></div>
       </div>
     </>
@@ -44,15 +47,15 @@ const NFTTableHeading = () => {
         <div className="table-header-column padded">
           <p className="table-header-title">Taker Address </p>
         </div>
-        {/* <div className="table-header-column padded">
-          <p className="table-header-title">Locked Time</p>
-        </div> */}
-        {/* <div className="table-header-column padded">
-          <p className="table-header-title">Unlocked Time</p>
-        </div> */}
         <div className="table-header-column padded">
           <p className="table-header-title">Status</p>
         </div>
+        <div className="table-header-column padded">
+          <p className="table-header-title">Locked Time</p>
+        </div>
+        <div className="table-header-column padded">
+          <p className="table-header-title">Unlocked Time</p>
+        </div>{" "}
         <div className="table-header-column padded-left"></div>
       </div>
     </>

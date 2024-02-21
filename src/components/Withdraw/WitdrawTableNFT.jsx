@@ -159,19 +159,20 @@ const WithdrawTableNFT = ({
             <p className="table-title">{shortAddress(taker)} </p>
           </div>
 
-          {/* <div className="table-column padded">
-            <p className="table-title">{lockedTime}</p>
-          </div> */}
           <div className="table-column padded">
             <p className="table-title">
               {ftInfo.unlocked ? "unlocked" : "locked"}
             </p>
           </div>
-          {/* <div className="table-column padded">
+
+          <div className="table-column padded">
+            <p className="table-title">{lockedTime}</p>
+          </div>
+          <div className="table-column padded">
             <div id="clockdiv">
               <CountdownTimer targetDateTime={unlockDateTime} />
             </div>
-          </div> */}
+          </div>
 
           <div className="table-column padded-left">
             {!ftInfo.unlocked ? (
