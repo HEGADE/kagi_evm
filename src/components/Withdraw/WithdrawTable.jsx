@@ -194,12 +194,10 @@ const WithdrawTable = ({
               <div className="table-actions">
                 {taker === address ? (
                   <ButtonWithLoading
-                    isLoading={isButtonLoading}
+                    isLoading={isButtonLoading || isPending}
                     loaderColor="blue"
                     marginLft="28px"
-                    disabled={
-                      lockTime > currentBlockHeight || isPending ? true : false
-                    }
+                    disabled={lockTime > currentBlockHeight ? true : false}
                     onClick={() =>
                       handleWithdraw({
                         amount: amount,
@@ -214,7 +212,18 @@ const WithdrawTable = ({
                   <small>Your not a taker</small>
                 )}
               </div>
-            ) : null}
+            ) : (
+              <button
+                className="button "
+                style={{
+                  cursor: "not-allowed",
+                  backgroundColor: "grey",
+                }}
+                disabled
+              >
+                withdrawn
+              </button>
+            )}
           </div>
         </div>
       </>

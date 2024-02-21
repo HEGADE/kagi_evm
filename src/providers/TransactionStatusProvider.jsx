@@ -25,7 +25,7 @@ export default function TransactionToastProvider({ children }) {
   useEffect(() => {
     const interval = setInterval(() => {
       updateAllTransactions(transactionIds);
-    }, 3000);
+    }, 1000);
 
     return () => {
       clearInterval(interval);
