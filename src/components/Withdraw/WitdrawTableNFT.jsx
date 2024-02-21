@@ -29,6 +29,10 @@ import { addDaysToGivenDate } from "../../utils/format/format-date-time";
 import { useTableData } from "../../store/table-data.store";
 import { useEvent } from "../../store/event.store";
 import { CountdownTimer } from "../UI/Ticker";
+import { IconCopy } from "@tabler/icons-react";
+import { rem } from "@mantine/core";
+import toast from "react-hot-toast";
+import { copy } from "../../utils/copy-text";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -156,7 +160,27 @@ const WithdrawTableNFT = ({
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{shortAddress(taker)} </p>
+            <p
+              className="table-title"
+              onClick={() => {
+                copy(taker);
+                toast.success("Copied!", {
+                  position: "bottom-right",
+                });
+              }}
+            >
+              {shortAddress(taker)}
+              {address !== taker && (
+                <IconCopy
+                  style={{
+                    marginLeft: "5px",
+                    width: rem(17),
+                    height: rem(17),
+                    cursor: "pointer",
+                  }}
+                />
+              )}{" "}
+            </p>
           </div>
 
           <div className="table-column padded">
@@ -180,11 +204,9 @@ const WithdrawTableNFT = ({
                 {taker === address ? (
                   <ButtonWithLoading
                     marginLft="28px"
-                    isLoading={isButtonLoading}
+                    isLoading={isButtonLoading || isPending}
                     loaderColor="blue"
-                    disabled={
-                      lockTime > currentBlockHeight || isPending ? true : false
-                    }
+                    disabled={lockTime > currentBlockHeight ? true : false}
                     onClick={() =>
                       handleWithdraw({
                         tokenAddress: assetContact,
@@ -198,7 +220,18 @@ const WithdrawTableNFT = ({
                   <small>Your not a taker</small>
                 )}
               </div>
-            ) : null}
+            ) : (
+              <button
+                className="button "
+                style={{
+                  cursor: "not-allowed",
+                  backgroundColor: "grey",
+                }}
+                disabled
+              >
+                withdrawn
+              </button>
+            )}
           </div>
         </div>
       </>

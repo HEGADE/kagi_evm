@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ButtonWithLoading from "../UI/LoaderButton";
 import { useStacks } from "../../providers/StacksProvider";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
-import { getFtPostCondition } from "../../utils/postconditions/ft-postcondition";
 import {
   AVG_BLOCK_MINED_PER_DAY,
   appDetails,
@@ -21,18 +20,19 @@ import {
 } from "@stacks/transactions";
 import { getContractAddressAndName } from "../../utils/extract-contract-info";
 import { openContractCall } from "@stacks/connect";
-import { withDrawData } from "../../lib/withdraw-data";
 import { shortAddress } from "../../utils/format/address.format";
-import { ContentLoader } from "../UI/ContentLoader";
 
 import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "../UI/ConnectWallet";
-import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { addDaysToGivenDate } from "../../utils/format/format-date-time";
 import { reduceToPowerOf } from "../../utils/final-stx-amount";
 import { useEvent } from "../../store/event.store";
 import { useTableData } from "../../store/table-data.store";
 import { CountdownTimer } from "../UI/Ticker";
+import { IconCopy } from "@tabler/icons-react";
+import { rem } from "@mantine/core";
+import { copy } from "../../utils/copy-text.js";
+import toast from "react-hot-toast";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -163,7 +163,27 @@ const WithdrawTable = ({
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{shortAddress(taker)}</p>
+            <p
+              className="table-title"
+              onClick={() => {
+                copy(taker);
+                toast.success("Copied!", {
+                  position: "bottom-right",
+                });
+              }}
+            >
+              {shortAddress(taker)}
+              {address !== taker && (
+                <IconCopy
+                  style={{
+                    marginLeft: "5px",
+                    width: rem(17),
+                    height: rem(17),
+                    cursor: "pointer",
+                  }}
+                />
+              )}
+            </p>
           </div>
           <div className="table-column padded">
             {/* decimal 6 should be come from contract */}
