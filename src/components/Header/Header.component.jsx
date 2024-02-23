@@ -7,7 +7,7 @@ import { shortAddress } from "../../utils/format/address.format";
 import { PageLoader } from "../UI/PageLoader";
 import ConnectWallet, { ConnectWalletWithDropDown } from "../UI/ConnectWallet";
 import { IconBackArrow, IconBulb, IconClose } from "../UI/Icons";
-
+import { useUIStore } from "../../store/ui.store.js";
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
@@ -32,7 +32,9 @@ function disconnect() {
 
 const Header = () => {
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+
+  const open = useUIStore((state) => state.isMenuBarOpen);
+  const setOpen = useUIStore((state) => state.setIsMenuBarOpen);
 
   const location = useLocation();
 
@@ -49,9 +51,26 @@ const Header = () => {
   }
 
   const toggleSideBar = () => {
-    setOpen((pre) => !pre);
+    setOpen();
     const sidebar = document.querySelector("#navigation-widget-mobile");
     sidebar.classList.toggle("hidden");
+  };
+
+  const toggleSideBarDesktop = () => {
+    setOpen();
+    const sidebar = document.querySelector("#navigation-widget");
+    const contentGrid =
+      document.querySelector(".content-grid") ||
+      document.querySelector(".content-grid-sidebar-collapsed");
+    if (!open) {
+      contentGrid.classList.remove("content-grid");
+      contentGrid.classList.add("content-grid-sidebar-collapsed");
+    } else {
+      contentGrid.classList.add("content-grid");
+      contentGrid.classList.remove("content-grid-sidebar-collapsed");
+    }
+
+    sidebar.classList.toggle("desktop-side-bar-width");
   };
 
   return (
@@ -80,6 +99,24 @@ const Header = () => {
             </h1>
           </div>
         </div>
+        {location.pathname !== "/token-lock" && (
+          <div className="navigation-widget-mobile-trigger">
+            <div
+              className="burger-icon inverted"
+              onClick={toggleSideBarDesktop}
+            >
+              {!open ? (
+                <>
+                  <div className="burger-icon-bar"></div>
+                  <div className="burger-icon-bar"></div>
+                  <div className="burger-icon-bar"></div>
+                </>
+              ) : (
+                <IconClose />
+              )}
+            </div>
+          </div>
+        )}
         <div className="header-actions"></div>
         <div className="header-actions search-bar">
           {/* <div className="interactive-input dark">
@@ -104,7 +141,7 @@ const Header = () => {
         <div className="header-actions">
           <ConnectWallet />
           {!!userSession.isUserSignedIn() && <ConnectWalletWithDropDown />}
-          <div className="action-list" style={{visibility:"hidden"}}>
+          <div className="action-list" style={{ visibility: "hidden" }}>
             <div className="action-list-item-wrap">
               <div className="action-list-item header-dropdown-trigger ">
                 <IconBulb />

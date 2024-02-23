@@ -140,7 +140,7 @@ const WithdrawTable = ({
         <div className="table-row medium">
           <div className="table-column" key={lockID}>
             <div className="product-preview tiny">
-              <a>
+              {/* <a>
                 <figure
                   className="product-preview-image short liquid"
                   style={{ background: "url('img/btc-logo.svg')" }}
@@ -151,7 +151,7 @@ const WithdrawTable = ({
                     style={{ display: "none" }}
                   />
                 </figure>
-              </a>
+              </a> */}
               <div className="product-preview-info">
                 <p className="product-preview-title">{assetName}</p>
               </div>
@@ -197,6 +197,9 @@ const WithdrawTable = ({
             </p>
           </div>
           <div className="table-column padded">
+            <p className="table-title">{lockID}</p>
+          </div>
+          <div className="table-column padded">
             <p className="table-title">
               {ftInfo.unlocked ? "Unlocked" : "Locked"}
             </p>
@@ -229,7 +232,17 @@ const WithdrawTable = ({
                     className="button secondary"
                   />
                 ) : (
-                  <small>Your not a taker</small>
+                  <button
+                    className="button"
+                    style={{
+                      cursor: "not-allowed",
+                      backgroundColor: "grey",
+                      padding: "0px 1rem",
+                    }}
+                    disabled
+                  >
+                    Your not a taker
+                  </button>
                 )}
               </div>
             ) : (
@@ -238,6 +251,7 @@ const WithdrawTable = ({
                 style={{
                   cursor: "not-allowed",
                   backgroundColor: "grey",
+                  padding: "0px 1rem",
                 }}
                 disabled
               >

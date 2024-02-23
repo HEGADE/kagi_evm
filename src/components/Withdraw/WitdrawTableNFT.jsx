@@ -137,18 +137,6 @@ const WithdrawTableNFT = ({
         <div className="table-row medium">
           <div className="table-column" key={lockID}>
             <div className="product-preview tiny">
-              <a>
-                <figure
-                  className="product-preview-image short liquid"
-                  style={{ background: "url('img/btc-logo.svg')" }}
-                >
-                  <img
-                    src="img/btc-logo.svg"
-                    alt="item-11"
-                    style={{ display: "none" }}
-                  />
-                </figure>
-              </a>
               <div className="product-preview-info">
                 <p className="product-preview-title">{assetName}</p>
               </div>
@@ -188,6 +176,9 @@ const WithdrawTableNFT = ({
               {ftInfo.unlocked ? "unlocked" : "locked"}
             </p>
           </div>
+          <div className="table-column padded">
+            <p className="table-title">{assetID}</p>
+          </div>
 
           <div className="table-column padded">
             <p className="table-title">{lockedTime}</p>
@@ -217,7 +208,7 @@ const WithdrawTableNFT = ({
                     className="button secondary"
                   />
                 ) : (
-                  <small>Your not a taker</small>
+                  <button className="button secondary">Your not a taker</button>
                 )}
               </div>
             ) : (
@@ -226,6 +217,7 @@ const WithdrawTableNFT = ({
                 style={{
                   cursor: "not-allowed",
                   backgroundColor: "grey",
+                  padding: "0px 1rem",
                 }}
                 disabled
               >

@@ -1,6 +1,12 @@
 import React from "react";
 
-const TokenCard = ({ tokenName, totalTokenAmount, lockTime, tokenAmount,ticker }) => {
+const TokenCard = ({
+  tokenName,
+  totalTokenAmount,
+  lockTime,
+  tokenAmount,
+  ticker,
+}) => {
   return (
     <>
       <div className="quest-item">
@@ -29,7 +35,9 @@ const TokenCard = ({ tokenName, totalTokenAmount, lockTime, tokenAmount,ticker }
                 src="assets/img/btc-logo.svg"
                 alt="btc-logo"
               />
-              <h3 className="table-title">{tokenName} ({ticker})</h3>
+              <h3 className="table-title">
+                {tokenName} ({ticker})
+              </h3>
             </span>
             <h4 className="table-title table-value">${tokenAmount}m</h4>
           </div>
@@ -41,7 +49,9 @@ const TokenCard = ({ tokenName, totalTokenAmount, lockTime, tokenAmount,ticker }
                 src="assets/img/btc-logo.svg"
                 alt="btc-logo"
               />
-              <h3 className="table-title">{tokenName} ({ticker})</h3>
+              <h3 className="table-title">
+                {tokenName} ({ticker})
+              </h3>
             </span>
             <h4 className="table-title table-value">${tokenAmount}m</h4>
           </div>
@@ -53,7 +63,9 @@ const TokenCard = ({ tokenName, totalTokenAmount, lockTime, tokenAmount,ticker }
                 src="assets/img/btc-logo.svg"
                 alt="btc-logo"
               />
-              <h3 className="table-title">{tokenName} ({ticker})</h3>
+              <h3 className="table-title">
+                {tokenName} ({ticker})
+              </h3>
             </span>
             <h4 className="table-title table-value">${tokenAmount}m</h4>
           </div>
@@ -272,7 +284,9 @@ const TokenCard = ({ tokenName, totalTokenAmount, lockTime, tokenAmount,ticker }
             </div>
             <div className="quest-item-meta-info">
               <p className="quest-item-meta-title">+24 Tokens</p>
-              <p className="quest-item-meta-text">Locked in past {lockTime} Days</p>
+              <p className="quest-item-meta-text">
+                Locked in past {lockTime} Days
+              </p>
             </div>
           </div>
         </div>

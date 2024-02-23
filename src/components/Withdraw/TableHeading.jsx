@@ -21,6 +21,9 @@ const FtTableHeading = () => {
           <p className="table-header-title">Tokens Locked</p>
         </div>
         <div className="table-header-column padded">
+          <p className="table-header-title">Lock ID</p>
+        </div>
+        <div className="table-header-column padded">
           <p className="table-header-title">Status</p>
         </div>
         <div className="table-header-column padded">
@@ -49,6 +52,9 @@ const NFTTableHeading = () => {
         </div>
         <div className="table-header-column padded">
           <p className="table-header-title">Status</p>
+        </div>
+        <div className="table-header-column padded">
+          <p className="table-header-title">NFTID</p>
         </div>
         <div className="table-header-column padded">
           <p className="table-header-title">Locked Time</p>

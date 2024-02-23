@@ -5566,7 +5566,7 @@ figure > img {
     padding-left: 60px;
 }
 .table .table-header-column:first-child {
-    padding-left: 87px;
+    padding-left: 27px;
 }
 .table .table-header-column:last-child {
     padding-right: 28px;
@@ -11618,6 +11618,13 @@ figure > img {
     transition: transform 0.35s ease-in-out;
     transition: transform 0.35s ease-in-out, -webkit-transform 0.35s ease-in-out;
 }
+.content-grid-sidebar-collapsed {
+    max-width: 1184px;
+    transform: translate(120px, 0px) !important;
+    padding: 112px 0 100px;
+}
+
+
 .sidebar.navigation-widget.navigation-widget-mobile {
     margin-top: 0;
     z-index: 100000;
@@ -26597,6 +26604,11 @@ body.dark {
         margin-top: 6px;
         font-size: .75rem
     }
+}
+
+
+.desktop-side-bar-width {
+    width: 70px;
 }
 
 @media screen and (max-width: 480px) {
