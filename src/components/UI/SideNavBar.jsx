@@ -1,14 +1,21 @@
 import React, { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useUIStore } from "../../store/ui.store";
 const SideNavBar = () => {
   const location = useLocation();
   const mobileNavigationRef = useRef(null);
+
+  const open = useUIStore((state) => state.isMenuBarOpen);
 
   return (
     <>
       <nav
         id="navigation-widget"
-        className="navigation-widget navigation-widget-desktop sidebar left delayed"
+        className={
+          open
+            ? "desktop-side-bar-width navigation-widget navigation-widget-desktop sidebar left delayed"
+            : "navigation-widget navigation-widget-desktop sidebar left delayed"
+        }
         data-simplebar
       >
         <ul className="menu">

@@ -69,8 +69,6 @@ const Header = () => {
       contentGrid.classList.add("content-grid");
       contentGrid.classList.remove("content-grid-sidebar-collapsed");
     }
-
-    sidebar.classList.toggle("desktop-side-bar-width");
   };
 
   return (
