@@ -8,7 +8,7 @@ export const createDeployableTokenContractFT = (
 
   const traitToBeUsed =
     networkBeingUsed === "TESTNET"
-      ? "ST1ETGPP1H4D5WEGEDJXG5XVY5AA3K4N2EW4ZBYE1"
+      ? "ST390N6P90C8V9TDT0KHSHR28VF58SS2QS9HE7A1K"
       : "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE";
 
   const contract = `
@@ -78,20 +78,20 @@ export const createDeployableTokenContractNFT = (
 
   const traitToBeUsed =
     networkBeingUsed === "TESTNET"
-      ? "ST1ETGPP1H4D5WEGEDJXG5XVY5AA3K4N2EW4ZBYE1"
+      ? "ST390N6P90C8V9TDT0KHSHR28VF58SS2QS9HE7A1K"
       : "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9";
 
   const contract = `
     (impl-trait '${traitToBeUsed}.sip009-nft-trait.sip-009-trait)
-  
+
     (define-constant contract-owner tx-sender)
     (define-constant err-owner-only (err u100))
     (define-constant err-not-token-owner (err u101))
-    
+
     (define-non-fungible-token ${formattedContractName} uint)
-    
+
     (define-data-var last-token-id uint u0)
-    
+
     (define-read-only (get-last-token-id)
         (ok (var-get last-token-id))
     )
@@ -99,22 +99,22 @@ export const createDeployableTokenContractNFT = (
     (define-read-only (get-name)
 	(ok "${name}")
 )
-    
+
     (define-read-only (get-token-uri (token-id uint))
         (ok (some "${url}"))
     )
-    
+
     (define-read-only (get-owner (token-id uint))
         (ok (nft-get-owner? ${formattedContractName} token-id))
     )
-    
+
     (define-public (transfer (token-id uint) (sender principal) (recipient principal))
         (begin
             (asserts! (is-eq tx-sender sender) err-not-token-owner)
             (nft-transfer? ${formattedContractName} token-id sender recipient)
         )
     )
-    
+
     (define-public (mint (recipient principal))
         (let
             (
@@ -126,7 +126,7 @@ export const createDeployableTokenContractNFT = (
             (ok token-id)
         )
     )
-  
+
       `;
 
   return contract;
