@@ -6,9 +6,13 @@ export const createDeployableTokenContractFT = (
 ) => {
   const formattedContractName = transformString(name);
 
+  console.log("formattedContractName", formattedContractName);
+
+  const supplyToBeUsed = supply ? `u${supply}` : "";
+
   const traitToBeUsed =
     networkBeingUsed === "TESTNET"
-      ? "ST390N6P90C8V9TDT0KHSHR28VF58SS2QS9HE7A1K"
+      ? "ST1ETGPP1H4D5WEGEDJXG5XVY5AA3K4N2EW4ZBYE1"
       : "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE";
 
   const contract = `
@@ -17,7 +21,7 @@ export const createDeployableTokenContractFT = (
 
 (define-constant contract-owner tx-sender)
 
-(define-fungible-token ${formattedContractName})
+(define-fungible-token ${formattedContractName} ${supplyToBeUsed})
 
 (define-constant err-owner-only (err u100))
 (define-constant err-not-token-owner (err u102))
@@ -78,7 +82,7 @@ export const createDeployableTokenContractNFT = (
 
   const traitToBeUsed =
     networkBeingUsed === "TESTNET"
-      ? "ST390N6P90C8V9TDT0KHSHR28VF58SS2QS9HE7A1K"
+      ? "ST1ETGPP1H4D5WEGEDJXG5XVY5AA3K4N2EW4ZBYE1"
       : "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9";
 
   const contract = `

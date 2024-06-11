@@ -89,7 +89,7 @@ export const CreateTokenSchemaFT = yup.object().shape({
   supply: yup
     .number()
     .integer("Decimal places are not allowed")
-    .required("Supply is required")
+    .optional()
     .min(1, "Supply must be greater than 1")
     .typeError("Supply is required"),
   decimals: yup

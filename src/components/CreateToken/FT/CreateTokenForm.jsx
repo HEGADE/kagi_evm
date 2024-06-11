@@ -35,8 +35,7 @@ const CreateTokenFormFT = () => {
   });
 
   const [buttonLoading, setButtonLoading] = useState(false);
-
-  console.log(errors, isValid, "::");
+  const [includeTotalSupply, setIncludeTotalSupply] = useState(false);
 
   const onSubmit = async (data) => {
     setButtonLoading(true);
@@ -119,11 +118,25 @@ const CreateTokenFormFT = () => {
                   <div className="form-item">
                     <div className="form-input small">
                       <input
+                        type="checkbox"
+                        name="include"
+                        onClick={() => setIncludeTotalSupply((pre) => !pre)}
+                      />
+                      <label for="include">
+                        Do you Want to include the total Supply?
+                      </label>
+                      <input
+                        disabled={!includeTotalSupply}
+                        style={{
+                          cursor: !includeTotalSupply
+                            ? "not-allowed"
+                            : "pointer",
+                        }}
                         placeholder="Token Supply"
                         type="text"
                         id="supply"
                         name="supply"
-                        {...register("supply", { required: true })}
+                        {...register("supply", { required: false })}
                       />
                       <ValidationError err={errors.supply} />
                     </div>
