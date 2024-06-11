@@ -36,7 +36,7 @@ export default function TransactionToastProvider({ children }) {
 
   async function updateAllTransactions(transactionIds) {
     transactionIds.forEach(async (transactionId) => {
-      console.log("Checking latest status of transaction:", transactionId);
+      // console.log("Checking latest status of transaction:", transactionId);
       await getTransactionStatus(transactionId);
     });
   }
@@ -46,7 +46,6 @@ export default function TransactionToastProvider({ children }) {
     const url = `${apiUrl}/extended/v1/tx/${transactionId}`;
     const res = await fetch(url);
     const json = await res.json();
-    console.log(successMsgs, "msgs");
     const transactionSuccess = successMsgs[transactionId];
     const status = json["tx_status"];
     if (status === "pending") {
@@ -62,6 +61,8 @@ export default function TransactionToastProvider({ children }) {
       });
       emitEvent();
       setTransactionLoading(false);
+
+      console.log(json, "data from the transaction success ");
     } else {
       toast.error("Transaction failed", { id: transactionId });
       setTransactionLoading(false);
