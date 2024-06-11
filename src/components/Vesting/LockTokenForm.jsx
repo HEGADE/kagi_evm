@@ -449,71 +449,68 @@ const LockTokenAddress = ({
   const handleNext = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (
-      tokenAddress &&
-      tokenAddress?.length > 0 &&
-      tokenAddress?.length >= 34 &&
-      tokenAddress?.length <= 52
-    ) {
-      try {
-        principalCV(tokenAddress);
-        const currentBlockHeight = fetchFromVestingContract({
-          network,
-          address,
-          contractFunctionName: "get-current-block-height",
+
+    try {
+      console.log(principalCV(tokenAddress), "tokenAddress");
+
+      const currentBlockHeight = fetchFromVestingContract({
+        network,
+        address,
+        contractFunctionName: "get-current-block-height",
+      });
+      if (!nft) {
+        let [assetName, decimals, balance, symbol] = await Promise.all([
+          fetch({ functionName: "get-name" }),
+          fetch({ functionName: "get-decimals" }),
+          fetch({
+            functionName: "get-balance",
+            args: [principalCV(address)],
+          }),
+          fetch({ functionName: "get-symbol" }),
+        ]);
+
+        setData((pre) => {
+          return {
+            ...pre,
+            assetName: assetName?.value,
+            decimals: Number(decimals?.value),
+            currentBlockHeight: Number(currentBlockHeight?.value),
+            balance: reduceToPowerOf(balance?.value, decimals?.value),
+            symbol: symbol?.value,
+          };
         });
-        if (!nft) {
-          let [assetName, decimals, balance, symbol] = await Promise.all([
-            fetch({ functionName: "get-name" }),
-            fetch({ functionName: "get-decimals" }),
-            fetch({
-              functionName: "get-balance",
-              args: [principalCV(address)],
-            }),
-            fetch({ functionName: "get-symbol" }),
-          ]);
+      } else {
+        let [assetName, decimals, balance] = await Promise.all([
+          fetch({ functionName: "get-name" }),
 
-          setData((pre) => {
-            return {
-              ...pre,
-              assetName: assetName?.value,
-              decimals: Number(decimals?.value),
-              currentBlockHeight: Number(currentBlockHeight?.value),
-              balance: reduceToPowerOf(balance?.value, decimals?.value),
-              symbol: symbol?.value,
-            };
-          });
-        } else {
-          let [assetName, decimals, balance] = await Promise.all([
-            fetch({ functionName: "get-name" }),
+          fetch({
+            functionName: "get-last-token-id",
+            args: [],
+          }),
+        ]);
 
-            fetch({
-              functionName: "get-last-token-id",
-              args: [],
-            }),
-          ]);
-
-          setData((pre) => {
-            return {
-              ...pre,
-              assetName: assetName?.value,
-              decimals: Number(decimals?.value),
-              currentBlockHeight: Number(currentBlockHeight?.value),
-              balance: reduceToPowerOf(balance?.value, decimals?.value),
-            };
-          });
-        }
-        setMargin(true);
-        setMoveToLockPage(true);
-      } catch (err) {
-        toast.error("No data Found for the given contract", {
+        setData((pre) => {
+          return {
+            ...pre,
+            assetName: assetName?.value,
+            decimals: Number(decimals?.value),
+            currentBlockHeight: Number(currentBlockHeight?.value),
+            balance: reduceToPowerOf(balance?.value, decimals?.value),
+          };
+        });
+      }
+      setMargin(true);
+      setMoveToLockPage(true);
+    } catch (err) {
+      if (err.message.split(":")[0] === "Invalid c32 address") {
+        toast.error("Invalid Contract Address", {
           position: "bottom-right",
         });
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      toast.error("Please enter the valid token address");
+      } else
+        toast.error("No data Found for the given contract..", {
+          position: "bottom-right",
+        });
+    } finally {
       setLoading(false);
     }
   };
