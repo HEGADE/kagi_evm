@@ -9,6 +9,7 @@ import DashBoard from "./pages/DashBoard";
 import ContactUs from "./pages/ContactUs";
 import { CreateToken } from "./pages/CreateToken";
 import { TraceableTokens } from "./pages/TraceableTokens";
+import { BulkTransfer } from "./pages/BulkTransfer";
 
 function App() {
   // SCRIPT LOAD
@@ -44,6 +45,7 @@ function App() {
           <Route path="smart-contact-audit" element={<ContactUs />} />
           <Route path="create-token" element={<CreateToken />} />
           <Route path="tradeable-token" element={<TraceableTokens />} />
+          <Route path="bulk-transfer" element={<BulkTransfer />} />
         </Route>
       </Routes>
     </Router>
