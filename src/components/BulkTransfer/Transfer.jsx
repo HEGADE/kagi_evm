@@ -53,9 +53,11 @@ export function Transfer() {
       // Check the file extension
       const fileExtension = inputFile?.type.split("/")[1];
       if (!allowedExtensions.includes(fileExtension)) {
-        toast.error(
-          "⛔️  Invalid File Extension. \n\nOnly CSV extension allowed!"
-        );
+        toast.error("⛔️ Only CSV extension allowed!", {
+          duration: 5000,
+          position: "bottom-right",
+        });
+        setFile(null);
         return;
       }
 
@@ -63,41 +65,33 @@ export function Transfer() {
     }
   };
 
-  const handleParse = () => {
-    console.info("Calling handleParse");
+  const handleParse = (e) => {
     if (!file) return toast.error("⛔️  Please enter a valid file!");
 
-    try {
-      // When the file loads, we parse it and set the data
-      principalCV(tokenAddress);
-      Parser.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-          const recipientList = [];
-          const amountList = [];
+    // When the file loads, we parse it and set the data
+    Parser.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        const recipientLists = [];
+        const amountList = [];
 
-          // Iterating data to get column name and their values
-          let keys = results.meta.fields;
-          console.info("keys: ", keys);
-          results.data.map((d) => {
-            recipientList.push(d[keys[0]]);
+        // Iterating data to get column name and their values
+        let keys = results.meta.fields;
+
+        results.data
+          .filter((d) => !(d[keys[0]] === address?.toString()))
+          .map((d) => {
+            recipientLists.push(d[keys[0]]);
             amountList.push(Number(d[keys[1]]));
           });
 
-          setRecipientList(recipientList);
-          setAmountList(amountList);
-        },
-      });
-    } catch (err) {
-      const actualErrorMsg = err?.message?.split(":")[0];
-      if (actualErrorMsg === "Invalid c32 address") {
-        toast.error("⛔️ Please Enter Valid Token Address");
-      }
-    }
+        transferTokens(e, recipientLists, amountList);
+      },
+    });
   };
 
-  const transferTokens = async (e) => {
+  const transferTokens = async (e, recipientList, amountList) => {
     e.preventDefault();
 
     if (!address) {
@@ -108,9 +102,7 @@ export function Transfer() {
     setLoading(true);
 
     try {
-      // Parse file data
-      await handleParse();
-
+      principalCV(tokenAddress);
       const contractInfoResult = await fetchFromContractForBulkTransfer(
         tokenAddress,
         network,
@@ -128,6 +120,7 @@ export function Transfer() {
           },
         ]
       );
+
       console.info("👓  contractInfoResult: ", contractInfoResult);
 
       const tokenSymbol = contractInfoResult?.contractInfo[0]?.value;
@@ -148,6 +141,7 @@ export function Transfer() {
       let transactionInfo = [];
       // let transactionInfo: TupleCV<TransactionInfo>[] = [];
       let totalTokens = 0;
+
       recipientList.map((recipient, index) => {
         if (recipient !== address) {
           const amount = amountList[index];
@@ -215,6 +209,7 @@ export function Transfer() {
           });
         }
       }
+      setTokenAddress(null);
     } finally {
       setLoading(false);
     }
@@ -377,7 +372,7 @@ export function Transfer() {
               loaderColor="blue"
               isLoading={loading}
               disabled={isButtonDisabled}
-              onClick={transferTokens}
+              onClick={handleParse}
             />
           </div>
         </form>
