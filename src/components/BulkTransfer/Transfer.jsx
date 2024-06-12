@@ -37,9 +37,9 @@ export function Transfer() {
   const [loading, setLoading] = useState(false);
 
   const { network, address } = useStacks();
-  const { addTransactionToast } = useTransactionToasts(
-    "Transfer Successfully "
-  );
+  const { addTransactionToast } = useTransactionToasts({
+    success: "🎉 Tokens Transferred Successfully!",
+  });
 
   const handleFileChange = async (e) => {
     e.preventDefault();
@@ -110,8 +110,6 @@ export function Transfer() {
     try {
       // Parse file data
       await handleParse();
-
-      // const network = new StacksMocknet();
 
       const contractInfoResult = await fetchFromContractForBulkTransfer(
         tokenAddress,
