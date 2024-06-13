@@ -67,7 +67,6 @@ export function Transfer() {
 
   const handleParse = (e) => {
     if (!file) return toast.error("⛔️  Please enter a valid file!");
-
     // When the file loads, we parse it and set the data
     Parser.parse(file, {
       header: true,
@@ -85,8 +84,34 @@ export function Transfer() {
             recipientLists.push(d[keys[0]]);
             amountList.push(Number(d[keys[1]]));
           });
+        let InvalidAddress = "";
+        try {
+          recipientLists.forEach((recipient) => {
+            InvalidAddress = recipient;
+            principalCV(recipient);
+          });
+          amountList.forEach((amount) => {
+            if (amount <= 0) {
+              throw new Error("Amount Error");
+            }
+          });
+          transferTokens(e, recipientLists, amountList);
+        } catch (err) {
+          if (err.message === "Amount Error") {
+            toast.error("⛔️  Amount should be greater than 0 in CSV fle", {
+              duration: 5000,
+              position: "bottom-right",
+            });
+          } else
+            toast.error(
+              ` ${InvalidAddress} this address  in Csv File  is not Valid`,
+              {
+                duration: 5000,
 
-        transferTokens(e, recipientLists, amountList);
+                position: "bottom-right",
+              }
+            );
+        }
       },
     });
   };
