@@ -6,6 +6,7 @@ const TokenCard = ({
   lockTime,
   tokenAmount,
   ticker,
+  index,
 }) => {
   return (
     <>
@@ -14,7 +15,7 @@ const TokenCard = ({
           className="quest-item-cover liquid"
           style={{
             background:
-              'url("assets/img/cover.png") center center / cover no-repeat',
+              'url("assets/img/banner.jpeg") center center / cover no-repeat',
           }}
         >
           <img
@@ -23,51 +24,65 @@ const TokenCard = ({
             style={{ display: "none" }}
           />
         </figure>
-        <p className="text-sticker small-text">${totalTokenAmount}m</p>
+        <p
+          style={{
+            visibility: "hidden",
+          }}
+          className="text-sticker small-text"
+        >
+          ${totalTokenAmount * (index + 1)}m
+        </p>
         <div className="quest-item-info">
-          <h4 className="quest-item-title">Token Locked Past {lockTime}D</h4>
+          <h4 className="quest-item-title">Token Locked until now</h4>
           <br />
           <div className="table-information">
             <span className="d-flex align-items-center">
-              <h4 className="table-title">1</h4>
-              <img
+              {/* <h4 className="table-title">1 </h4> */}
+              {/* <img
                 className="table-image"
                 src="assets/img/btc-logo.svg"
                 alt="btc-logo"
-              />
+              /> */}
               <h3 className="table-title">
+                {" "}
                 {tokenName} ({ticker})
               </h3>
             </span>
-            <h4 className="table-title table-value">${tokenAmount}m</h4>
+            <h4 className="table-title table-value">
+              ${tokenAmount * (index + 1)}m
+            </h4>
           </div>
           <div className="table-information">
             <span className="d-flex align-items-center">
-              <h4 className="table-title">2</h4>
-              <img
+              {/* <h4 className="table-title">2</h4> */}
+              {/* <img
                 className="table-image"
                 src="assets/img/btc-logo.svg"
                 alt="btc-logo"
-              />
+              /> */}
               <h3 className="table-title">
                 {tokenName} ({ticker})
               </h3>
             </span>
-            <h4 className="table-title table-value">${tokenAmount}m</h4>
+            <h4 className="table-title table-value">
+              ${tokenAmount + index * 1.3}m
+            </h4>
           </div>
           <div className="table-information">
             <span className="d-flex align-items-center">
-              <h4 className="table-title">3</h4>
-              <img
+              {/* <h4 className="table-title">3</h4> */}
+              {/* <img
                 className="table-image"
                 src="assets/img/btc-logo.svg"
                 alt="btc-logo"
-              />
+              /> */}
               <h3 className="table-title">
                 {tokenName} ({ticker})
               </h3>
             </span>
-            <h4 className="table-title table-value">${tokenAmount}m</h4>
+            <h4 className="table-title table-value">
+              ${tokenAmount + index * 0.4}m
+            </h4>
           </div>
           <div className="quest-item-meta">
             <div className="user-avatar-list">
@@ -283,9 +298,14 @@ const TokenCard = ({
               </div>
             </div>
             <div className="quest-item-meta-info">
-              <p className="quest-item-meta-title">+24 Tokens</p>
-              <p className="quest-item-meta-text">
-                Locked in past {lockTime} Days
+              <p className="quest-item-meta-title">+2{index} Tokens</p>
+              <p
+                className="quest-item-meta-text"
+                style={{
+                  color: "blue",
+                }}
+              >
+                More info
               </p>
             </div>
           </div>

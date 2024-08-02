@@ -8,6 +8,7 @@ import { PageLoader } from "../UI/PageLoader";
 import ConnectWallet, { ConnectWalletWithDropDown } from "../UI/ConnectWallet";
 import { IconBackArrow, IconBulb, IconClose } from "../UI/Icons";
 import { useUIStore } from "../../store/ui.store.js";
+import { Image } from "@mantine/core";
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
@@ -92,7 +93,7 @@ const Header = () => {
                   <IconBackArrow />
                 </Link>
               ) : (
-                "Token"
+                <Image src={"assets/img/kagi-logo2.png"} w={"200"} h={"50"} />
               )}
             </h1>
           </div>

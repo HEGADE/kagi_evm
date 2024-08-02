@@ -105,7 +105,8 @@ export const CreateTokenSchemaFT = yup.object().shape({
 export const createNFTSchema = yup.object().shape({
   url: yup.string().url("Invalid URL").required("URL is required"),
   name: yup
-    .string().max(30,"Name should not be greater than 30 characters")
+    .string()
+    .max(30, "Name should not be greater than 30 characters")
     .matches(
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
@@ -116,4 +117,12 @@ export const createNFTSchema = yup.object().shape({
       }
       return true;
     }),
+});
+
+export const VestTokenSchema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  address: yup.string().required("Address is required"),
+  amount: yup.number().required("Amount is required"),
+  cliff: yup.number().required("Cliff is required"),
+  vestingPeriod: yup.number().required("Vesting Period is required"),
 });

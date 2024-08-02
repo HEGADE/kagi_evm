@@ -16,14 +16,14 @@ const TraceableTokenContainer = () => {
             <div className="create-entity-box-avatar primary">
               <img
                 className="table-image"
-                src="assets/img/btc-logo.svg"
+                src="assets/img/kagi-logo-no-name.png"
                 alt="btc-logo"
                 style={{ height: 60 }}
               />
             </div>
             <div className="create-entity-box-info">
-              <p className="create-entity-box-title">Brc Launcher</p>
-              <p className="create-entity-box-category">$BRCL</p>
+              <p className="create-entity-box-title">KAGI</p>
+              <p className="create-entity-box-category">$KG</p>
               <p className="button primary full popup-manage-item-trigger">
                 View Details
               </p>
@@ -34,14 +34,14 @@ const TraceableTokenContainer = () => {
             <div className="create-entity-box-avatar primary">
               <img
                 className="table-image"
-                src="assets/img/btc-logo.svg"
+                src="assets/img/kagi-logo-no-name.png"
                 alt="btc-logo"
                 style={{ height: 60 }}
               />
             </div>
             <div className="create-entity-box-info">
-              <p className="create-entity-box-title">Brc Launcher</p>
-              <p className="create-entity-box-category">$BRCL</p>
+              <p className="create-entity-box-title">KAPE</p>
+              <p className="create-entity-box-category">$KP</p>
               <p className="button primary full popup-manage-item-trigger">
                 View Details
               </p>

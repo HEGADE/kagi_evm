@@ -16,7 +16,7 @@ const TokenDashBoard = () => {
           </div>
           <div className="grid grid-4-4-4 centered">
             {tokenData.map((token, index) => {
-              return <TokenCard key={index} {...token} />;
+              return <TokenCard key={index} index={index} {...token} />;
             })}
           </div>
           <section className="section">

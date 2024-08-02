@@ -10,6 +10,7 @@ import ContactUs from "./pages/ContactUs";
 import { CreateToken } from "./pages/CreateToken";
 import { TraceableTokens } from "./pages/TraceableTokens";
 import { BulkTransfer } from "./pages/BulkTransfer";
+import { Vesting } from "./pages/Vesting";
 
 function App() {
   // SCRIPT LOAD
@@ -46,6 +47,7 @@ function App() {
           <Route path="create-token" element={<CreateToken />} />
           <Route path="tradeable-token" element={<TraceableTokens />} />
           <Route path="bulk-transfer" element={<BulkTransfer />} />
+          <Route path="vest-token" element={<Vesting />} />
         </Route>
       </Routes>
     </Router>

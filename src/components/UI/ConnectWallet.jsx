@@ -6,6 +6,7 @@ import { shortAddress } from "../../utils/format/address.format";
 import { useStacks } from "../../providers/StacksProvider";
 import { copy } from "../../utils/copy-text";
 import toast from "react-hot-toast";
+import { ModalMantine } from "./Modal";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -29,18 +30,7 @@ export function authenticate() {
   });
 }
 const ConnectWallet = () => {
-  return (
-    <>
-      {!userSession.isUserSignedIn() ? (
-        <button
-          className="button primary wallet-connect"
-          onClick={authenticate}
-        >
-          Connect Wallet
-        </button>
-      ) : null}
-    </>
-  );
+  return <>{!userSession.isUserSignedIn() ? <ModalMantine /> : null}</>;
 };
 
 export const ConnectWalletWithDropDown = () => {

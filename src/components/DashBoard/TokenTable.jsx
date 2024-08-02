@@ -1,5 +1,6 @@
 import React from "react";
 import { tokenTable } from "./data-token";
+import { Image } from "@mantine/core";
 
 const TokenTable = () => {
   return (
@@ -83,27 +84,32 @@ const TokenTable = () => {
           <div className="user-stat d-none d-lg-block">
             <p className="user-stat-title">Unlock Value</p>
           </div>
-          <div className="user-stat d-none d-lg-block">
+          <div
+            style={{
+              visibility: "hidden",
+            }}
+            className="user-stat d-none d-lg-block"
+          >
             <p className="user-stat-title">Next Unlock</p>
           </div>
         </div>
 
-        <div className="user-preview landscape">
-          <figure
-            className="user-preview-cover liquid"
-            style={{
-              background:
-                'url("assets/img/token-cover.jpg") center center / cover no-repeat',
-            }}
-          >
-            <img
-              src="assets/img/token-cover.jpg"
-              alt="cover-04"
-              style={{ display: "none" }}
-            />
-          </figure>
-          {tokenTable.map((token) => {
-            return (
+        {tokenTable.map((token) => {
+          return (
+            <div className="user-preview landscape">
+              <figure
+                className="user-preview-cover liquid"
+                style={{
+                  background:
+                    'url("assets/img/token-cover.jpg") center center / cover no-repeat',
+                }}
+              >
+                <img
+                  src="assets/img/token-cover.jpg"
+                  alt="cover-04"
+                  style={{ display: "none" }}
+                />
+              </figure>
               <>
                 <div className="user-preview-info">
                   <div className="user-short-description landscape tiny">
@@ -130,7 +136,7 @@ const TokenTable = () => {
                       <div className="user-avatar-content">
                         <div
                           className="hexagon-image-30-32"
-                          data-src="assets/img/btc-logo.svg"
+                          data-src="https://cdn.prod.website-files.com/618b0aafa4afde9048fe3926/62b7a54730c30d0840766c4d_clarity%20favicon%20(1).png"
                           style={{
                             width: 50,
                             height: 52,
@@ -161,11 +167,22 @@ const TokenTable = () => {
                         </div>
                       </div>
                     </a>
-                    <p className="user-short-description-title">
+                    <p
+                      className="user-short-description-title"
+                      style={{
+                        display: "flex",
+                        gap: ".4rem",
+                        // justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span>
+                        <Image src={token.logo} w="50" h="50" />
+                      </span>
                       <a href="project-overview.html">{token.projectName} </a>
                     </p>
                     <p className="user-short-description-text">
-                      <a href="project-overview.html">$BRCL</a>
+                      {/* <a href="project-overview.html">$BRCL</a> */}
                     </p>
                   </div>
                   <div className="user-stats">
@@ -175,12 +192,12 @@ const TokenTable = () => {
                   </div>
                   <div className="user-stats">
                     <div className="user-stat">
-                      <p className="user-stat-title">${token.marketcap}m</p>
+                      <p className="user-stat-title">${token.marketcap}</p>
                     </div>
                   </div>
                   <div className="user-stats">
                     <div className="user-stat">
-                      <p className="user-stat-title">${token.cirSupply}m</p>
+                      <p className="user-stat-title">${token.cirSupply}</p>
                     </div>
                   </div>
                   <div className="user-stats">
@@ -198,7 +215,12 @@ const TokenTable = () => {
                       <p className="user-stat-title">${token.unlockValue}</p>
                     </div>
                   </div>
-                  <div className="social-links small">
+                  <div
+                    style={{
+                      visibility: "hidden",
+                    }}
+                    className="social-links small"
+                  >
                     <div id="clockdiv">
                       <div>
                         <span className="days" />
@@ -220,9 +242,9 @@ const TokenTable = () => {
                   </div>
                 </div>
               </>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
       <div className="section-pager-bar">
         <div className="section-pager">
