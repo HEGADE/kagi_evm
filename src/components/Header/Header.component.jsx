@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AppConfig, showConnect, UserSession } from "@stacks/connect";
 import { Outlet, useLocation, Navigate, Link } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -9,31 +9,29 @@ import ConnectWallet, { ConnectWalletWithDropDown } from "../UI/ConnectWallet";
 import { IconBackArrow, IconBulb, IconClose } from "../UI/Icons";
 import { useUIStore } from "../../store/ui.store.js";
 import { Image } from "@mantine/core";
+import { MetamaskContext } from "../../context/MetamaskContext.js";
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
 
-export function authenticate() {
-  showConnect({
-    appDetails: {
-      name: "Stacks React Starter",
-      icon: window.location.origin + "/logo512.png",
-    },
-    redirectTo: "/",
-    onFinish: () => {
-      window.location.reload();
-    },
-    userSession,
-  });
-}
-
-function disconnect() {
-  userSession.signUserOut("/");
-}
+// export function authenticate() {
+//   showConnect({
+//     appDetails: {
+//       name: "Stacks React Starter",
+//       icon: window.location.origin + "/logo512.png",
+//     },
+//     redirectTo: "/",
+//     onFinish: () => {
+//       window.location.reload();
+//     },
+//     userSession,
+//   });
+// }
 
 const Header = () => {
   const [loading, setLoading] = useState(true);
 
+  const {accountID} = useContext(MetamaskContext)
   const open = useUIStore((state) => state.isMenuBarOpen);
   const setOpen = useUIStore((state) => state.setIsMenuBarOpen);
 
@@ -139,7 +137,7 @@ const Header = () => {
         </div>
         <div className="header-actions">
           <ConnectWallet />
-          {!!userSession.isUserSignedIn() && <ConnectWalletWithDropDown />}
+          {!!accountID && <ConnectWalletWithDropDown />}
           <div className="action-list" style={{ visibility: "hidden" }}>
             <div className="action-list-item-wrap">
               <div className="action-list-item header-dropdown-trigger ">

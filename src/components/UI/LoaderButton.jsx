@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { AppConfig, UserSession } from "@stacks/connect";
 import ConnectWallet from "./ConnectWallet";
+import { ConnectWalletMetamask } from "./Modal";
+import { MetamaskContext } from "../../context/MetamaskContext";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -16,8 +18,10 @@ const ButtonWithLoading = ({
   marginLft = 0,
   ...rest
 }) => {
-  if (!userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
+  const {accountID} = useContext(MetamaskContext)
+  
+  if (!accountID) {
+    return <ConnectWalletMetamask />;
   }
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -14,6 +14,7 @@ import { NETWORK } from "../../lib/constants";
 import { deployContract } from "../../utils/deploy-contract/deployContract";
 import { TokenInfoCard } from "../CreateToken/TokenInfoCard";
 import ButtonWithLoading from "../UI/LoaderButton";
+import { MetamaskContext } from "../../context/MetamaskContext";
 
 const explorerUrl =
   NETWORK === "TESTNET"
@@ -41,8 +42,13 @@ const VestToken = () => {
 
   const [buttonLoading, setButtonLoading] = useState(false);
   const [includeTotalSupply, setIncludeTotalSupply] = useState(false);
+  const {accountID} = useContext(MetamaskContext)
 
   const onSubmit = async (data) => {
+    if (!accountID) {
+      toast.error("Please connect your wallet before submitting the form.");
+      return;
+    }
     window.location.reload();
     setButtonLoading(true);
     try {

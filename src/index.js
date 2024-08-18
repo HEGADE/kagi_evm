@@ -8,11 +8,11 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import { Connect } from "@stacks/connect-react";
-
 import { userSession } from "./components/Header/Header.component";
 import StacksProvider from "./providers/StacksProvider";
 import TransactionToastProvider from "./providers/TransactionStatusProvider";
+import GlobalContextProvider from "./context/GobalContext";
+import MetamaskContextProvider from "./context/MetamaskContext";
 
 const theme = createTheme({
   /** Put your mantine theme override here */
@@ -21,25 +21,15 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <MantineProvider theme={theme}>
-      <Connect
-        authOptions={{
-          appDetails: {
-            name: "Stacks React Template",
-            icon: window.location.origin + "/logo.png",
-          },
-          redirectTo: "/",
-          onFinish: () => {
-            window.location.reload();
-          },
-          userSession,
-        }}
-      >
-        <StacksProvider>
-          <TransactionToastProvider>
-            <App />
-          </TransactionToastProvider>
-        </StacksProvider>
-      </Connect>
+      <GlobalContextProvider>
+        <MetamaskContextProvider>
+          <StacksProvider>
+            <TransactionToastProvider>
+              <App />
+            </TransactionToastProvider>
+          </StacksProvider>
+        </MetamaskContextProvider>
+      </GlobalContextProvider>
     </MantineProvider>
   </React.StrictMode>
 );
