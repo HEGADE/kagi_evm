@@ -19,7 +19,7 @@ const TokenLock = () => {
   };
   const handlePageFT = () => {
     ftRef.current.classList.add("active");
-    nftRef.current.classList.remove("active");
+    // nftRef.current.classList.remove("active");
     setMargin(false);
     setShowTokenLockForm(true);
     setMoveToLockPage(false);
@@ -48,13 +48,13 @@ const TokenLock = () => {
             >
               Fungible Tokens
             </p>
-            <p
+            {/* <p
               ref={nftRef}
               onClick={handlePageNFT}
               className="tab-switch-button "
             >
               NFT
-            </p>
+            </p> */}
           </div>
         </div>
         <div

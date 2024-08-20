@@ -1,29 +1,17 @@
 import * as yup from "yup";
-import { principalCV, StringAsciiCV } from "@stacks/transactions";
+import { principalCV } from "@stacks/transactions";
 
 export const tokenSchema = (balance) =>
   yup.object().shape({
     assetName: yup.string().optional(),
-    taker: yup
-      .string()
-      .required("taker is required")
-
-      .test("forValidAddress", "taker is invalid", (value) => {
-        try {
-          principalCV(String(value));
-          return true;
-        } catch (err) {
-          console.log(err);
-          return false;
-        }
-      }),
+    token: yup.string().required("taker is required"),
     amount: yup
       .number()
       .integer("Decimal places are not allowed")
       .typeError("amount is required")
       .required("amount is required")
       .min(1, "amount must be greater than 1")
-      .max(balance, "Insufficient Balance"),
+      .max(balance, "amount must be less than token balance"),
     days: yup
       .number()
       .integer("Decimal places are not allowed")
@@ -64,7 +52,6 @@ export const nftSchema = (currentBlockHeight) =>
   });
 
 export const CreateTokenSchemaFT = yup.object().shape({
-  url: yup.string().url("Invalid URL").required("URL is required"),
   name: yup
     .string()
     .matches(
@@ -78,6 +65,23 @@ export const CreateTokenSchemaFT = yup.object().shape({
       }
       return true;
     }),
+  token: yup
+    .string()
+    .matches(
+      /^[a-zA-Z0-9 ]+$/gi,
+      "Only letters and numbers are allowed in Token name"
+    )
+    .max(30, "Token name should not be greater than 30 characters")
+    .test(
+      "forValidName",
+      "Token name should not only contain number",
+      (value) => {
+        if (!isNaN(value)) {
+          return false;
+        }
+        return true;
+      }
+    ),
   symbol: yup
     .string()
     .matches(/^[a-zA-Z0-9]+$/gi, "Only letters and numbers are allowed symbol")
@@ -91,15 +95,8 @@ export const CreateTokenSchemaFT = yup.object().shape({
     .number()
     .integer("Decimal places are not allowed")
     .optional()
-    .min(1, "Supply must be greater than 1")
+    .min(100, "Supply must be greater than 100")
     .typeError("Supply is required"),
-  decimals: yup
-    .number()
-    .integer("Decimal places are not allowed")
-    .required("Decimals is required")
-    .typeError("Decimal is required")
-
-    .min(1, "Decimal must be greater than 0"),
 });
 
 export const createNFTSchema = yup.object().shape({

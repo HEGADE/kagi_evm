@@ -1,64 +1,44 @@
-import React, { useEffect, useState } from "react";
-import { openContractCall } from "@stacks/connect";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+  getTokenBalance,
+  getTokenName,
+  getTokenSymbol,
+  requestAllowance,
+  requestApprove,
+} from "../../services/token.service.js";
+
+import { lockContractAddress } from "../../lib/constants.js";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import {
-  appDetails,
-  contractOwnerAddress,
-  deployedContractName,
-} from "../../lib/constants";
-
-import {
-  uintCV,
-  tupleCV,
-  principalCV,
-  makeStandardSTXPostCondition,
-  stringAsciiCV,
-  FungibleConditionCode,
-  makeStandardFungiblePostCondition,
-  createAssetInfo,
-} from "@stacks/transactions";
-import { getContractAddressAndName } from "../../utils/extract-contract-info";
-import { useStacks } from "../../providers/StacksProvider";
 import ButtonWithLoading from "../UI/LoaderButton";
-import {
-  getFtPostCondition,
-  getFtPostConditionNFT,
-} from "../../utils/postconditions/ft-postcondition";
-import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
+
 import {
   nftSchema,
   tokenSchema,
 } from "../../utils/validation/validation-schema";
 import { ValidationError } from "../UI/Errors";
-import toast from "react-hot-toast";
-import {
-  fetchFromContract,
-  fetchFromVestingContract,
-} from "../../lib/fetch-data";
+
 import { transformString } from "../../utils/format/format-asset-name";
 import { IconBackArrow } from "../UI/Icons";
-import { getFinalAmount, reduceToPowerOf } from "../../utils/final-stx-amount";
-import { formatDate } from "../../utils/format/format-date-time";
-import { useEvent } from "../../store/event.store";
 
-const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
-  const { network, address } = useStacks();
+import { lockToken } from "../../services/lock.services";
+import { MetamaskContext } from "../../context/MetamaskContext";
+import Web3 from "web3";
+import toast from "react-hot-toast";
 
-  const isEventEmitted = useEvent((state) => state.emitted);
-  const restEvent = useEvent((state) => state.reset);
-
+const LockTokenInfo = ({
+  tokenAddress,
+  nft,
+  data,
+  handlePage,
+  setTokenAddress,
+}) => {
   const [loading, setLoading] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
-  const { addTransactionToast } = useTransactionToasts({
-    success: `Successfully locked ${data?.assetName.toLowerCase()} ${
-      nft ? "NFT" : "FT"
-    } `,
-  });
 
-  const res = data;
+  const { accountID } = useContext(MetamaskContext);
 
   const {
     register,
@@ -68,7 +48,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(tokenSchema(data.balance)),
+    resolver: yupResolver(tokenSchema(data?.balance)),
   });
 
   const {
@@ -83,152 +63,31 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     resolver: yupResolver(nftSchema(data.currentBlockHeight)),
   });
 
-  useEffect(() => {
-    if (isEventEmitted) {
-      handlePage();
-    }
-    return () => restEvent();
-  }, [isEventEmitted]);
-
-  useEffect(() => {
-    let sub = watch(async (data, { name, type }) => {
-      if (name === "tokenID") {
-        if (!isFinite(data.tokenID)) return;
-        let res = await fetchFromContract({
-          address,
-          contractFunctionName: "get-owner",
-          args: [uintCV(data.tokenID)],
-          network,
-          contract: tokenAddress,
-        });
-        if (address !== String(res?.value?.value)) {
-          setError("tokenID", {
-            message: "NFT does not belong to you",
-            type: "onChange",
-          });
-          setBtnDisabled(false);
-        } else {
-          console.log("valid");
-          setBtnDisabled(true);
-        }
-      }
-    });
-
-    return () => sub.unsubscribe();
-  }, [watch("tokenID")]);
-
   const onSubmit = async (data) => {
-    const { contractAddress, contractName } =
-      getContractAddressAndName(tokenAddress);
-    const { amount, days, assetName, taker } = data;
-
-    let lockDate = formatDate(new Date());
-
-    let finalAmount = getFinalAmount(res.decimals, amount);
-
     setLoading(true);
 
+    const { token, amount, days } = data;
     try {
-      const stxPostCondition = makeStandardSTXPostCondition(
-        address,
-        FungibleConditionCode.Equal,
-        0
-      );
-      const tokenPostCondition = makeStandardFungiblePostCondition(
-        address,
-        FungibleConditionCode.Equal,
-        finalAmount,
-        createAssetInfo(contractAddress, contractName, assetName)
-      );
+      await lockToken({
+        accountAddress: accountID,
+        ert20TokenAddress: token,
+        amount,
+        duration: days,
+      });
 
-      const options = {
-        contractAddress: contractOwnerAddress,
-        contractName: deployedContractName,
-        functionName: "lock-ft",
-        functionArgs: [
-          principalCV(tokenAddress),
-          tupleCV({
-            amount: uintCV(finalAmount),
-            "lock-expiry": uintCV(days),
-            "ft-name": stringAsciiCV(assetName),
-            taker: principalCV(taker),
-            "locked-time": stringAsciiCV(lockDate),
-          }),
-        ],
-        postConditions: [stxPostCondition, tokenPostCondition],
-        network,
-        appDetails,
-        onFinish: ({ txId }) => {
-          console.log("onFinish:", txId);
-          addTransactionToast(txId, `Locking ${assetName} FT`);
-        },
-      };
-
-      await openContractCall(options);
+      toast.success("Token locked successfully", {
+        position: "bottom-right",
+      });
     } catch (err) {
       console.log(err, "error submitting");
+
+      toast.error("Error submitting", {
+        position: "bottom-right",
+      });
     } finally {
       setLoading(false);
     }
   };
-  const onSubmitNFT = async (data) => {
-    const { contractAddress, contractName } =
-      getContractAddressAndName(tokenAddress);
-    const { days, tokenID, assetName, taker } = data;
-    // setTransactionSuccessfulMsg(`Successfully Locked ${assetName} NFT`);
-
-    setLoading(true);
-
-    let lockDate = formatDate(new Date());
-
-    let finalAssetName = transformString(assetName);
-
-    try {
-      const stxPostCondition = makeStandardSTXPostCondition(
-        address,
-        FungibleConditionCode.Equal,
-        0
-      );
-
-      const nftPostCondition = getFtPostConditionNFT(
-        address,
-        contractAddress,
-        contractName,
-        finalAssetName,
-        uintCV(tokenID)
-      );
-
-      const options = {
-        contractAddress: contractOwnerAddress,
-        contractName: deployedContractName,
-        functionName: "lock-nft",
-        functionArgs: [
-          principalCV(tokenAddress),
-          tupleCV({
-            "token-id": uintCV(tokenID),
-            "lock-expiry": uintCV(days),
-            taker: principalCV(taker),
-            "locked-time": stringAsciiCV(lockDate),
-          }),
-        ],
-        postConditions: [stxPostCondition, nftPostCondition],
-        network,
-        appDetails,
-        onFinish: ({ txId }) => {
-          console.log("onFinish:", txId);
-
-          addTransactionToast(txId, `Locking ${assetName} NFT`);
-        },
-      };
-
-      await openContractCall(options);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  console.log("error:", errors.assetName);
 
   useEffect(() => {
     if (nft) {
@@ -239,6 +98,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
     }
     reset({
       assetName: transformString(data?.assetName?.toLowerCase()),
+      token: tokenAddress,
     });
   }, []);
   // lock-expiry: uint, token-id: uint, taker: principal
@@ -250,7 +110,13 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
           justifyContent: "space-between",
         }}
       >
-        <IconBackArrow onClick={handlePage} style={{ cursor: "pointer" }} />
+        <IconBackArrow
+          onClick={() => {
+            setTokenAddress("");
+            handlePage();
+          }}
+          style={{ cursor: "pointer" }}
+        />
         <p
           style={{
             visibility: nft ? "hidden" : "visible",
@@ -289,10 +155,12 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
               <div className="form-input">
                 {/* <label for="register-email">Taker Address</label> */}
                 <input
+                  disabled
+                  name="token"
                   type="text"
                   id="balance"
-                  placeholder="Taker Address"
-                  {...register("taker")}
+                  placeholder="Token Address"
+                  {...register("token")}
                 />
 
                 <ValidationError err={errors.taker} />
@@ -341,7 +209,7 @@ const LockTokenInfo = ({ tokenAddress, nft, data, handlePage }) => {
           </div>
         </form>
       ) : (
-        <form className="form" onSubmit={nftHandleSubmit(onSubmitNFT)}>
+        <form className="form">
           <div className="form-row">
             <div className="form-item">
               <div className="form-input">
@@ -427,23 +295,57 @@ const LockTokenAddress = ({
   nft,
   setMargin,
 }) => {
-  const { address, network } = useStacks();
-
   const [loading, setLoading] = useState(false);
+
+  const web3 = new Web3();
+
+  const [buttonConfig, setButtonConfig] = useState({
+    showApprove: false,
+  });
+
+  const { accountID } = useContext(MetamaskContext);
 
   const tokens = {
     ft: "Fungible Token",
     nft: "Non Fungible Token",
   };
 
-  const fetch = async ({ functionName, args = [] }) => {
-    return fetchFromContract({
-      network,
-      address,
-      contract: tokenAddress?.trim(),
-      contractFunctionName: functionName,
-      args,
-    });
+  const fetch = async () => {
+    try {
+      const balance = await getTokenBalance(accountID, tokenAddress);
+      const symbol = await getTokenSymbol(accountID, tokenAddress);
+      const assetName = await getTokenName(accountID, tokenAddress);
+
+      setData((pre) => ({
+        ...pre,
+        balance,
+        symbol,
+        assetName,
+      }));
+
+      const allowance = await requestAllowance(
+        accountID,
+        lockContractAddress,
+        tokenAddress
+      );
+
+      if (allowance <= 0) {
+        setButtonConfig((pre) => ({
+          ...pre,
+          showApprove: true,
+        }));
+
+        return;
+      }
+
+      setMargin(true);
+      setMoveToLockPage(true);
+    } catch (err) {
+      console.log(err);
+      toast.error("Invalid token address", {
+        position: "bottom-right",
+      });
+    }
   };
 
   const handleNext = async (e) => {
@@ -451,78 +353,41 @@ const LockTokenAddress = ({
     setLoading(true);
 
     try {
-      console.log(principalCV(tokenAddress), "tokenAddress");
-
-      const currentBlockHeight = fetchFromVestingContract({
-        network,
-        address,
-        contractFunctionName: "get-current-block-height",
+      await requestApprove({
+        accountAddress: accountID,
+        contractAddress: lockContractAddress,
+        tokenAddress,
       });
-      if (!nft) {
-        let [assetName, decimals, balance, symbol] = await Promise.all([
-          fetch({ functionName: "get-name" }),
-          fetch({ functionName: "get-decimals" }),
-          fetch({
-            functionName: "get-balance",
-            args: [principalCV(address)],
-          }),
-          fetch({ functionName: "get-symbol" }),
-        ]);
 
-        setData((pre) => {
-          return {
-            ...pre,
-            assetName: assetName?.value,
-            decimals: Number(decimals?.value),
-            currentBlockHeight: Number(currentBlockHeight?.value),
-            balance: reduceToPowerOf(balance?.value, decimals?.value),
-            symbol: symbol?.value,
-          };
-        });
-      } else {
-        let [assetName, decimals, balance] = await Promise.all([
-          fetch({ functionName: "get-name" }),
-
-          fetch({
-            functionName: "get-last-token-id",
-            args: [],
-          }),
-        ]);
-
-        setData((pre) => {
-          return {
-            ...pre,
-            assetName: assetName?.value,
-            decimals: Number(decimals?.value),
-            currentBlockHeight: Number(currentBlockHeight?.value),
-            balance: reduceToPowerOf(balance?.value, decimals?.value),
-          };
-        });
-      }
       setMargin(true);
       setMoveToLockPage(true);
     } catch (err) {
-      if (err.message.split(":")[0] === "Invalid c32 address") {
-        toast.error("Invalid Contract Address", {
-          position: "bottom-right",
-        });
-      } else
-        toast.error("No data Found for the given contract..", {
-          position: "bottom-right",
-        });
+      console.log(err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (!tokenAddress.length) return;
+
+    if (!web3.utils.isAddress(tokenAddress)) {
+      toast.error("Invalid token address", {
+        position: "bottom-right",
+      });
+      return;
+    }
+
+    fetch();
+  }, [tokenAddress]);
 
   return (
     <>
       <h2 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h2>
       <p className="text-center mt-10">
         {" "}
-        {!nft ? tokens.ft : tokens.nft} Generated from App
+        {!nft ? tokens.ft : tokens.nft} Generated from App{" "}
+        {buttonConfig?.showApprove}
       </p>
       <div className="form-row landing-form-next">
         <div className="form-item">
@@ -543,12 +408,14 @@ const LockTokenAddress = ({
       <br />
       <div className="form-row" onClick={handleNext}>
         <div className="form-item">
-          <ButtonWithLoading
-            loaderColor="blue"
-            isLoading={loading}
-            className="button medium primary"
-            text="Next"
-          />
+          {buttonConfig?.showApprove && (
+            <ButtonWithLoading
+              loaderColor="blue"
+              isLoading={loading}
+              className="button medium primary"
+              text="Approve"
+            />
+          )}
         </div>
       </div>
     </>
@@ -586,6 +453,7 @@ const LockTokenForm = ({
           handlePage={handlePage}
           nft={nft}
           data={data}
+          setTokenAddress={setTokenAddress}
           tokenAddress={tokenAddress}
         />
       )}
