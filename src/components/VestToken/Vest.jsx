@@ -1,72 +1,66 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  CreateTokenSchemaFT,
-  VestTokenSchema,
-} from "../../utils/validation/validation-schema";
+import { VestTokenSchema } from "../../utils/validation/validation-schema";
 import { ValidationError } from "../UI/Errors";
 import { copy } from "../../utils/copy-text";
-import { createDeployableTokenContractFT } from "../../utils/deploy-contract/createDeployableFT";
 import toast from "react-hot-toast";
-import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
-import { NETWORK } from "../../lib/constants";
-import { deployContract } from "../../utils/deploy-contract/deployContract";
-import { TokenInfoCard } from "../CreateToken/TokenInfoCard";
 import ButtonWithLoading from "../UI/LoaderButton";
 import { MetamaskContext } from "../../context/MetamaskContext";
+import { vestToken } from "../../services/vesting.services";
+import { unixTimeStamp } from "../../helpers/convertion";
 
-const explorerUrl =
-  NETWORK === "TESTNET"
-    ? "https://explorer.hiro.so"
-    : "https://explorer.hiro.so";
-
-const VestToken = () => {
+const VestToken = ({ data, tokenAddress }) => {
   const {
     register,
     watch,
     handleSubmit,
+    reset,
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(VestTokenSchema),
+    resolver: yupResolver(VestTokenSchema(data?.balance)),
   });
 
-  let { name, symbol, decimals, supply, url } = watch();
-
-  const { addTransactionToast } = useTransactionToasts({
-    success: `Successfully deployed ${name?.toLowerCase()} ${
-      false ? "NFT" : "FT"
-    } `,
-  });
+  // let { name, address, amount, cliff, vestingPeriod, taker } = watch();
 
   const [buttonLoading, setButtonLoading] = useState(false);
   const [includeTotalSupply, setIncludeTotalSupply] = useState(false);
-  const {accountID} = useContext(MetamaskContext)
+  const { accountID } = useContext(MetamaskContext);
+
+  useEffect(() => {
+    reset({
+      name: data?.assetName,
+      address: tokenAddress,
+    });
+  }, [data, tokenAddress]);
 
   const onSubmit = async (data) => {
-    if (!accountID) {
-      toast.error("Please connect your wallet before submitting the form.");
-      return;
-    }
-    window.location.reload();
+    const { address, amount, cliff, vestingPeriod, taker, duration } = data;
+
     setButtonLoading(true);
+
     try {
-      const contactToDeploy = createDeployableTokenContractFT(data, NETWORK);
-      let txId = await deployContract({
-        contractCode: contactToDeploy,
-        contractName: data?.name,
-        networkBeingUsed: NETWORK,
+      await vestToken({
+        accountAddress: accountID,
+        takerAddress: taker,
+        cliffPeriod: unixTimeStamp(cliff),
+        vestingPeriod: unixTimeStamp(vestingPeriod),
+        duration,
+        ert20TokenAddress: address,
+        amount: amount,
       });
 
-      let url = `${explorerUrl}/txid/${txId}?chain=testnet`;
-      if (txId) {
-        copy(url);
-        // alert("Transaction URL copied to ClipBoard");
-        addTransactionToast(txId, `Deploying ${data?.name}`);
-      }
+      toast.success("Token vested successfully", {
+        duration: 4000,
+        position: "bottom-right",
+      });
     } catch (err) {
-      toast.error(err?.message || "Some error occurred");
+      toast.error("An error occurred, please try again", {
+        duration: 4000,
+        position: "bottom-right",
+      });
+      console.log("error", err);
     } finally {
       setButtonLoading(false);
     }
@@ -78,11 +72,37 @@ const VestToken = () => {
         <div className="grid-column">
           <div className="widget-box">
             <div className="widget-box-content">
+              <p
+                style={{
+                  float: "right",
+
+                  color: "dodgerblue",
+                }}
+              >
+                {data?.balance} {data?.symbol}
+              </p>
               <form className="form" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
+                        placeholder="Token Address"
+                        disabled
+                        type="text"
+                        id="address"
+                        name="address"
+                        {...register("address", { required: true })}
+                      />
+                      <ValidationError err={errors.address} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row split">
+                  <div className="form-item">
+                    <div className="form-input small">
+                      <input
+                        disabled
                         placeholder="Token Name"
                         type="text"
                         id="name"
@@ -93,106 +113,88 @@ const VestToken = () => {
                     </div>
                   </div>
                   <br />
-                  <br />
-                  <br />
                 </div>
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
-                        placeholder="Token Address"
+                        placeholder="Taker Address"
                         type="text"
-                        id="symbol"
-                        name="symbol"
-                        {...register("address", { required: true })}
+                        id="name"
+                        name="taker"
+                        {...register("taker", { required: true })}
                       />
-                      <ValidationError err={errors.symbol} />
+                      <ValidationError err={errors.taker} />
                     </div>
                   </div>
+                  <br />
+                  <br />
+                  <br />
                 </div>
-                <br />
+
                 <div className="form-row">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
                         placeholder="Token Amount"
                         type="text"
-                        id="decimal"
-                        name="decimal"
+                        id="amount"
+                        name="amount"
                         {...register("amount", { required: true })}
                       />
-                      <ValidationError err={errors.decimals} />
+                      <ValidationError err={errors.amount} />
                     </div>
                     <br />
                   </div>
                 </div>
-
-                <input
-                  type="checkbox"
-                  name="include"
-                  onClick={() => setIncludeTotalSupply((pre) => !pre)}
-                />
-                <label
-                  for="include"
-                  style={{
-                    color: "green",
-                  }}
-                >
-                  Do you Want to include the Cliff period in Days (default its
-                  in months)?
-                </label>
 
                 <div className="form-row">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
                         placeholder="Cliff Period"
-                        type="text"
-                        id="decimal"
-                        name="decimal"
+                        type="date"
+                        id="cliff"
+                        name="cliff"
                         {...register("cliff", { required: true })}
                       />
-                      <ValidationError err={errors.decimals} />
+                      <ValidationError err={errors.cliff} />
                     </div>
                     <br />
                   </div>
                 </div>
-                <input
-                  type="checkbox"
-                  name="include"
-                  onClick={() => setIncludeTotalSupply((pre) => !pre)}
-                />
-                <label
-                  for="include"
-                  style={{
-                    color: "green",
-                  }}
-                >
-                  Do you Want to include the Vesting period in Days (default its
-                  in months)?
-                </label>
+
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
-                        // disabled={!includeTotalSupply}
-                        // style={{
-                        //   cursor: !includeTotalSupply
-                        //     ? "not-allowed"
-                        //     : "pointer",
-                        // }}
                         placeholder="Vesting Period"
-                        type="text"
-                        id="supply"
-                        name="supply"
+                        type="date"
+                        min={new Date().toISOString().split("T")[0]}
+                        id="vestingPeriod"
+                        name="vestingPeriod"
                         {...register("vestingPeriod", { required: false })}
                       />
-                      <ValidationError err={errors.supply} />
+                      <ValidationError err={errors.vestingPeriod} />
                     </div>
-                    <br />
+                  </div>
+                </div>
+                <div className="form-row split">
+                  <div className="form-item">
+                    <div className="form-input small">
+                      <input
+                        placeholder="Duration (n The duration over which the tokens will be vested)"
+                        type="text"
+                        id="duration"
+                        name="duration"
+                        {...register("duration", { required: false })}
+                      />
+                      <ValidationError err={errors.duration} />
+                    </div>
                   </div>
                 </div>
                 <ButtonWithLoading
+                  isLoading={buttonLoading}
                   loaderColor="blue"
                   disabled={!isValid}
                   text="Vest Token"

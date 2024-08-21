@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { principalCV } from "@stacks/transactions";
+import Web3 from "web3";
 
 export const tokenSchema = (balance) =>
   yup.object().shape({
@@ -116,10 +117,55 @@ export const createNFTSchema = yup.object().shape({
     }),
 });
 
-export const VestTokenSchema = yup.object().shape({
-  name: yup.string().required("Name is required"),
-  address: yup.string().required("Address is required"),
-  amount: yup.number().required("Amount is required"),
-  cliff: yup.number().required("Cliff is required"),
-  vestingPeriod: yup.number().required("Vesting Period is required"),
-});
+export const VestTokenSchema = (balance) =>
+  yup.object().shape({
+    name: yup.string().required("Name is required"),
+    address: yup
+      .string()
+      .required("Address is required")
+      .required("Address is required")
+      .test("forValidAddress", "Token address is invalid", (value) => {
+        try {
+          return Web3.utils.isAddress(value);
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }),
+    taker: yup
+      .string()
+      .required("Taker address  is required")
+      .required("Taker address is required")
+      .test("forValidAddress", "Taker address is invalid", (value) => {
+        try {
+          return Web3.utils.isAddress(value);
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }),
+
+    amount: yup
+      .number()
+      .required("Amount is required")
+      .min(1, "Amount must be greater than 1")
+      .max(balance, "Amount must be less than token balance")
+      .typeError("Amount is required"),
+    cliff: yup
+      .date()
+      .required("Cliff is required")
+      .min(
+        yup.ref("vestingPeriod"),
+        "cliff period must be greater than vestingPeriod period"
+      ),
+
+    vestingPeriod: yup
+      .date()
+      .required("Vesting Period is required")
+      .min(new Date(), "Vesting period must be greater than current date"),
+    duration: yup
+      .number()
+      .required("Duration  is required")
+      .typeError(" Duration is required")
+      .min(1, "Duration must be greater than  0"),
+  });

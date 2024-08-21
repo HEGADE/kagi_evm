@@ -5,3 +5,9 @@ export const toWei = (value, par = "ether") => {
 export const fromWei = (value, par = "ether") => {
   return Web3.utils.fromWei(String(value), par);
 };
+
+export const unixTimeStamp = (dateTime) => {
+  const date = new Date(dateTime); // Or any Date('YYYY-MM-DD')
+  const unixTimestamp = Math.floor(date.getTime() / 1000);
+  return unixTimestamp;
+};

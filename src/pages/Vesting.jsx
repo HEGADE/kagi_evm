@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import SideNavBar from "../components/UI/SideNavBar";
 import { VestToken } from "../components/VestToken/Vest";
+import { Approve } from "../components/approve/Aprrove";
+import { vestingContractAddress } from "../lib/constants";
 
 export const Vesting = () => {
+  const [margin, setMargin] = useState(false);
+
+  const [moveToLockPage, setMoveToLockPage] = useState(false);
+  const [showTokenLockForm, setShowTokenLockForm] = useState(true);
+  const [tokenAddress, setTokenAddress] = useState("");
+  const [data, setData] = useState({
+    assetName: "",
+    decimals: "",
+    currentBlockHeight: 0,
+    balance: 0,
+    symbol: "",
+  });
+
   return (
     <>
       <SideNavBar />
@@ -19,7 +34,18 @@ export const Vesting = () => {
             {/* <p className="section-pretitle"></p> */}
           </div>
         </div>
-        <VestToken />
+        {!moveToLockPage ? (
+          <Approve
+            contractAddress={vestingContractAddress}
+            setData={setData}
+            setTokenAddress={setTokenAddress}
+            tokenAddress={tokenAddress}
+            setMoveToLockPage={setMoveToLockPage}
+            setMargin={setMargin}
+          />
+        ) : (
+          <VestToken data={data} tokenAddress={tokenAddress} />
+        )}
       </div>
     </>
   );

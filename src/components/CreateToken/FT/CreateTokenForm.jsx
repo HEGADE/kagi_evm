@@ -64,7 +64,7 @@ const CreateTokenFormFT = () => {
     try {
       const { token, name, symbol, supply } = data;
 
-      const version="soljson-v0.5.16+commit.9c3226ce.js"
+      const version = "soljson-v0.5.16+commit.9c3226ce.js";
       const contractToDeploy = getContract(name, token, symbol, supply);
 
       const output = await solidityCompiler({
@@ -78,16 +78,17 @@ const CreateTokenFormFT = () => {
         },
       });
 
+
       // (function() {
       //   const originalWorker = window.Worker;
       //   const workers = [];
-      
+
       //   window.Worker = function(...args) {
       //     const worker = new originalWorker(...args);
       //     workers.push(worker);
       //     return worker;
       //   };
-      
+
       //   window.terminateAllWorkers = function() {
       //     workers.forEach(worker => worker.terminate());
       //     workers.length = 0;
