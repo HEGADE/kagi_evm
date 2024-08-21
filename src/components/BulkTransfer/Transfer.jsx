@@ -388,7 +388,6 @@ export function Transfer() {
             </p>
           </div>
           <br />
-
           <div className="flex flex-row gap-8">
             <ButtonWithLoading
               className="button secondary"

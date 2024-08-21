@@ -53,6 +53,7 @@ export const Approve = ({
         contractAddress,
         tokenAddress
       );
+      console.log(allowance);
 
       if (allowance <= 0) {
         setButtonConfig((pre) => ({
@@ -108,14 +109,14 @@ export const Approve = ({
 
   return (
     <>
-      <h2 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h2>
-      <p className="text-center mt-10">
+      <h5 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h5>
+      {/* <p className="text-center mt-10">
         {" "}
         {!nft ? tokens.ft : tokens.nft} Generated from App{" "}
         {buttonConfig?.showApprove}
-      </p>
+      </p> */}
       <div className="form-row landing-form-next">
-        <div className="form-item">
+        <div className="form-item grid grid-8-4 small-space">
           <div className="form-input">
             {/* <label for="login-username">Project Token Address</label> */}
             <input
@@ -130,10 +131,9 @@ export const Approve = ({
           </div>
         </div>
       </div>
-      <br />
       <div className="form-row" onClick={handleNext}>
-        <div className="form-item">
-          {buttonConfig?.showApprove && (
+        <div className="form-item grid grid-8-4 small-space">
+          {!buttonConfig?.showApprove && (
             <ButtonWithLoading
               loaderColor="blue"
               isLoading={loading}

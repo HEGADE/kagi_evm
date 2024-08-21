@@ -123,11 +123,19 @@ const MetamaskContextProvider = ({ children }) => {
   //   await switchNetwork("0x61");
   // };
 
+  function disconnectMetamask() {
+    let web3 = new Web3(window.ethereum);
+    window.ethereum.enable().then((accountss) => console.log(accountss)
+    )    
+    web3.currentProvider.disconnect()
+  }
+
   return (
     <MetamaskContext.Provider
       value={{
         switchNetwork,
         connectMetamask,
+        disconnectMetamask,
         accountID,
         netName,
         networkID,
