@@ -68,16 +68,16 @@ export const ConnectWalletWithDropDown = () => {
           >
             {shortAddress(accountID)}
           </Menu.Item>
-          <Menu.Divider />
+          {/* <Menu.Divider /> */}
 
-          <Menu.Item
+          {/* <Menu.Item
             onClick={disconnectMetamask}
             leftSection={
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
           >
             Disconnect
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu.Dropdown>
       </Menu>
     </>
