@@ -19,23 +19,6 @@ export const vestToken = async ({
     vestingContractAddress
   );
 
-  console.log(
-    "accountAddress",
-    accountAddress,
-    "takerAddress",
-    takerAddress,
-    "cliffPeriod",
-    cliffPeriod,
-    "vestingPeriod",
-    vestingPeriod,
-    "duration",
-    duration,
-    "ert20TokenAddress",
-    ert20TokenAddress,
-    "amount",
-    amount
-  );
-
   const actualAmount = toWei(amount, "ether");
 
   let vestRes = await contractInstance.methods
@@ -50,4 +33,36 @@ export const vestToken = async ({
     .send({ from: accountAddress, to: vestingContractAddress });
 
   return vestRes;
+};
+
+export const releaseToken = async ({ accountAddress, vestID }) => {
+  const web3 = await initWeb3();
+
+  const contractInstance = new web3.eth.Contract(
+    vestingAbi,
+    vestingContractAddress
+  );
+
+  let releaseRes = await contractInstance.methods
+    .releaseTokens(vestID)
+    .send({ from: accountAddress, to: vestingContractAddress });
+
+  return releaseRes;
+};
+
+export const getVestingSchedules = async ({ accountAddress }) => {
+  const web3 = await initWeb3();
+
+  const contractInstance = new web3.eth.Contract(
+    vestingAbi,
+    vestingContractAddress
+  );
+
+  let vestingList = await contractInstance.methods
+    .getVestingSchedules(accountAddress)
+    .call();
+
+  console.log(vestingList, "vestingList");
+
+  return vestingList;
 };

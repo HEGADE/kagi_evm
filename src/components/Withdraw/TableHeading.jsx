@@ -8,24 +8,24 @@ const FtTableHeading = () => {
   return (
     <>
       <div className="table-header">
-        <div className="table-header-column">
+        {/* <div className="table-header-column">
           <p className="table-header-title">Token Name</p>
-        </div>
+        </div> */}
         <div className="table-header-column padded">
           <p className="table-header-title">Tokens Address</p>
         </div>
-        <div className="table-header-column padded">
+        {/* <div className="table-header-column padded">
           <p className="table-header-title">Taker Address</p>
-        </div>
-        <div className="table-header-column padded">
+        </div> */}
+        {/* <div className="table-header-column padded">
           <p className="table-header-title">Tokens Locked</p>
-        </div>
+        </div> */}
         <div className="table-header-column padded">
           <p className="table-header-title">Lock ID</p>
         </div>
-        <div className="table-header-column padded">
+        {/* <div className="table-header-column padded">
           <p className="table-header-title">Status</p>
-        </div>
+        </div> */}
         <div className="table-header-column padded">
           <p className="table-header-title"> Locked Time</p>
         </div>

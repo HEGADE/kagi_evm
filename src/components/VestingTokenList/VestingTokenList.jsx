@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IconRefresh } from "../UI/Icons";
 import VestingHeading from "./VestingHeading";
 import VestingTable from "./VestingTable";
+import { getVestingSchedules } from "../../services/vesting.services";
+import { MetamaskContext } from "../../context/MetamaskContext";
 
 const data = [
   {
@@ -31,10 +33,23 @@ const data = [
     amount: 10,
     cliffPeriod: 7,
     vestingPeriod: 2,
-  }
+  },
 ];
 
 function VestingTokenList() {
+  const { accountID } = useContext(MetamaskContext);
+
+  const [tokenVestingList, settokenVestingList] = useState([]);
+
+  const fetchtokenVestingList = async () => {
+    let res = await getVestingSchedules({ accountAddress: accountID });
+    settokenVestingList(res);
+  };
+
+  useEffect(() => {
+    fetchtokenVestingList();
+  }, []);
+
   return (
     <div class="content-grid">
       <div className="account-hub-content">
@@ -131,9 +146,9 @@ function VestingTokenList() {
                     <div className="table table-downloads table-responsive split-rows">
                       <VestingHeading />
                       <div className="table-body same-color-rows">
-                        {data ? (
-                          data?.map((tokens) => {
-                            return <VestingTable token={tokens} />;
+                        {tokenVestingList?.length ? (
+                          tokenVestingList?.map((tokens,indx) => {
+                            return <VestingTable token={tokens} vestID={indx} />;
                           })
                         ) : (
                           <div

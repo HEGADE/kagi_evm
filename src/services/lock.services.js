@@ -22,3 +22,28 @@ export const lockToken = async ({
 
   return lockRes;
 };
+
+export const getTokenList = async ({ accountAddress }) => {
+  const web3 = await initWeb3();
+
+  const contractInstance = new web3.eth.Contract(lockAbi, lockContractAddress);
+
+  let tokenList = await contractInstance.methods.locked(accountAddress).call();
+
+  console.log(tokenList, "tokenList");
+
+  return tokenList;
+};
+
+export const unlockToken = async ({ accountAddress, lockID }) => {
+  const web3 = await initWeb3();
+
+  const contractInstance = new web3.eth.Contract(lockAbi, lockContractAddress);
+
+  let unlockRes = await contractInstance.methods
+    .unlock(lockID)
+    .send({ from: accountAddress, to: lockContractAddress });
+
+  return unlockRes;
+};
+

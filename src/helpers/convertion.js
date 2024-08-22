@@ -11,3 +11,8 @@ export const unixTimeStamp = (dateTime) => {
   const unixTimestamp = Math.floor(date.getTime() / 1000);
   return unixTimestamp;
 };
+
+export const fromUnixTimeStamp = (unixTimeStamp) => {
+  const date = new Date(unixTimeStamp * 1000);
+  return date;
+};

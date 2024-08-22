@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { WithdrawTable } from "./WithdrawTable";
 import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
 import { ContentLoader } from "../UI/ContentLoader";
@@ -9,21 +9,24 @@ import { IconRefresh } from "../UI/Icons";
 import { Skeleton } from "@mantine/core";
 import { SkeletonTabular } from "../UI/Skeletons";
 import { useTableData } from "../../store/table-data.store";
+import { getTokenList } from "../../services/lock.services";
+import { MetamaskContext } from "../../context/MetamaskContext";
 
 const Withdraw = () => {
-  const { fetchData } = useFetchFtLockStats();
-  const { currentBlockHeight } = useStacks();
   let data = useTableData((state) => state.data);
 
   const [selectToken, setSelectToken] = useState("ft");
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
   const [search, setSearch] = useState(null);
 
+  const [tokens, setTokens] = useState([]);
+
   const functionName =
     selectToken === "ft" ? "get-ft-lock-info" : "get-nft-lock-info";
 
-  const currentAsset = selectToken === "ft" ? "ft-name" : "nft-name";
   let sorted = [];
+
+  const { accountID } = useContext(MetamaskContext);
 
   if (data.result?.length) {
     console.log(data.result, "this the data");
@@ -49,22 +52,23 @@ const Withdraw = () => {
     });
   }
 
-  sorted = sorted.filter((item) => {
-    if (!search) {
-      return item;
-    }
-    return item[currentAsset]?.value
-      .toString()
-      .toLowerCase()
-      .includes(search.toLowerCase());
-  });
+  // sorted = sorted.filter((item) => {
+  //   if (!search) {
+  //     return item;
+  //   }
+  //   return item[currentAsset]?.value
+  //     .toString()
+  //     .toLowerCase()
+  //     .includes(search.toLowerCase());
+  // });
+
+  const fetchTokenList = async () => {
+    let res = await getTokenList({ accountAddress: accountID });
+    setTokens(res);
+  };
 
   useEffect(() => {
-    if (selectToken === "ft") {
-      fetchData({ functionName });
-    } else {
-      fetchData({ functionName });
-    }
+    fetchTokenList();
   }, [selectToken]);
 
   return (
@@ -77,9 +81,7 @@ const Withdraw = () => {
                 My Token Locks: <span className="highlighted"> </span>
               </h2>
               <p className="section-pretitle">Withdraw your token locks</p>
-              <p className="section-pretitle" color="blue">
-                Current Block Height: {currentBlockHeight}
-              </p>
+              <p className="section-pretitle" color="blue"></p>
             </div>
           </div>
           <div className="section-filters-bar v2">
@@ -136,7 +138,7 @@ const Withdraw = () => {
                     justifyContent: "center",
                   }}
                   onClick={() => {
-                    fetchData({ functionName });
+                    return null;
                   }}
                 >
                   <IconRefresh />
@@ -165,33 +167,25 @@ const Withdraw = () => {
                       <div className="table table-downloads table-responsive split-rows">
                         <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
-                          {data?.loading ? (
+                          {!tokens.length ? (
                             <SkeletonTabular
                               className="table-row medium"
                               height={60}
                               width="100%"
                               howMany={3}
                             />
-                          ) : sorted?.length > 0 ? (
-                            sorted?.map((token) => {
+                          ) : tokens?.length > 0 ? (
+                            tokens?.map((token, indx) => {
                               if (selectToken === "ft") {
                                 return (
                                   <WithdrawTable
-                                    assetContact={token["ft-contract"]?.value}
-                                    assetName={
-                                      token["ft-name"]?.value || "stacksies"
-                                    }
-                                    maker={token["maker"]?.value}
-                                    unlocked={token["unlocked"]?.value}
-                                    amount={token["amount"]?.value}
-                                    lockID={token["lock-id"]?.value}
-                                    key={token["lock-id"]?.value}
-                                    taker={token["taker"]?.value}
-                                    lockTime={token["lock-expiry"]?.value}
-                                    lockedTime={token["locked-time"]?.value}
-                                    lockedBlockHeight={
-                                      token["locked-block-height"]?.value
-                                    }
+                                    assetContact={token["0"]}
+                                    // unlocked={token["unlocked"]?.value}
+                                    amount={token["1"]}
+                                    lockID={indx}
+                                    key={indx}
+                                    unlockTime={token["4"]}
+                                    lockedTime={token["3"]}
                                   />
                                 );
                               } else {

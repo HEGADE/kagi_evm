@@ -1,14 +1,48 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { shortAddress } from "../../utils/format/address.format";
+import { fromUnixTimeStamp, fromWei } from "../../helpers/convertion";
+import { format } from "date-fns";
+import ButtonWithLoading from "../UI/LoaderButton";
+import toast from "react-hot-toast";
+import { MetamaskContext } from "../../context/MetamaskContext";
+import { releaseToken } from "../../services/vesting.services";
 
-function VestingTable({token}) {
+function VestingTable({ token, vestID }) {
+  let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
+  let vestingPeriodStart = format(
+    fromUnixTimeStamp(Number(token?.startTime)),
+    "yyyy-MM-dd"
+  );
+
+  const [withdrawID, setWithdrawID] = useState(undefined);
+
+  const { accountID } = useContext(MetamaskContext);
+
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+
+  const handleWithdraw = async ({ lockID }) => {
+    setIsButtonLoading(true);
+    try {
+      await releaseToken({
+        accountAddress: accountID,
+        lockID,
+      });
+      toast.success("Withdrawn successfully", {
+        position: "bottom-right",
+      });
+      setWithdrawID(lockID);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsButtonLoading(false);
+    }
+  };
+
   return (
     <>
       <>
         <div className="table-row medium">
-          <div className="table-column padded">
-            <p className="table-title">{token?.name}</p>
-          </div>
           <div className="table-column padded">
             <p className="table-title">{shortAddress(token?.tokenAddress)}</p>
           </div>
@@ -19,14 +53,36 @@ function VestingTable({token}) {
               //     display: "contents",
               //   }}
             >
-                {token?.amount}
+              {fromWei(Number(token?.amount))}
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{token?.cliffPeriod}</p>
+            <p className="table-title">{cliff}</p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{token?.vestingPeriod}</p>
+            <p className="table-title">{vestingPeriodStart}</p>
+          </div>
+          <div className="table-column padded">
+            <p className="table-title">{Number(token?.duration)} Months</p>
+          </div>
+
+          <div className="table-column padded">
+            <ButtonWithLoading
+              isLoading={isButtonLoading || isPending}
+              loaderColor="blue"
+              // disabled={!canUnlock || withdrawID}
+              style={{
+                // cursor: !canUnlock || withdrawID ? "not-allowed" : "pointer",
+                width: "100px",
+              }}
+              onClick={() =>
+                handleWithdraw({
+                  vestID,
+                })
+              }
+              text={"Release"}
+              className="button secondary"
+            />
           </div>
         </div>
       </>

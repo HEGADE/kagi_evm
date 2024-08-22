@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ButtonWithLoading from "../UI/LoaderButton";
 import { useStacks } from "../../providers/StacksProvider";
 import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
@@ -33,6 +33,10 @@ import { IconCopy } from "@tabler/icons-react";
 import { rem } from "@mantine/core";
 import { copy } from "../../utils/copy-text.js";
 import toast from "react-hot-toast";
+import { isTimestampGreaterOrEqualToCurrentDateTime } from "../../helpers/time-compare.js";
+import { fromUnixTimeStamp } from "../../helpers/convertion.js";
+import { unlockToken } from "../../services/lock.services.js";
+import { MetamaskContext } from "../../context/MetamaskContext.js";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -42,96 +46,39 @@ const WithdrawTable = ({
   lockID,
   assetName,
   amount,
-  taker,
-  maker,
-  unlocked,
   assetContact,
-  lockTime,
   lockedTime,
-  lockedBlockHeight,
+  unlockTime,
 }) => {
-  const { network, currentBlockHeight, address } = useStacks();
-
   const [withdrawID, setWithdrawID] = useState(undefined);
 
-  const [ftInfo, setFtInfo] = useState({
-    unlocked,
-  });
-
-  const setData = useTableData((state) => state.setData);
-  const data = useTableData((state) => state.data);
-
-  const isEventEmitted = useEvent((state) => state.emitted);
-  const restEvent = useEvent((state) => state.reset);
-
-  const { addTransactionToast } = useTransactionToasts({
-    success: `Successfully withdrawn ${assetName} FT`,
-  });
+  
+  const { accountID } = useContext(MetamaskContext);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
-  const unlockTokenInDays =
-    (lockTime - lockedBlockHeight) / AVG_BLOCK_MINED_PER_DAY;
-
-  const unlockDateTime = addDaysToGivenDate(
-    String(lockedTime),
-    unlockTokenInDays
+  const canUnlock = isTimestampGreaterOrEqualToCurrentDateTime(
+    Number(unlockTime)
   );
 
-  const handleWithdraw = async ({ amount, assetName, tokenAddress }) => {
-    const { contractAddress, contractName } =
-      getContractAddressAndName(tokenAddress);
-    console.log("lock id", lockID);
+  const handleWithdraw = async ({ lockID }) => {
     setIsButtonLoading(true);
-    setIsPending(true);
-    setWithdrawID(lockID);
-
     try {
-      const stxPostCondition = makeContractSTXPostCondition(
-        contractOwnerAddress,
-        deployedContractName,
-        FungibleConditionCode.Equal,
-        0
-      );
-      const tokenPostCondition = makeContractFungiblePostCondition(
-        contractOwnerAddress,
-        deployedContractName,
-        FungibleConditionCode.Greater,
-        0,
-        createAssetInfo(contractAddress, contractName, assetName)
-      );
-
-      const options = {
-        contractAddress: contractOwnerAddress,
-        contractName: deployedContractName,
-        functionName: "unlock-ft",
-        functionArgs: [principalCV(tokenAddress), uintCV(lockID)],
-        postConditions: [stxPostCondition, tokenPostCondition],
-        network,
-        appDetails,
-        onFinish: ({ txId }) => {
-          addTransactionToast(txId, `Withdrawing ${assetName} FT `);
-        },
-      };
-      await openContractCall(options);
+      await unlockToken({
+        accountAddress: accountID,
+        lockID,
+      });
+      toast.success("Withdrawn successfully", {
+        position: "bottom-right",
+      });
+      setWithdrawID(lockID);
     } catch (err) {
-      console.log("error", err);
+      console.log(err);
     } finally {
       setIsButtonLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (isEventEmitted && withdrawID !== undefined) {
-      setFtInfo({ ...ftInfo, unlocked: true });
-    }
-    return () => {
-      restEvent();
-    };
-  }, [isEventEmitted]);
-
-  if (!userSession.isUserSignedIn()) return <ConnectWallet />;
 
   return (
     <>
@@ -157,32 +104,17 @@ const WithdrawTable = ({
             </div>
           </div>
           <div className="table-column padded">
-            <p className="table-title">
-              {shortAddress(assetContact?.split(".")[0])}
-            </p>
+            <p className="table-title">{shortAddress(assetContact)}</p>
           </div>
           <div className="table-column padded">
             <p
               className="table-title"
               onClick={() => {
-                copy(taker);
                 toast.success("Copied!", {
                   position: "bottom-right",
                 });
               }}
-            >
-              {shortAddress(taker)}
-              {address !== taker && (
-                <IconCopy
-                  style={{
-                    marginLeft: "5px",
-                    width: rem(17),
-                    height: rem(17),
-                    cursor: "pointer",
-                  }}
-                />
-              )}
-            </p>
+            ></p>
           </div>
           <div className="table-column padded">
             {/* decimal 6 should be come from contract */}
@@ -192,71 +124,45 @@ const WithdrawTable = ({
                 display: "contents",
               }}
             >
-              {reduceToPowerOf(amount, 6)}{" "}
+              {amount}
             </p>
           </div>
           <div className="table-column padded">
             <p className="table-title">{lockID}</p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">
+            {/* <p className="table-title">
               {ftInfo.unlocked ? "Unlocked" : "Locked"}
-            </p>
+            </p> */}
           </div>
           <div className="table-column padded">
             <p className="table-title">{lockedTime}</p>
           </div>
           <div className="table-column padded">
             <div id="clockdiv">
-              <CountdownTimer targetDateTime={unlockDateTime} />
+              {unlockTime}
+              {/* <CountdownTimer targetDateTime={unlockDateTime} /> */}
             </div>
           </div>
           <div className="table-column padded-left">
-            {!ftInfo.unlocked ? (
-              <div className="table-actions">
-                {taker === address ? (
-                  <ButtonWithLoading
-                    isLoading={isButtonLoading || isPending}
-                    loaderColor="blue"
-                    marginLft="28px"
-                    disabled={lockTime > currentBlockHeight ? true : false}
-                    onClick={() =>
-                      handleWithdraw({
-                        amount: amount,
-                        tokenAddress: assetContact,
-                        assetName: assetName?.toLowerCase(),
-                      })
-                    }
-                    text="withdraw"
-                    className="button secondary"
-                  />
-                ) : (
-                  <button
-                    className="button"
-                    style={{
-                      cursor: "not-allowed",
-                      backgroundColor: "grey",
-                      padding: "0px 1rem",
-                    }}
-                    disabled
-                  >
-                    Your not a taker
-                  </button>
-                )}
-              </div>
-            ) : (
-              <button
-                className="button "
+            <div className="table-actions">
+              <ButtonWithLoading
+                isLoading={isButtonLoading || isPending}
+                loaderColor="blue"
+                disabled={!canUnlock || withdrawID}
                 style={{
-                  cursor: "not-allowed",
-                  backgroundColor: "grey",
-                  padding: "0px 1rem",
+                  cursor: !canUnlock || withdrawID ? "not-allowed" : "pointer",
                 }}
-                disabled
-              >
-                withdrawn
-              </button>
-            )}
+                marginLft="28px"
+                onClick={() =>
+                  handleWithdraw({
+                    lockID,
+                  })
+                }
+                text={!withdrawID ? "Withdraw" : "Withdrawn"}
+                className="button secondary"
+              />
+            </div>
           </div>
         </div>
       </>
