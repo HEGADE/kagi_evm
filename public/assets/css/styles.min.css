@@ -26691,3 +26691,26 @@ body.dark {
 .mt-10 {
     margin-top: 10px;
 }
+
+  .form-label {
+    font-size: 16px;
+    /* font-weight: 600; */
+    margin-bottom: 6px;
+    color: #333; 
+    display: block; 
+  }
+  
+  .date-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+    margin: 0px;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .date-input:focus {
+    border-color: #007bff; 
+  }

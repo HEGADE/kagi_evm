@@ -150,12 +150,14 @@ const VestToken = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
+                  <label htmlFor="cliff" className="form-label">Cliff Period</label>
                     <div className="form-input small">
                       <input
                         placeholder="Cliff Period"
                         type="date"
                         id="cliff"
                         name="cliff"
+                        className="date-input"
                         {...register("cliff", { required: true })}
                       />
                       <ValidationError err={errors.cliff} />
@@ -164,8 +166,9 @@ const VestToken = ({ data, tokenAddress }) => {
                   </div>
                 </div>
 
-                <div className="form-row split">
+                <div className="form-row">
                   <div className="form-item">
+                  <label htmlFor="vestingPeriod" className="form-label">Vesting Period</label>
                     <div className="form-input small">
                       <input
                         placeholder="Vesting Period"
@@ -173,12 +176,14 @@ const VestToken = ({ data, tokenAddress }) => {
                         min={new Date().toISOString().split("T")[0]}
                         id="vestingPeriod"
                         name="vestingPeriod"
+                        className="date-input"
                         {...register("vestingPeriod", { required: false })}
                       />
                       <ValidationError err={errors.vestingPeriod} />
                     </div>
                   </div>
                 </div>
+
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">

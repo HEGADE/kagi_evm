@@ -13,9 +13,9 @@ import { MetamaskContext } from "../../context/MetamaskContext";
 
 // export const userSession = new UserSession({ appConfig });
 
-export function disconnect() {
+// export function disconnect() {
   // userSession.signUserOut("/");
-}
+// }
 
 
 // export function authenticate() {
@@ -38,7 +38,7 @@ const ConnectWallet = () => {
 };
 
 export const ConnectWalletWithDropDown = () => {
-  const { accountID } = useContext(MetamaskContext);
+  const { accountID, disconnectMetamask } = useContext(MetamaskContext);
   return (
     <>
       <Menu shadow="md" width={200}>
@@ -68,16 +68,16 @@ export const ConnectWalletWithDropDown = () => {
           >
             {shortAddress(accountID)}
           </Menu.Item>
-          <Menu.Divider />
+          {/* <Menu.Divider /> */}
 
-          <Menu.Item
-            // onClick={disconnect}
+          {/* <Menu.Item
+            onClick={disconnectMetamask}
             leftSection={
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
           >
             Disconnect
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu.Dropdown>
       </Menu>
     </>
