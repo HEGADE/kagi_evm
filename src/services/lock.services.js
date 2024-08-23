@@ -30,7 +30,7 @@ export const getTokenList = async ({ accountAddress }) => {
 
   let tokenList = await contractInstance.methods.locked(accountAddress).call();
 
-  console.log(tokenList, "tokenList");
+  console.log(tokenList, "tokenList lock");
 
   return tokenList;
 };
@@ -46,4 +46,3 @@ export const unlockToken = async ({ accountAddress, lockID }) => {
 
   return unlockRes;
 };
-

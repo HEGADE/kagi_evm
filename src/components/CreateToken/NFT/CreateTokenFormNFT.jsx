@@ -72,7 +72,6 @@ const CreateTokenFormNFT = ({ currentForm }) => {
     try {
       const contractToDeploy = getContractNFT(contractName, nftName, nftSymbol);
 
-
       console.log("contractToDeploy nft", contractToDeploy);
 
       const output = await solidityCompiler({
@@ -101,6 +100,8 @@ const CreateTokenFormNFT = ({ currentForm }) => {
       );
     } catch (err) {
       console.error("Error compiling contract:", err);
+    } finally {
+      setButtonLoading(false);
     }
   };
 

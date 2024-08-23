@@ -14,9 +14,9 @@ const FtTableHeading = () => {
         <div className="table-header-column padded">
           <p className="table-header-title">Tokens Address</p>
         </div>
-        {/* <div className="table-header-column padded">
-          <p className="table-header-title">Taker Address</p>
-        </div> */}
+        <div className="table-header-column padded">
+          <p className="table-header-title">Amount</p>
+        </div>
         {/* <div className="table-header-column padded">
           <p className="table-header-title">Tokens Locked</p>
         </div> */}
@@ -30,7 +30,7 @@ const FtTableHeading = () => {
           <p className="table-header-title"> Locked Time</p>
         </div>
         <div className="table-header-column padded">
-          <p className="table-header-title"> Unlocked Time</p>
+          <p className="table-header-title"> Unlock Time</p>
         </div>
         <div className="table-header-column padded-left"></div>
       </div>

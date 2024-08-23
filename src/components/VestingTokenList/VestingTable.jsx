@@ -6,6 +6,7 @@ import ButtonWithLoading from "../UI/LoaderButton";
 import toast from "react-hot-toast";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import { releaseToken } from "../../services/vesting.services";
+import { isTimestampGreaterOrEqualToCurrentDateTime } from "../../helpers/time-compare";
 
 function VestingTable({ token, vestID }) {
   let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
@@ -14,7 +15,11 @@ function VestingTable({ token, vestID }) {
     "yyyy-MM-dd"
   );
 
-  const [withdrawID, setWithdrawID] = useState(undefined);
+  const canUnlock = isTimestampGreaterOrEqualToCurrentDateTime(
+    Number(token?.cliffTime)
+  );
+
+  const [withdrawID, setWithdrawID] = useState(false);
 
   const { accountID } = useContext(MetamaskContext);
 
@@ -31,7 +36,7 @@ function VestingTable({ token, vestID }) {
       toast.success("Withdrawn successfully", {
         position: "bottom-right",
       });
-      setWithdrawID(lockID);
+      setWithdrawID(true);
     } catch (err) {
       console.log(err);
     } finally {
@@ -66,13 +71,17 @@ function VestingTable({ token, vestID }) {
             <p className="table-title">{Number(token?.duration)} Months</p>
           </div>
 
-          <div className="table-column padded">
+          <div
+            className="table-column padded"
+            style={{
+              padding: "10px",
+            }}
+          >
             <ButtonWithLoading
               isLoading={isButtonLoading || isPending}
               loaderColor="blue"
-              // disabled={!canUnlock || withdrawID}
+              disabled={!canUnlock || withdrawID}
               style={{
-                // cursor: !canUnlock || withdrawID ? "not-allowed" : "pointer",
                 width: "100px",
               }}
               onClick={() =>

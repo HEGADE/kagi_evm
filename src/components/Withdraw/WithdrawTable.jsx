@@ -34,9 +34,10 @@ import { rem } from "@mantine/core";
 import { copy } from "../../utils/copy-text.js";
 import toast from "react-hot-toast";
 import { isTimestampGreaterOrEqualToCurrentDateTime } from "../../helpers/time-compare.js";
-import { fromUnixTimeStamp } from "../../helpers/convertion.js";
+import { fromUnixTimeStamp, fromWei } from "../../helpers/convertion.js";
 import { unlockToken } from "../../services/lock.services.js";
 import { MetamaskContext } from "../../context/MetamaskContext.js";
+import { format } from "date-fns";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -50,9 +51,8 @@ const WithdrawTable = ({
   lockedTime,
   unlockTime,
 }) => {
-  const [withdrawID, setWithdrawID] = useState(undefined);
+  const [withdrawID, setWithdrawID] = useState(false);
 
-  
   const { accountID } = useContext(MetamaskContext);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
@@ -72,7 +72,7 @@ const WithdrawTable = ({
       toast.success("Withdrawn successfully", {
         position: "bottom-right",
       });
-      setWithdrawID(lockID);
+      setWithdrawID(true);
     } catch (err) {
       console.log(err);
     } finally {
@@ -86,62 +86,36 @@ const WithdrawTable = ({
         <div className="table-row medium">
           <div className="table-column" key={lockID}>
             <div className="product-preview tiny">
-              {/* <a>
-                <figure
-                  className="product-preview-image short liquid"
-                  style={{ background: "url('img/btc-logo.svg')" }}
-                >
-                  <img
-                    src="img/btc-logo.svg"
-                    alt="item-11"
-                    style={{ display: "none" }}
-                  />
-                </figure>
-              </a> */}
               <div className="product-preview-info">
-                <p className="product-preview-title">{assetName}</p>
+                <p className="table-title">{shortAddress(assetContact)}</p>
               </div>
             </div>
           </div>
+
           <div className="table-column padded">
-            <p className="table-title">{shortAddress(assetContact)}</p>
-          </div>
-          <div className="table-column padded">
-            <p
-              className="table-title"
-              onClick={() => {
-                toast.success("Copied!", {
-                  position: "bottom-right",
-                });
-              }}
-            ></p>
-          </div>
-          <div className="table-column padded">
-            {/* decimal 6 should be come from contract */}
             <p
               className="table-title"
               style={{
                 display: "contents",
               }}
             >
-              {amount}
+              {fromWei(Number(amount))}
             </p>
           </div>
           <div className="table-column padded">
             <p className="table-title">{lockID}</p>
           </div>
+
           <div className="table-column padded">
-            {/* <p className="table-title">
-              {ftInfo.unlocked ? "Unlocked" : "Locked"}
-            </p> */}
+            <p className="table-title">
+              {format(fromUnixTimeStamp(Number(lockedTime)), "yyyy-MM-dd")}
+            </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{lockedTime}</p>
-          </div>
-          <div className="table-column padded">
-            <div id="clockdiv">
-              {unlockTime}
-              {/* <CountdownTimer targetDateTime={unlockDateTime} /> */}
+            <div className="table-column padded">
+              <p className="table-title">
+                {format(fromUnixTimeStamp(Number(unlockTime)), "yyyy-MM-dd")}
+              </p>
             </div>
           </div>
           <div className="table-column padded-left">

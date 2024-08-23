@@ -179,13 +179,12 @@ const Withdraw = () => {
                               if (selectToken === "ft") {
                                 return (
                                   <WithdrawTable
-                                    assetContact={token["0"]}
-                                    // unlocked={token["unlocked"]?.value}
-                                    amount={token["1"]}
+                                    assetContact={token?.erc20}
+                                    amount={token?.amount}
                                     lockID={indx}
                                     key={indx}
-                                    unlockTime={token["4"]}
-                                    lockedTime={token["3"]}
+                                    unlockTime={token?.unlockTime}
+                                    lockedTime={token?.lockedTime}
                                   />
                                 );
                               } else {
