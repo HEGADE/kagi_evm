@@ -8,19 +8,13 @@ import {
 } from "../../../utils/validation/validation-schema";
 import { ValidationError } from "../../UI/Errors";
 import { copy } from "../../../utils/copy-text";
-import {
-  createDeployableTokenContractFT,
-  createDeployableTokenContractNFT,
-} from "../../../utils/deploy-contract/createDeployableFT";
 import toast from "react-hot-toast";
-import { useTransactionToasts } from "../../../providers/TransactionStatusProvider";
-import { NETWORK } from "../../../lib/constants";
-import { deployContract } from "../../../utils/deploy-contract/deployContract";
+import { solidityCompiler } from "@agnostico/browser-solidity-compiler";
+import { getContractNFT } from "../../../dynamic-contract/ft";
+import Web3 from "web3";
 
-const explorerUrl =
-  NETWORK === "TESTNET"
-    ? "https://explorer.hiro.so"
-    : "https://explorer.hiro.so";
+const web3 = new Web3(window.ethereum);
+
 const CreateTokenFormNFT = ({ currentForm }) => {
   const {
     register,
@@ -32,36 +26,81 @@ const CreateTokenFormNFT = ({ currentForm }) => {
     resolver: yupResolver(createNFTSchema),
   });
 
-  let { name, symbol, decimals, supply, url } = watch();
-
-  const { addTransactionToast } = useTransactionToasts({
-    success: `Successfully deployed ${name?.toLowerCase()} NFT `,
-  });
+  let { contractName, nftName, nftSymbol } = watch();
 
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  console.log(errors, isValid, "::");
+  async function deployContract(abi, bytecode) {
+    const accounts = await web3.eth.getAccounts();
+    const contract = new web3.eth.Contract(abi);
+
+    setButtonLoading(true);
+    try {
+      const deployedContract = await contract
+        .deploy({
+          data: "0x" + bytecode,
+        })
+        .send({
+          from: accounts[0],
+          gas: 3000000, // Adjust gas limit as needed
+        });
+
+      copy(deployedContract?.options?.address);
+      toast.success(
+        "Contract deployed successfully,and address copied to clip board",
+        {
+          position: "bottom-right",
+          duration: 5000,
+        }
+      );
+    } catch (error) {
+      console.error("Error deploying contract:", error);
+
+      toast.error("Error deploying contract", {
+        position: "bottom-right",
+      });
+    } finally {
+      setButtonLoading(false);
+    }
+  }
 
   const onSubmit = async (data) => {
     setButtonLoading(true);
+
+    const version = "soljson-v0.8.15+commit.e14f2714.js";
+
     try {
-      const contactToDeploy = createDeployableTokenContractNFT(data, NETWORK);
-      let txId = await deployContract({
-        contractCode: contactToDeploy,
-        contractName: data?.name,
-        networkBeingUsed: NETWORK,
+      const contractToDeploy = getContractNFT(contractName, nftName, nftSymbol);
+
+
+      console.log("contractToDeploy nft", contractToDeploy);
+
+      const output = await solidityCompiler({
+        version: `https://binaries.soliditylang.org/bin/${version}`,
+        contractBody: contractToDeploy,
+        options: {
+          optimizer: {
+            enabled: true,
+            runs: 3000,
+          },
+        },
       });
 
-      let url = `${explorerUrl}/txid/${txId}?chain=testnet`;
-      if (txId) {
-        copy(url);
-        // alert("Transaction URL copied to ClipBoard");
-        addTransactionToast(txId, `Deploying ${data?.name} NFT`);
+      const contractComplied =
+        output?.contracts?.["Compiled_Contracts"]?.[contractName];
+
+      if (!contractComplied?.abi) {
+        toast.error("Please Refresh the page and try again", {
+          position: "bottom-right",
+        });
+        return;
       }
+      await deployContract(
+        contractComplied.abi,
+        contractComplied.evm.bytecode.object
+      );
     } catch (err) {
-      toast.error(err?.message || "Some error occurred");
-    } finally {
-      setButtonLoading(false);
+      console.error("Error compiling contract:", err);
     }
   };
 
@@ -76,36 +115,52 @@ const CreateTokenFormNFT = ({ currentForm }) => {
                   <div className="form-item">
                     <div className="form-input small">
                       <input
-                        placeholder="Token Name"
+                        placeholder="Enter the Contract Name"
                         type="text"
                         id="name"
-                        name="name"
-                        {...register("name", { required: true })}
+                        name="contractName"
+                        {...register("contractName", { required: true })}
                       />
-                      <ValidationError err={errors.name} />
+                      <ValidationError err={errors.contractName} />
                     </div>
                   </div>
                   <br />
                   <br />
                   <br />
                 </div>
-
-                <br />
-
-                <div className="form-row">
+                <div className="form-row split">
                   <div className="form-item">
-                    {/* FORM INPUT */}
-                    <div className="form-input small medium-textarea">
-                      <textarea
-                        {...register("url", { required: true })}
-                        id="billing-details"
-                        name="url"
-                        placeholder="Token Url (www.example.com)"
-                        defaultValue={""}
+                    <div className="form-input small">
+                      <input
+                        placeholder="Enter the name of the NFT"
+                        type="text"
+                        id="name"
+                        name="nftName"
+                        {...register("nftName", { required: true })}
                       />
-                      <ValidationError err={errors.url} />
+                      <ValidationError err={errors.nftName} />
                     </div>
                   </div>
+                  <br />
+                  <br />
+                  <br />
+                </div>
+                <div className="form-row split">
+                  <div className="form-item">
+                    <div className="form-input small">
+                      <input
+                        placeholder="Enter the symbol of the NFT"
+                        type="text"
+                        id="name"
+                        name="nftSymbol"
+                        {...register("nftSymbol", { required: true })}
+                      />
+                      <ValidationError err={errors.nftSymbol} />
+                    </div>
+                  </div>
+                  <br />
+                  <br />
+                  <br />
                 </div>
               </form>
             </div>
@@ -117,11 +172,9 @@ const CreateTokenFormNFT = ({ currentForm }) => {
           handleSubmit={handleSubmit}
           onSubmitContract={onSubmit}
           isValid={isValid}
-          name={name}
-          decimal={decimals}
-          supply={supply}
-          symbol={symbol}
-          url={url}
+          name={nftName}
+          contractName={contractName}
+          symbol={nftSymbol}
         />
       </div>
     </>

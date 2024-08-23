@@ -101,15 +101,40 @@ export const CreateTokenSchemaFT = yup.object().shape({
 });
 
 export const createNFTSchema = yup.object().shape({
-  url: yup.string().url("Invalid URL").required("URL is required"),
-  name: yup
+  nftName: yup
     .string()
-    .max(30, "Name should not be greater than 30 characters")
+    .max(30, "nft name should not be greater than 30 characters")
     .matches(
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
     )
-    .test("forValidName", "name should not only contain number", (value) => {
+    .test("forValidName", "nft name should not only contain number", (value) => {
+      if (!isNaN(value)) {
+        return false;
+      }
+      return true;
+    }),
+  contractName: yup
+    .string()
+    .max(30, "Contract name should not be greater than 30 characters")
+    .matches(
+      /^[a-zA-Z0-9 ]+$/gi,
+      "Only letters and numbers are allowed in name"
+    )
+    .test("forValidName", "Contract name should not only contain number", (value) => {
+      if (!isNaN(value)) {
+        return false;
+      }
+      return true;
+    }),
+  nftSymbol: yup
+    .string()
+    .max(30, "nft symbol should not be greater than 30 characters")
+    .matches(
+      /^[a-zA-Z0-9 ]+$/gi,
+      "Only letters and numbers are allowed in name"
+    )
+    .test("forValidName", "nft symbol  should not only contain number", (value) => {
       if (!isNaN(value)) {
         return false;
       }

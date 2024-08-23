@@ -78,7 +78,6 @@ const CreateTokenFormFT = () => {
         },
       });
 
-
       // (function() {
       //   const originalWorker = window.Worker;
       //   const workers = [];

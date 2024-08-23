@@ -1,5 +1,5 @@
 export function getContract(contractName, token, symbol, supply) {
-    return `
+  return `
   
   
   /**
@@ -491,5 +491,102 @@ export function getContract(contractName, token, symbol, supply) {
                   return true;
       }
   }`;
-  }
-  
+}
+
+export const getContractNFT = (contractName, name, symbol) => {
+  return `
+    // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract ${contractName} {
+    string private _name = "${name}"; // Change this to your desired name
+    string private _symbol = "${symbol}"; // Change this to your desired symbol
+    address private _owner;
+    
+    mapping(uint256 => address) private _owners;
+    mapping(address => uint256) private _balances;
+    mapping(uint256 => address) private _tokenApprovals;
+    mapping(address => mapping(address => bool)) private _operatorApprovals;
+    
+    uint256 private _tokenIdCounter;
+
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
+    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+
+    constructor() {
+        _owner = msg.sender;
+        _mint(_owner, 1);
+    }
+
+    function name() public view returns (string memory) { return _name; }
+    function symbol() public view returns (string memory) { return _symbol; }
+    function balanceOf(address owner) public view returns (uint256) { return _balances[owner]; }
+    function ownerOf(uint256 tokenId) public view returns (address) { return _owners[tokenId]; }
+
+    function approve(address to, uint256 tokenId) public {
+        require(msg.sender == _owners[tokenId] || _operatorApprovals[_owners[tokenId]][msg.sender], "Not authorized");
+        _tokenApprovals[tokenId] = to;
+        emit Approval(_owners[tokenId], to, tokenId);
+    }
+
+    function getApproved(uint256 tokenId) public view returns (address) {
+        require(_owners[tokenId] != address(0), "Token does not exist");
+        return _tokenApprovals[tokenId];
+    }
+
+    function setApprovalForAll(address operator, bool approved) public {
+        _operatorApprovals[msg.sender][operator] = approved;
+        emit ApprovalForAll(msg.sender, operator, approved);
+    }
+
+    function isApprovedForAll(address owner, address operator) public view returns (bool) {
+        return _operatorApprovals[owner][operator];
+    }
+
+    function transferFrom(address from, address to, uint256 tokenId) public {
+        require(_isApprovedOrOwner(msg.sender, tokenId), "Not authorized");
+        _transfer(from, to, tokenId);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId) public {
+        transferFrom(from, to, tokenId);
+    }
+
+    function mintNFT(address to) public returns (uint256) {
+        require(msg.sender == _owner, "Only owner can mint");
+        _tokenIdCounter++;
+        uint256 newTokenId = _tokenIdCounter;
+        _mint(to, newTokenId);
+        return newTokenId;
+    }
+
+    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view returns (bool) {
+        address owner = _owners[tokenId];
+        return (spender == owner || _tokenApprovals[tokenId] == spender || _operatorApprovals[owner][spender]);
+    }
+
+    function _mint(address to, uint256 tokenId) internal {
+        require(to != address(0), "Invalid recipient");
+        require(_owners[tokenId] == address(0), "Token already minted");
+
+        _balances[to]++;
+        _owners[tokenId] = to;
+
+        emit Transfer(address(0), to, tokenId);
+    }
+
+    function _transfer(address from, address to, uint256 tokenId) internal {
+        require(_owners[tokenId] == from, "Not the owner");
+        require(to != address(0), "Invalid recipient");
+
+        _balances[from]--;
+        _balances[to]++;
+        _owners[tokenId] = to;
+        delete _tokenApprovals[tokenId];
+
+        emit Transfer(from, to, tokenId);
+    }
+}
+    `;
+};

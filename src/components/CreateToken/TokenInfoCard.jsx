@@ -13,6 +13,7 @@ const TokenInfoCard = ({
   isValid,
   handleSubmit,
   onSubmitContract,
+  contractName,
 }) => {
   return (
     <>
@@ -27,19 +28,19 @@ const TokenInfoCard = ({
                     <span className="bold">Contract Name</span>
                   </p>
                 </div>
-                <p className="price-title">{name}</p>
+                <p className="price-title">{contractName}</p>
               </div>
-              {currentForm !== "NFT" && (
+              {
                 <div className="totals-line">
                   <div className="totals-line-info">
                     <p className="totals-line-title">
-                      <span className="bold">Token Symbol</span>
+                      <span className="bold"> Symbol</span>
                     </p>
                   </div>
                   <p className="price-title"> {symbol}</p>
                 </div>
-              )}
-          
+              }
+
               {currentForm !== "NFT" && (
                 <div className="totals-line">
                   <div className="totals-line-info">
@@ -56,7 +57,7 @@ const TokenInfoCard = ({
                     <span className="bold">Token name</span>
                   </p>
                 </div>
-                <p className="price-title"> {token}</p>
+                <p className="price-title"> {name}</p>
               </div>
             </div>
           </div>
