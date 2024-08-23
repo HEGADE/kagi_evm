@@ -167,14 +167,7 @@ const Withdraw = () => {
                       <div className="table table-downloads table-responsive split-rows">
                         <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
-                          {!tokens.length ? (
-                            <SkeletonTabular
-                              className="table-row medium"
-                              height={60}
-                              width="100%"
-                              howMany={3}
-                            />
-                          ) : tokens?.length > 0 ? (
+                          {tokens?.length > 0 ? (
                             tokens?.map((token, indx) => {
                               if (selectToken === "ft") {
                                 return (
