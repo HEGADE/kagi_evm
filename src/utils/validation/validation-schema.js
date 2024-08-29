@@ -21,17 +21,16 @@ export const tokenSchema = (balance) =>
       .required("days is required")
       .min(1, "days must be greater than 0"),
   });
-export const nftSchema = (currentBlockHeight) =>
+export const nftSchema = () =>
   yup.object().shape({
     assetName: yup.string().optional(),
-    taker: yup
+    tokenAddress: yup
       .string()
-      .required("taker is required")
-      .required("taker is required")
-      .test("forValidAddress", "taker is invalid", (value) => {
+      .required("Token Address is required")
+
+      .test("forValidAddress", "Token Address is invalid", (value) => {
         try {
-          principalCV(String(value));
-          return true;
+          return Web3.utils.isAddress(value);
         } catch (err) {
           console.log(err);
           return false;
@@ -108,12 +107,16 @@ export const createNFTSchema = yup.object().shape({
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
     )
-    .test("forValidName", "nft name should not only contain number", (value) => {
-      if (!isNaN(value)) {
-        return false;
+    .test(
+      "forValidName",
+      "nft name should not only contain number",
+      (value) => {
+        if (!isNaN(value)) {
+          return false;
+        }
+        return true;
       }
-      return true;
-    }),
+    ),
   contractName: yup
     .string()
     .max(30, "Contract name should not be greater than 30 characters")
@@ -121,12 +124,16 @@ export const createNFTSchema = yup.object().shape({
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
     )
-    .test("forValidName", "Contract name should not only contain number", (value) => {
-      if (!isNaN(value)) {
-        return false;
+    .test(
+      "forValidName",
+      "Contract name should not only contain number",
+      (value) => {
+        if (!isNaN(value)) {
+          return false;
+        }
+        return true;
       }
-      return true;
-    }),
+    ),
   nftSymbol: yup
     .string()
     .max(30, "nft symbol should not be greater than 30 characters")
@@ -134,12 +141,16 @@ export const createNFTSchema = yup.object().shape({
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
     )
-    .test("forValidName", "nft symbol  should not only contain number", (value) => {
-      if (!isNaN(value)) {
-        return false;
+    .test(
+      "forValidName",
+      "nft symbol  should not only contain number",
+      (value) => {
+        if (!isNaN(value)) {
+          return false;
+        }
+        return true;
       }
-      return true;
-    }),
+    ),
 });
 
 export const VestTokenSchema = (balance) =>

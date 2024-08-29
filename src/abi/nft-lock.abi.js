@@ -1,4 +1,4 @@
-export const locNftAbi = [
+export const lockNftAbi = [
   {
     inputs: [
       {

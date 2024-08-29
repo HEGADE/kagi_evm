@@ -48,13 +48,13 @@ const TokenLock = () => {
             >
               Fungible Tokens
             </p>
-            {/* <p
+            <p
               ref={nftRef}
               onClick={handlePageNFT}
               className="tab-switch-button "
             >
               NFT
-            </p> */}
+            </p>
           </div>
         </div>
         <div
