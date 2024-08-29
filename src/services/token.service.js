@@ -125,5 +125,6 @@ export const requestApprove = async ({
     console.log("approved res", res);
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
