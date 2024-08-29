@@ -53,9 +53,8 @@ export const Approve = ({
         contractAddress,
         tokenAddress
       );
-      console.log(allowance);
 
-      if (allowance <= 0) {
+      if (allowance <= 0) {        
         setButtonConfig((pre) => ({
           ...pre,
           showApprove: true,
@@ -63,7 +62,7 @@ export const Approve = ({
 
         return;
       }
-
+      
       setMargin(true);
       setMoveToLockPage(true);
     } catch (err) {
@@ -133,7 +132,7 @@ export const Approve = ({
       </div>
       <div className="form-row" onClick={handleNext}>
         <div className="form-item grid grid-8-4 small-space">
-          {!buttonConfig?.showApprove && (
+          {buttonConfig?.showApprove && (
             <ButtonWithLoading
               loaderColor="blue"
               isLoading={loading}
