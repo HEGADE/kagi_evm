@@ -20,8 +20,8 @@ const ConnectWalletMetamask = ({ styl }) => {
         className="d-flex justify-content-center align-items-center "
         style={styl}
       >
-        <button className="btn btn-success" onClick={connectMetamask}>
-          Please Connect To Wallet
+        <button className="btn btn-dark shadow" onClick={connectMetamask}>
+          Connect to wallet
         </button>
       </div>
     </>

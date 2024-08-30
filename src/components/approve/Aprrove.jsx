@@ -31,7 +31,7 @@ export const Approve = ({
   const { accountID } = useContext(MetamaskContext);
 
   const tokens = {
-    ft: "Fungible Token",
+    ft: " Token",
     nft: "Non Fungible Token",
   };
 
@@ -109,12 +109,8 @@ export const Approve = ({
 
   return (
     <>
-      <h5 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h5>
-      {/* <p className="text-center mt-10">
-        {" "}
-        {!nft ? tokens.ft : tokens.nft} Generated from App{" "}
-        {buttonConfig?.showApprove}
-      </p> */}
+      {/* <h5 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h5> */}
+
       <div className="form-row landing-form-next">
         <div className="form-item grid grid-8-4 small-space">
           <div className="form-input">
@@ -137,14 +133,13 @@ export const Approve = ({
       </div>
       <div className="form-row" onClick={handleNext}>
         <div className="form-item grid grid-8-4 small-space">
-          {buttonConfig?.showApprove && (
-            <ButtonWithLoading
-              loaderColor="blue"
-              isLoading={loading}
-              className="button medium primary"
-              text="Approve"
-            />
-          )}
+          <ButtonWithLoading
+            disabled={!buttonConfig.showApprove}
+            loaderColor="blue"
+            isLoading={loading}
+            className="button medium primary"
+            text="Approve"
+          />
         </div>
       </div>
     </>
