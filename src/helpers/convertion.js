@@ -1,3 +1,4 @@
+import { addDays, getUnixTime } from "date-fns";
 import Web3 from "web3";
 export const toWei = (value, par = "ether") => {
   return Web3.utils.toWei(value, "ether");
@@ -16,3 +17,13 @@ export const fromUnixTimeStamp = (unixTimeStamp) => {
   const date = new Date(unixTimeStamp * 1000);
   return date;
 };
+
+function daysToFutureTimestamp(days) {
+  const currentDate = new Date();
+
+  const futureDate = addDays(currentDate, days);
+
+  const unixTimestamp = getUnixTime(futureDate);
+
+  return unixTimestamp;
+}

@@ -8,7 +8,10 @@ import {
   requestApprove,
 } from "../../services/token.service.js";
 
-import { lockContractAddress } from "../../lib/constants.js";
+import {
+  lockContractAddress,
+  lockNftContractAddress,
+} from "../../lib/constants.js";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -27,6 +30,14 @@ import { lockToken } from "../../services/lock.services";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import Web3 from "web3";
 import toast from "react-hot-toast";
+import {
+  getApproved,
+  getNFTName,
+  getNFTOwner,
+  getNFTSymbol,
+  requestApproveNft,
+} from "../../services/nft.service.js";
+import { lockNFT } from "../../services/lock-nft.services.js";
 
 const LockTokenInfo = ({
   tokenAddress,
@@ -60,7 +71,7 @@ const LockTokenInfo = ({
     formState: { errors: nftErrors, isValid: nftIsValid },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(nftSchema(data.currentBlockHeight)),
+    resolver: yupResolver(nftSchema()),
   });
 
   const onSubmit = async (data) => {
@@ -88,20 +99,46 @@ const LockTokenInfo = ({
       setLoading(false);
     }
   };
+  const onSubmitNFT = async (data) => {
+    setLoading(true);
+
+    const { days } = data;
+    try {
+      await lockNFT({
+        accountAddress: accountID,
+        nftAddress: tokenAddress?.address,
+        tokenID: tokenAddress?.id,
+        lockingPeriod: days,
+      });
+
+      toast.success("NFT locked successfully", {
+        position: "bottom-right",
+      });
+    } catch (err) {
+      console.log(err, "error submitting");
+
+      toast.error("Error While Locking", {
+        position: "bottom-right",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (nft) {
       nftReset({
         assetName: transformString(data?.assetName.toLowerCase()),
+        tokenID: tokenAddress?.id,
+        tokenAddress: tokenAddress?.address,
       });
       return;
     }
     reset({
       assetName: transformString(data?.assetName?.toLowerCase()),
-      token: tokenAddress,
+      token: tokenAddress?.address,
     });
   }, []);
-  // lock-expiry: uint, token-id: uint, taker: principal
   return (
     <>
       <div
@@ -209,7 +246,7 @@ const LockTokenInfo = ({
           </div>
         </form>
       ) : (
-        <form className="form">
+        <form className="form" onSubmit={nftHandleSubmit(onSubmitNFT)}>
           <div className="form-row">
             <div className="form-item">
               <div className="form-input">
@@ -233,6 +270,7 @@ const LockTokenInfo = ({
                 <input
                   type="text"
                   id="balance"
+                  disabled
                   {...nftRegister("tokenID")}
                   placeholder="Token ID"
                 />
@@ -247,10 +285,11 @@ const LockTokenInfo = ({
                 <input
                   type="text"
                   id="balance"
-                  placeholder="Taker Address"
-                  {...nftRegister("taker")}
+                  disabled
+                  placeholder="Token Address"
+                  {...nftRegister("tokenAddress")}
                 />
-                <ValidationError err={nftErrors.taker} />
+                <ValidationError err={nftErrors?.tokenAddress} />
               </div>
             </div>
           </div>
@@ -272,7 +311,7 @@ const LockTokenInfo = ({
           <div className="form-row">
             <div className="form-item">
               <ButtonWithLoading
-                disabled={!btnDisabled || !nftIsValid}
+                disabled={!nftIsValid}
                 loaderColor="blue"
                 type="submit"
                 className="button medium primary"
@@ -310,36 +349,86 @@ const LockTokenAddress = ({
     nft: "Non Fungible Token",
   };
 
-  const fetch = async () => {
-    try {
-      const balance = await getTokenBalance(accountID, tokenAddress);
-      const symbol = await getTokenSymbol(accountID, tokenAddress);
-      const assetName = await getTokenName(accountID, tokenAddress);
+  const fetchFt = async () => {
+    const balance = await getTokenBalance(accountID, tokenAddress?.address);
+    const symbol = await getTokenSymbol(accountID, tokenAddress?.address);
+    const assetName = await getTokenName(accountID, tokenAddress?.address);
 
-      setData((pre) => ({
+    setData((pre) => ({
+      ...pre,
+      balance,
+      symbol,
+      assetName,
+    }));
+
+    const allowance = await requestAllowance(
+      accountID,
+      lockContractAddress,
+      tokenAddress?.address
+    );
+
+    if (allowance <= 0) {
+      setButtonConfig((pre) => ({
         ...pre,
-        balance,
-        symbol,
-        assetName,
+        showApprove: true,
       }));
 
-      const allowance = await requestAllowance(
-        accountID,
-        lockContractAddress,
-        tokenAddress
-      );
+      return;
+    }
 
-      if (allowance <= 0) {
-        setButtonConfig((pre) => ({
-          ...pre,
-          showApprove: true,
-        }));
+    setMargin(true);
+    setMoveToLockPage(true);
+  };
 
+  const fetchNft = async () => {
+    if (!tokenAddress?.id) return;
+    const name = await getNFTName(tokenAddress?.address);
+    const symbol = await getNFTSymbol(tokenAddress?.address);
+    const owner = await getNFTOwner(tokenAddress?.address, tokenAddress?.id);
+
+    if (owner?.toLowerCase() !== accountID?.toLowerCase()) {
+      toast.error("You are not the owner of this token", {
+        position: "bottom-right",
+      });
+      setButtonConfig((pre) => ({
+        ...pre,
+        showApprove: false,
+      }));
+      return;
+    }
+
+    setData((pre) => ({
+      ...pre,
+      assetName: name,
+      symbol,
+    }));
+
+    const approved = await getApproved({
+      nftAddress: tokenAddress?.address,
+      tokenID: tokenAddress?.id,
+    });
+
+    if (approved?.toLowerCase() !== lockNftContractAddress?.toLowerCase()) {
+      setButtonConfig((pre) => ({
+        ...pre,
+        showApprove: true,
+      }));
+
+      return;
+    }
+
+    setMargin(true);
+    setMoveToLockPage(true);
+  };
+
+  const fetch = async () => {
+    try {
+      if (!nft) {
+        await fetchFt();
         return;
       }
 
-      setMargin(true);
-      setMoveToLockPage(true);
+      await fetchNft();
     } catch (err) {
       console.log(err);
       toast.error("Invalid token address", {
@@ -348,17 +437,33 @@ const LockTokenAddress = ({
     }
   };
 
+  const handleFtNext = async () => {
+    await requestApprove({
+      accountAddress: accountID,
+      contractAddress: lockContractAddress,
+      tokenAddress: tokenAddress?.address,
+    });
+  };
+
+  const handleNftNext = async () => {
+    await requestApproveNft({
+      accountAddress: accountID,
+      tokenID: tokenAddress?.id,
+      nftAddress: tokenAddress?.address,
+    });
+  };
+
   const handleNext = async (e) => {
     e.preventDefault();
+
     setLoading(true);
 
     try {
-      await requestApprove({
-        accountAddress: accountID,
-        contractAddress: lockContractAddress,
-        tokenAddress,
-      });
-
+      if (!nft) {
+        await handleFtNext();
+      } else {
+        await handleNftNext();
+      }
       setMargin(true);
       setMoveToLockPage(true);
     } catch (err) {
@@ -369,9 +474,9 @@ const LockTokenAddress = ({
   };
 
   useEffect(() => {
-    if (!tokenAddress.length) return;
+    if (!tokenAddress?.address?.length) return;
 
-    if (!web3.utils.isAddress(tokenAddress)) {
+    if (!web3.utils.isAddress(tokenAddress?.address)) {
       toast.error("Invalid token address", {
         position: "bottom-right",
       });
@@ -379,7 +484,7 @@ const LockTokenAddress = ({
     }
 
     fetch();
-  }, [tokenAddress]);
+  }, [tokenAddress?.address, tokenAddress?.id]);
 
   return (
     <>
@@ -387,7 +492,6 @@ const LockTokenAddress = ({
       <p className="text-center mt-10">
         {" "}
         {!nft ? tokens.ft : tokens.nft} Generated from App{" "}
-        {buttonConfig?.showApprove}
       </p>
       <div className="form-row landing-form-next">
         <div className="form-item">
@@ -400,8 +504,29 @@ const LockTokenAddress = ({
               type="text"
               id="address"
               required
-              onChange={(e) => setTokenAddress(e.target.value)}
+              onChange={(e) =>
+                setTokenAddress({
+                  ...tokenAddress,
+                  address: e.target.value,
+                })
+              }
             />
+            <br />
+            <br />
+            {nft && (
+              <input
+                placeholder="Token ID"
+                type="text"
+                id="address"
+                required
+                onChange={(e) =>
+                  setTokenAddress({
+                    ...tokenAddress,
+                    id: e.target.value,
+                  })
+                }
+              />
+            )}
           </div>
         </div>
       </div>
@@ -429,7 +554,10 @@ const LockTokenForm = ({
   setMoveToLockPage,
   handlePage,
 }) => {
-  const [tokenAddress, setTokenAddress] = useState("");
+  const [tokenAddress, setTokenAddress] = useState({
+    address: "",
+    id: 0,
+  });
   const [data, setData] = useState({
     assetName: "",
     decimals: "",
