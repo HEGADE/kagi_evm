@@ -123,6 +123,7 @@ export const Approve = ({
               placeholder={
                 !nft ? tokens.ft + " Address" : tokens.nft + " Address"
               }
+              disabled={!accountID}
               type="text"
               id="address"
               required
