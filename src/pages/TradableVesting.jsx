@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SideNavBar from "../components/UI/SideNavBar";
 import { Approve } from "../components/approve/Aprrove";
 import { TradableVestingContractAddress } from "../lib/constants";
+import { TradableVest } from "../components/TradableVesting/TradableVest";
 
 function TradableVesting() {
   const [margin, setMargin] = useState(false);
@@ -43,8 +44,7 @@ function TradableVesting() {
             setMargin={setMargin}
           />
         ) : (
-        //   <VestToken data={data} tokenAddress={tokenAddress} />
-        <p>LOCK PAGE</p>
+        <TradableVest data={data} tokenAddress={tokenAddress}/>
         )}
       </div>
     </>

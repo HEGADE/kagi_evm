@@ -1,6 +1,6 @@
 import { tradableVestingAbi } from "../abi/tradable-vest.abi";
 import { toWei } from "../helpers/convertion";
-import { vestingContractAddress } from "../lib/constants";
+import { TradableVestingContractAddress } from "../lib/constants";
 import { initWeb3 } from "./web3.service";
 
 export const vestToken = async ({
@@ -16,9 +16,10 @@ export const vestToken = async ({
 
   const contractInstance = new web3.eth.Contract(
     tradableVestingAbi,
-    vestingContractAddress
+    TradableVestingContractAddress
   );
-
+  console.log(contractInstance.methods);
+  
   const actualAmount = toWei(amount, "ether");
 
   let vestRes = await contractInstance.methods
@@ -30,7 +31,7 @@ export const vestToken = async ({
       cliffPeriod,
       duration
     )
-    .send({ from: accountAddress, to: vestingContractAddress });
+    .send({ from: accountAddress, to: TradableVestingContractAddress });
 
   return vestRes;
 };
@@ -40,12 +41,12 @@ export const releaseToken = async ({ accountAddress, vestID }) => {
 
   const contractInstance = new web3.eth.Contract(
     tradableVestingAbi,
-    vestingContractAddress
+    TradableVestingContractAddress
   );
 
   let releaseRes = await contractInstance.methods
     .releaseTokens(vestID)
-    .send({ from: accountAddress, to: vestingContractAddress });
+    .send({ from: accountAddress, to: TradableVestingContractAddress });
 
   return releaseRes;
 };
@@ -55,11 +56,11 @@ export const getVestingSchedules = async ({ accountAddress }) => {
 
   const contractInstance = new web3.eth.Contract(
     tradableVestingAbi,
-    vestingContractAddress
+    TradableVestingContractAddress
   );
 
   let vestingList = await contractInstance.methods
-    .getVestingSchedules(accountAddress)
+    .getUserVestingSchedules(accountAddress)
     .call();
 
   console.log(vestingList, "vestingList");

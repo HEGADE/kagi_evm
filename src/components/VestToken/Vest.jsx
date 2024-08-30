@@ -168,10 +168,10 @@ const VestToken = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
-                  <label htmlFor="vestingPeriod" className="form-label">Vesting Period</label>
+                  <label htmlFor="vestingPeriod" className="form-label">Vesting Start Time</label>
                     <div className="form-input small">
                       <input
-                        placeholder="Vesting Period"
+                        placeholder="Vesting Start Time"
                         type="date"
                         min={new Date().toISOString().split("T")[0]}
                         id="vestingPeriod"

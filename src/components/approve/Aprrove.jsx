@@ -88,6 +88,7 @@ export const Approve = ({
       setMoveToLockPage(true);
     } catch (err) {
       console.log(err);
+      // setMoveToLockPage(true);
     } finally {
       setLoading(false);
     }

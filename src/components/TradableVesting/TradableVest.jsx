@@ -169,10 +169,10 @@ const TradableVest = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
-                  <label htmlFor="vestingPeriod" className="form-label">Vesting Period</label>
+                  <label htmlFor="vestingPeriod" className="form-label">Vesting Start Time</label>
                     <div className="form-input small">
                       <input
-                        placeholder="Vesting Period"
+                        placeholder="Vesting Start Time"
                         type="date"
                         min={new Date().toISOString().split("T")[0]}
                         id="vestingPeriod"
@@ -189,7 +189,7 @@ const TradableVest = ({ data, tokenAddress }) => {
                   <div className="form-item">
                     <div className="form-input small">
                       <input
-                        placeholder="Duration (n The duration over which the tokens will be vested)"
+                        placeholder="Duration (The duration over which the tokens will be vested)"
                         type="text"
                         id="duration"
                         name="duration"
