@@ -47,8 +47,8 @@ function VestingTokenList() {
   };
 
   useEffect(() => {
-    fetchtokenVestingList();
-  }, []);
+    if (accountID) fetchtokenVestingList();
+  }, [accountID]);
 
   return (
     <div class="content-grid">
@@ -147,8 +147,10 @@ function VestingTokenList() {
                       <VestingHeading />
                       <div className="table-body same-color-rows">
                         {tokenVestingList?.length ? (
-                          tokenVestingList?.map((tokens,indx) => {
-                            return <VestingTable token={tokens} vestID={indx} />;
+                          tokenVestingList?.map((tokens, indx) => {
+                            return (
+                              <VestingTable token={tokens} vestID={indx} />
+                            );
                           })
                         ) : (
                           <div

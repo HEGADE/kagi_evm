@@ -11,6 +11,7 @@ import { SkeletonTabular } from "../UI/Skeletons";
 import { useTableData } from "../../store/table-data.store";
 import { getTokenList } from "../../services/lock.services";
 import { MetamaskContext } from "../../context/MetamaskContext";
+import { getLockedNftList } from "../../services/lock-nft.services";
 
 const Withdraw = () => {
   let data = useTableData((state) => state.data);
@@ -62,14 +63,25 @@ const Withdraw = () => {
   //     .includes(search.toLowerCase());
   // });
 
+  //tokenAddress: '0x571ab8910f2931ee3e5a227936f85d3c8a2AfA88', tokenId: 1n, unlockTime: 1724926946n
+
   const fetchTokenList = async () => {
     let res = await getTokenList({ accountAddress: accountID });
-    setTokens(res);
+
+    let resNft = await getLockedNftList({ accountAddress: accountID });
+
+    setTokens((pre) => {
+      return {
+        ...pre,
+        nft: resNft,
+        ft: res,
+      };
+    });
   };
 
   useEffect(() => {
     fetchTokenList();
-  }, [selectToken]);
+  }, [selectToken, accountID]);
 
   return (
     <>
@@ -167,8 +179,8 @@ const Withdraw = () => {
                       <div className="table table-downloads table-responsive split-rows">
                         <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
-                          {tokens?.length > 0 ? (
-                            tokens?.map((token, indx) => {
+                          {tokens?.[selectToken]?.length > 0 ? (
+                            tokens?.[selectToken].map((token, indx) => {
                               if (selectToken === "ft") {
                                 return (
                                   <WithdrawTable
@@ -183,27 +195,10 @@ const Withdraw = () => {
                               } else {
                                 return (
                                   <WithdrawTableNFT
-                                    assetContact={token["nft-contract"]?.value}
-                                    assetName={
-                                      token["nft-contract"]?.value.split(
-                                        "."
-                                      )[1] === "sip009-nft"
-                                        ? "stacksies"
-                                        : token["nft-contract"]?.value.split(
-                                            "."
-                                          )[1]
-                                    }
-                                    lockID={token["lock-id"]?.value}
-                                    unlocked={token["unlocked"]?.value}
-                                    key={token["token-id"]?.value}
-                                    assetID={token["token-id"]?.value}
-                                    lockTime={token["lock-expiry"]?.value}
-                                    lockedTime={token["locked-time"]?.value}
-                                    taker={token["taker"]?.value}
-                                    maker={token["maker"]?.value}
-                                    lockedBlockHeight={
-                                      token["locked-block-height"]?.value
-                                    }
+                                    assetContact={token?.tokenAddress}
+                                    lockID={Number(token?.tokenId)}
+                                    unlockTime={Number(token?.unlockTime)}
+                                    key={Number(token?.tokenId)}
                                   />
                                 );
                               }
