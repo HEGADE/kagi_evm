@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { shortAddress } from "../../utils/format/address.format";
-import { fromUnixTimeStamp, fromWei } from "../../helpers/convertion";
+import { fromUnixTimeStamp, fromWei, toWei } from "../../helpers/convertion";
 import { format } from "date-fns";
 import ButtonWithLoading from "../UI/LoaderButton";
 import toast from "react-hot-toast";
@@ -44,6 +44,7 @@ function VestingTable({ token, vestID }) {
     }
   };
 
+  console.log(token, "this is the token");
   return (
     <>
       <>
@@ -58,7 +59,7 @@ function VestingTable({ token, vestID }) {
               //     display: "contents",
               //   }}
             >
-              {fromWei(Number(token?.amount))}
+              {fromWei((token?.amount))}
             </p>
           </div>
           <div className="table-column padded">

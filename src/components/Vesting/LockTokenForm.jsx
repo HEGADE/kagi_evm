@@ -38,6 +38,7 @@ import {
   requestApproveNft,
 } from "../../services/nft.service.js";
 import { lockNFT } from "../../services/lock-nft.services.js";
+import { set } from "date-fns";
 
 const LockTokenInfo = ({
   tokenAddress,
@@ -89,6 +90,8 @@ const LockTokenInfo = ({
       toast.success("Token locked successfully", {
         position: "bottom-right",
       });
+      handlePage();
+      setTokenAddress("");
     } catch (err) {
       console.log(err, "error submitting");
 

@@ -18,6 +18,7 @@ const web3 = new Web3(window.ethereum);
 const CreateTokenFormNFT = ({ currentForm }) => {
   const {
     register,
+    reset,
     watch,
     handleSubmit,
     formState: { errors, isValid },
@@ -53,6 +54,8 @@ const CreateTokenFormNFT = ({ currentForm }) => {
           duration: 5000,
         }
       );
+
+      reset();
     } catch (error) {
       console.error("Error deploying contract:", error);
 
@@ -173,8 +176,8 @@ const CreateTokenFormNFT = ({ currentForm }) => {
           handleSubmit={handleSubmit}
           onSubmitContract={onSubmit}
           isValid={isValid}
-          name={nftName}
-          contractName={contractName}
+          name={contractName}
+          token={nftName}
           symbol={nftSymbol}
         />
       </div>
