@@ -80,7 +80,7 @@ const Withdraw = () => {
   };
 
   useEffect(() => {
-    fetchTokenList();
+    if (accountID) fetchTokenList();
   }, [selectToken, accountID]);
 
   return (
