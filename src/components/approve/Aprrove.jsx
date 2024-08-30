@@ -105,7 +105,7 @@ export const Approve = ({
     }
 
     fetch();
-  }, [tokenAddress]);
+  }, [tokenAddress, accountID]);
 
   return (
     <>
@@ -123,6 +123,9 @@ export const Approve = ({
               placeholder={
                 !nft ? tokens.ft + " Address" : tokens.nft + " Address"
               }
+              style={{
+                cursor: !accountID ? "not-allowed" : "pointer",
+              }}
               disabled={!accountID}
               type="text"
               id="address"
