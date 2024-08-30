@@ -390,6 +390,10 @@ const LockTokenAddress = ({
       toast.error("You are not the owner of this token", {
         position: "bottom-right",
       });
+      setButtonConfig((pre) => ({
+        ...pre,
+        showApprove: false,
+      }));
       return;
     }
 
@@ -488,7 +492,6 @@ const LockTokenAddress = ({
       <p className="text-center mt-10">
         {" "}
         {!nft ? tokens.ft : tokens.nft} Generated from App{" "}
-        {buttonConfig?.showApprove}
       </p>
       <div className="form-row landing-form-next">
         <div className="form-item">

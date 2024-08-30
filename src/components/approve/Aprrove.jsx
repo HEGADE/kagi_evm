@@ -133,7 +133,7 @@ export const Approve = ({
       </div>
       <div className="form-row" onClick={handleNext}>
         <div className="form-item grid grid-8-4 small-space">
-          {!buttonConfig?.showApprove && (
+          {buttonConfig?.showApprove && (
             <ButtonWithLoading
               loaderColor="blue"
               isLoading={loading}
