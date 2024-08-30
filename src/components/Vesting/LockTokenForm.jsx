@@ -40,6 +40,7 @@ import {
 import { lockNFT } from "../../services/lock-nft.services.js";
 import { set } from "date-fns";
 import { LockNftForm } from "./LockNftForm.jsx";
+import { TokenInfo } from "./TokenInfo.jsx";
 
 const LockTokenInfo = ({
   tokenAddress,
@@ -275,6 +276,7 @@ const LockTokenAddress = ({
   setMoveToLockPage,
   nft,
   setMargin,
+  data,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -426,10 +428,11 @@ const LockTokenAddress = ({
     }
 
     fetch();
-  }, [tokenAddress?.address, tokenAddress?.id]);
+  }, [tokenAddress?.address, tokenAddress?.id, accountID]);
 
   return (
     <>
+      <TokenInfo data={data} />
       <h2 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h2>
       <p className="text-center mt-10">
         {" "}
@@ -512,6 +515,7 @@ const LockTokenForm = ({
         <LockTokenAddress
           nft={nft}
           setData={setData}
+          data={data}
           setMargin={setMargin}
           setTokenAddress={setTokenAddress}
           tokenAddress={tokenAddress}
