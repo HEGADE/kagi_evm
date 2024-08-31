@@ -15,7 +15,7 @@ export const AVG_BLOCK_MINED_PER_DAY = 2;
 
 export const NETWORK = "TESTNET";
 
-export const lockContractAddress = "0x95a82b11caa3f7a5445b848769af2980c0cedbdd";
+export const lockContractAddress = "0xea0cba00cd362ba9cbd98ab9d46d5954399483f2";
 
 export const lockNftContractAddress =
   "0x561bf99e7e7493fd79f93c58a24a5890fb17e97d";

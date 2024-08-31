@@ -97,7 +97,10 @@ const LockTokenInfo = ({
       toast.success("Token locked successfully", {
         position: "bottom-right",
       });
-      goBack();
+      reset({
+        amount: "",
+        days: "",
+      });
     } catch (err) {
       console.log(err, "error submitting");
 
@@ -123,7 +126,10 @@ const LockTokenInfo = ({
       toast.success("NFT locked successfully", {
         position: "bottom-right",
       });
-      goBack();
+
+      nftReset({
+        days: "",
+      });
     } catch (err) {
       console.log(err, "error submitting");
 

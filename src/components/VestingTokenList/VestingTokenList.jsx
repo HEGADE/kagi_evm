@@ -11,10 +11,17 @@ function VestingTokenList() {
   const [tokenVestingList, settokenVestingList] = useState([]);
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
 
+  let tokensWithIndex = tokenVestingList?.map((item, idx) => {
+    return {
+      ...item,
+      vestID: idx,
+    };
+  });
+
   let sorted = [];
 
   if (tokenVestingList?.length) {
-    sorted = tokenVestingList.sort((a, b) => {
+    sorted = tokensWithIndex.sort((a, b) => {
       const timeA = new Date(Number(a?.cliffTime) * 1000);
       const timeB = new Date(Number(b?.cliffTime) * 1000);
 
@@ -141,9 +148,12 @@ function VestingTokenList() {
                       <VestingHeading />
                       <div className="table-body same-color-rows">
                         {sorted?.length ? (
-                          sorted?.map((tokens, indx) => {
+                          sorted?.map((token, indx) => {
                             return (
-                              <VestingTable token={tokens} vestID={indx} />
+                              <VestingTable
+                                token={token}
+                                vestID={token?.vestID}
+                              />
                             );
                           })
                         ) : (

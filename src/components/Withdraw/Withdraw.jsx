@@ -14,12 +14,19 @@ const Withdraw = () => {
 
   const [tokens, setTokens] = useState([]);
 
+  let tokensWithIndex = tokens?.[selectToken]?.map((item, idx) => {
+    return {
+      ...item,
+      lockID: idx,
+    };
+  });
+
   let sorted = [];
 
   const { accountID } = useContext(MetamaskContext);
 
-  if (tokens?.[selectToken]?.length) {
-    sorted = tokens?.[selectToken].sort((a, b) => {
+  if (tokensWithIndex?.length) {
+    sorted = tokensWithIndex?.sort((a, b) => {
       const timeA = new Date(Number(a.unlockTime) * 1000);
       const timeB = new Date(Number(b.unlockTime) * 1000);
 
@@ -56,6 +63,7 @@ const Withdraw = () => {
   const fetchTokenList = async () => {
     let res = await getTokenList({ accountAddress: accountID });
 
+    console.log(res, "this is the token list");
     let resNft = await getLockedNftList({ accountAddress: accountID });
 
     setTokens((pre) => {
@@ -173,7 +181,7 @@ const Withdraw = () => {
                                   <WithdrawTable
                                     assetContact={token?.erc20}
                                     amount={token?.amount}
-                                    lockID={indx}
+                                    lockID={Number(token?.lockID)}
                                     key={indx + Number(token?.unlockTime)}
                                     unlockTime={token?.unlockTime}
                                     lockedTime={token?.lockedTime}
