@@ -5,9 +5,8 @@ import TradableHeading from "./TradableHeading";
 import TradableTable from "./TradableTable";
 import { getVestingSchedules } from "../../services/tradable-vest.services";
 
-const dmDate = new Date()
-const dummyDate = dmDate.getDate()
-
+const dmDate = new Date();
+const dummyDate = dmDate.getDate();
 
 const data = [
   {
@@ -62,7 +61,6 @@ function TradableList() {
   }, []);
 
   console.log(tokenVestingList);
-  
 
   return (
     <div class="content-grid">
@@ -161,8 +159,10 @@ function TradableList() {
                       <TradableHeading />
                       <div className="table-body same-color-rows">
                         {data?.length ? (
-                          data?.map((tokens,indx) => {
-                            return <TradableTable token={data} vestID={indx} />;
+                          data?.map((datas, indx) => {
+                            return (
+                              <TradableTable token={datas} vestID={indx} />
+                            );
                           })
                         ) : (
                           <div

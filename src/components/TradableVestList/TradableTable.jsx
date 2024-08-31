@@ -10,6 +10,7 @@ import {
   releaseToken,
   transferOwnership,
 } from "../../services/tradable-vest.services";
+import TransferModal from "../UI/TransferModal";
 
 function TradableTable({ token, vestID }) {
   console.log(token);
@@ -20,11 +21,14 @@ function TradableTable({ token, vestID }) {
   //   "yyyy-MM-dd"
   // );
 
+  console.log(vestID);
+
   const canUnlock = isTimestampGreaterOrEqualToCurrentDateTime(
     Number(token?.cliffTime)
   );
 
   const [withdrawID, setWithdrawID] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { accountID } = useContext(MetamaskContext);
 
@@ -33,6 +37,8 @@ function TradableTable({ token, vestID }) {
 
   const handleWithdraw = async ({ lockID }) => {
     setIsButtonLoading(true);
+    console.log(lockID);
+
     try {
       await releaseToken({
         accountAddress: accountID,
@@ -49,19 +55,20 @@ function TradableTable({ token, vestID }) {
     }
   };
 
-  const handleVestingTransfer = async ({ vestID, takerAddress }) => {
-    setIsButtonLoading(true);
-    try {
-      await transferOwnership({
-        takerAddress,
-        vestID,
-        accountAddress,
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsButtonLoading(false);
-    }
+  const handleTransfer = () => {
+    setIsModalVisible(true); // Show the modal
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false); // Hide the modal
+  };
+
+  const handleTransferSubmit = async () => {
+    // Add logic for transfer ownership here
+    console.log("Transfer confirmed");
+    toast.success("Transfer successful", {
+      position: "bottom-right",
+    });
   };
 
   return (
@@ -117,17 +124,29 @@ function TradableTable({ token, vestID }) {
               className="button secondary"
             />
           </div>
-
-          <div
-            className="table-column padded"
-            style={{
-              padding: "10px",
-            }}
-          >
-            {accountID && <ButtonWithLoading text={"Transfer"} className="button secondary" />}
-          </div>
+          {accountID && (
+            <div
+              className="table-column padded"
+              style={{
+                padding: "10px",
+              }}
+            >
+              <ButtonWithLoading
+                onClick={handleTransfer}
+                text={"Transfer"}
+                className="button secondary"
+              >
+                Transfer
+              </ButtonWithLoading>
+            </div>
+          )}
         </div>
       </>
+      <TransferModal
+        isVisible={isModalVisible}
+        onClose={handleModalClose}
+        onSubmit={handleTransferSubmit}
+      />
     </>
   );
 }

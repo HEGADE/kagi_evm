@@ -75,11 +75,14 @@ export const getVestingSchedules = async ({ accountAddress }) => {
 
 export const transferOwnership = async ({ newAddress, vestID, accountAddress }) => {
   const web3 = await initWeb3();
-
+  console.log({ newAddress, vestID, accountAddress });
+  
   const contractInstance = new web3.eth.Contract(
     tradableVestingAbi,
     TradableVestingContractAddress
   );
+  console.log({ newAddress, vestID, accountAddress });
+
 
   const transfer = await contractInstance.methods
     .transferVestingOwnership(vestID, newAddress)
