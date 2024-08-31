@@ -3,33 +3,25 @@ import { WithdrawTable } from "./WithdrawTable";
 import { WithdrawTableNFT } from "./WitdrawTableNFT";
 import { TableHeading } from "./TableHeading";
 import { IconRefresh } from "../UI/Icons";
-import { Skeleton } from "@mantine/core";
-import { useTableData } from "../../store/table-data.store";
 import { getTokenList } from "../../services/lock.services";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import { getLockedNftList } from "../../services/lock-nft.services";
 
 const Withdraw = () => {
-  let data = useTableData((state) => state.data);
-
   const [selectToken, setSelectToken] = useState("ft");
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
   const [search, setSearch] = useState(null);
 
   const [tokens, setTokens] = useState([]);
 
-  const functionName =
-    selectToken === "ft" ? "get-ft-lock-info" : "get-nft-lock-info";
-
   let sorted = [];
 
   const { accountID } = useContext(MetamaskContext);
 
-  if (data.result?.length) {
-    console.log(data.result, "this the data");
-    sorted = data.result.sort((a, b) => {
-      const timeA = new Date(a["locked-time"]?.value);
-      const timeB = new Date(b["locked-time"]?.value);
+  if (tokens?.[selectToken]?.length) {
+    sorted = tokens?.[selectToken].sort((a, b) => {
+      const timeA = new Date(Number(a.unlockTime) * 1000);
+      const timeB = new Date(Number(b.unlockTime) * 1000);
 
       if (selectTokenSort === "ds") {
         if (timeA < timeB) {
@@ -58,6 +50,8 @@ const Withdraw = () => {
   //     .toLowerCase()
   //     .includes(search.toLowerCase());
   // });
+
+  console.log(sorted, "this is the sorted data");
 
   const fetchTokenList = async () => {
     let res = await getTokenList({ accountAddress: accountID });
@@ -172,8 +166,8 @@ const Withdraw = () => {
                       <div className="table table-downloads table-responsive split-rows">
                         <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
-                          {tokens?.[selectToken]?.length > 0 ? (
-                            tokens?.[selectToken].map((token, indx) => {
+                          {sorted?.length > 0 ? (
+                            sorted?.map((token, indx) => {
                               if (selectToken === "ft") {
                                 return (
                                   <WithdrawTable
