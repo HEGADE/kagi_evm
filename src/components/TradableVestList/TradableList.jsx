@@ -5,41 +5,41 @@ import TradableHeading from "./TradableHeading";
 import TradableTable from "./TradableTable";
 import { getVestingSchedules } from "../../services/tradable-vest.services";
 
-const dmDate = new Date()
-const dummyDate = dmDate.getDate()
-
+const dmDate = new Date();
+const dummyDate = 1725101557;
+const cliffDate = 1725101557
 
 const data = [
   {
-    cliffTime: dummyDate,
+    cliffTime: cliffDate,
     tokenAddress: "0xAbC1234567890DEFabc1234567890defABC12345",
     startTime: dummyDate,
     amount: 1000,
     duration: 365, // days
   },
   {
-    cliffTime: dummyDate,
+    cliffTime: cliffDate,
     tokenAddress: "0x1234567890ABCdef1234567890abCDEf12345678",
     startTime: dummyDate,
     amount: 2500,
     duration: 180, // days
   },
   {
-    cliffTime: dummyDate,
+    cliffTime: cliffDate,
     tokenAddress: "0xDEFaBC1234567890defABC1234567890abcdef12",
     startTime: dummyDate,
     amount: 500,
     duration: 90, // days
   },
   {
-    cliffTime: dummyDate,
+    cliffTime: cliffDate,
     tokenAddress: "0x9876543210FEDcba9876543210fedcBA98765432",
     startTime: dummyDate,
     amount: 1500,
     duration: 120, // days
   },
   {
-    cliffTime: dummyDate,
+    cliffTime: cliffDate,
     tokenAddress: "0xABCDEF1234567890abcdef1234567890ABCDEF12",
     startTime: dummyDate,
     amount: 3000,
@@ -62,7 +62,6 @@ function TradableList() {
   }, []);
 
   console.log(tokenVestingList);
-  
 
   return (
     <div class="content-grid">
@@ -161,8 +160,10 @@ function TradableList() {
                       <TradableHeading />
                       <div className="table-body same-color-rows">
                         {data?.length ? (
-                          data?.map((tokens,indx) => {
-                            return <TradableTable token={data} vestID={indx} />;
+                          data?.map((datas, indx) => {
+                            return (
+                              <TradableTable token={datas} vestID={indx} />
+                            );
                           })
                         ) : (
                           <div

@@ -1,24 +1,24 @@
 import React, { useContext, useState } from "react";
 import { shortAddress } from "../../utils/format/address.format";
-import { fromUnixTimeStamp, fromWei } from "../../helpers/convertion";
+import { fromUnixTimeStamp, fromWei, toWei } from "../../helpers/convertion";
 import { format } from "date-fns";
 import ButtonWithLoading from "../UI/LoaderButton";
 import toast from "react-hot-toast";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import { isTimestampGreaterOrEqualToCurrentDateTime } from "../../helpers/time-compare";
+import { CountdownTimer } from "../UI/Ticker";
+import TransferModal from "../UI/TransferModal";
 import {
   releaseToken,
   transferOwnership,
 } from "../../services/tradable-vest.services";
 
-function TradableTable({ token, vestID }) {
-  console.log(token);
-  // let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
-
-  // let vestingPeriodStart = format(
-  //   fromUnixTimeStamp(Number(token?.startTime)),
-  //   "yyyy-MM-dd"
-  // );
+function VestingTable({ token, vestID }) {
+  let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
+  let vestingPeriodStart = format(
+    fromUnixTimeStamp(Number(token?.startTime)),
+    "yyyy-MM-dd"
+  );
 
   const canUnlock = isTimestampGreaterOrEqualToCurrentDateTime(
     Number(token?.cliffTime)
@@ -29,14 +29,16 @@ function TradableTable({ token, vestID }) {
   const { accountID } = useContext(MetamaskContext);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [transferBtnLoading, setTransferBtnLoading] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleWithdraw = async ({ lockID }) => {
+  const handleWithdraw = async ({ vestID }) => {
     setIsButtonLoading(true);
     try {
       await releaseToken({
         accountAddress: accountID,
-        lockID,
+        vestID,
       });
       toast.success("Withdrawn successfully", {
         position: "bottom-right",
@@ -49,21 +51,40 @@ function TradableTable({ token, vestID }) {
     }
   };
 
-  const handleVestingTransfer = async ({ vestID, takerAddress }) => {
-    setIsButtonLoading(true);
+  const handleTransfer = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleTransferSubmit = async (tokenID, newAddress) => {
+    setTransferBtnLoading(true);
+    console.log({
+      newAddress,
+      tokenID,
+      accountAddress: accountID,
+    });
+
     try {
       await transferOwnership({
-        takerAddress,
-        vestID,
+        newAddress,
+        vestID: tokenID,
         accountAddress: accountID,
+      });
+      console.log("Transfer confirmed");
+      toast.success("Transfer successful", {
+        position: "bottom-right",
       });
     } catch (error) {
       console.log(error);
     } finally {
-      setIsButtonLoading(false);
+      setTransferBtnLoading(false);
     }
   };
 
+  console.log(token, "this is the token");
   return (
     <>
       <>
@@ -78,21 +99,21 @@ function TradableTable({ token, vestID }) {
               //     display: "contents",
               //   }}
             >
-              {/* {fromWei(Number(token?.amount))} */}
-              {token.amount}
+              {fromWei(token?.amount)}
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{token?.cliffTime}</p>
+            <div id="clockdiv">
+              <CountdownTimer
+                targetDateTime={new Date(Number(token?.cliffTime) * 1000)}
+              />
+            </div>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{token?.startTime}</p>
+            <p className="table-title">{vestingPeriodStart}</p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">
-              {/* {Number(token?.duration)} Months */}
-              {token?.duration}
-            </p>
+            <p className="table-title">{Number(token?.duration)} Months</p>
           </div>
 
           <div
@@ -114,27 +135,38 @@ function TradableTable({ token, vestID }) {
                 })
               }
               text={"Release"}
-              className="button secondary"
+              className="button secondary p-3"
             />
           </div>
-
-          <div
-            className="table-column padded"
-            style={{
-              padding: "10px",
-            }}
-          >
-            {accountID && (
+          {accountID && (
+            <div
+              className="table-column padded"
+              style={{
+                padding: "10px",
+              }}
+            >
               <ButtonWithLoading
+                isLoading={transferBtnLoading}
+                loaderColor="blue"
+                style={{
+                  width: "100px",
+                }}
+                onClick={() => handleTransfer()}
                 text={"Transfer"}
-                className="button secondary"
+                className="button secondary p-3"
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </>
+      <TransferModal
+        isVisible={isModalVisible}
+        onClose={handleModalClose}
+        onSubmit={handleTransferSubmit}
+        vestID={vestID}
+      />
     </>
   );
 }
 
-export default TradableTable;
+export default VestingTable;

@@ -38,7 +38,8 @@ export const vestToken = async ({
 
 export const releaseToken = async ({ accountAddress, vestID }) => {
   const web3 = await initWeb3();
-
+  console.log({ accountAddress, vestID });
+  
   const contractInstance = new web3.eth.Contract(
     tradableVestingAbi,
     TradableVestingContractAddress
@@ -75,7 +76,8 @@ export const getVestingSchedules = async ({ accountAddress }) => {
 
 export const transferOwnership = async ({ newAddress, vestID, accountAddress }) => {
   const web3 = await initWeb3();
-
+  console.log({ newAddress, vestID, accountAddress });
+  
   const contractInstance = new web3.eth.Contract(
     tradableVestingAbi,
     TradableVestingContractAddress
