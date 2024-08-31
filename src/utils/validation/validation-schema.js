@@ -180,7 +180,6 @@ export const VestTokenSchema = (balance) =>
           return false;
         }
       }),
-
     amount: yup
       .number()
       .required("Amount is required")
@@ -194,11 +193,67 @@ export const VestTokenSchema = (balance) =>
         yup.ref("vestingPeriod"),
         "cliff period must be greater than vestingPeriod period"
       ),
-
     vestingPeriod: yup
       .date()
       .required("Vesting Period is required")
       .min(new Date(), "Vesting period must be greater than current date"),
+    duration: yup
+      .number()
+      .required("Duration  is required")
+      .typeError(" Duration is required")
+      .min(1, "Duration must be greater than  0"),
+  });
+
+export const TradableVestTokenSchema = (balance) =>
+  yup.object().shape({
+    name: yup.string().required("Name is required"),
+
+    address: yup
+      .string()
+      .required("Address is required")
+      .required("Address is required")
+      .test("forValidAddress", "Token address is invalid", (value) => {
+        try {
+          return Web3.utils.isAddress(value);
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }),
+
+    taker: yup
+      .string()
+      .required("Taker address  is required")
+      .required("Taker address is required")
+      .test("forValidAddress", "Taker address is invalid", (value) => {
+        try {
+          return Web3.utils.isAddress(value);
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }),
+
+    amount: yup
+      .number()
+      .required("Amount is required")
+      .min(1, "Amount must be greater than 1")
+      .max(balance, "Amount must be less than token balance")
+      .typeError("Amount is required"),
+
+    cliff: yup
+      .date()
+      .required("Cliff is required")
+      .min(
+        yup.ref("vestingPeriod"),
+        "cliff period must be greater than vesting start time"
+      ),
+
+    vestingPeriod: yup
+      .date()
+      .required("Vesting start time is required")
+      .min(new Date(), "Vesting time must be greater than current date"),
+
     duration: yup
       .number()
       .required("Duration  is required")

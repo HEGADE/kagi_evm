@@ -53,9 +53,8 @@ export const Approve = ({
         contractAddress,
         tokenAddress
       );
-      console.log(allowance);
 
-      if (allowance <= 0) {
+      if (allowance <= 0) {        
         setButtonConfig((pre) => ({
           ...pre,
           showApprove: true,
@@ -63,7 +62,7 @@ export const Approve = ({
 
         return;
       }
-
+      
       setMargin(true);
       setMoveToLockPage(true);
     } catch (err) {
@@ -89,6 +88,7 @@ export const Approve = ({
       setMoveToLockPage(true);
     } catch (err) {
       console.log(err);
+      // setMoveToLockPage(true);
     } finally {
       setLoading(false);
     }

@@ -13,6 +13,8 @@ import { BulkTransfer } from "./pages/BulkTransfer";
 import { Vesting } from "./pages/Vesting";
 import VestingTokenList from "./components/VestingTokenList/VestingTokenList";
 import VestingList from "./pages/VestingList";
+import TradableVesting from "./pages/TradableVesting";
+import TradableVestLists from "./pages/TradableVestLists";
 
 function App() {
   // SCRIPT LOAD
@@ -51,6 +53,8 @@ function App() {
           <Route path="bulk-transfer" element={<BulkTransfer />} />
           <Route path="vest-token" element={<Vesting />} />
           <Route path="vest-token-list" element={<VestingList/>}/>
+          <Route path="tradable-vest-token" element={<TradableVesting/>}/>
+          <Route path="tradable-vest-list" element={<TradableVestLists/>}/>
         </Route>
       </Routes>
     </Router>
