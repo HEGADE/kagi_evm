@@ -72,7 +72,6 @@ const Withdraw = () => {
 
     setTokens((pre) => {
       return {
-        ...pre,
         nft: resNft,
         ft: res,
       };
@@ -187,7 +186,7 @@ const Withdraw = () => {
                                     assetContact={token?.erc20}
                                     amount={token?.amount}
                                     lockID={indx}
-                                    key={indx}
+                                    key={indx + Number(token?.unlockTime)}
                                     unlockTime={token?.unlockTime}
                                     lockedTime={token?.lockedTime}
                                   />
@@ -198,7 +197,7 @@ const Withdraw = () => {
                                     assetContact={token?.tokenAddress}
                                     lockID={Number(token?.tokenId)}
                                     unlockTime={Number(token?.unlockTime)}
-                                    key={Number(token?.tokenId)}
+                                    key={indx + Number(token?.tokenId)}
                                   />
                                 );
                               }

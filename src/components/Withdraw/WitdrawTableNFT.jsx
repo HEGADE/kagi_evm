@@ -55,8 +55,8 @@ const WithdrawTableNFT = ({ lockID, assetContact, unlockTime }) => {
     <>
       <>
         {" "}
-        <div className="table-row medium">
-          <div className="table-column" key={lockID}>
+        <div className="table-row medium" key={lockID}>
+          <div className="table-column">
             <div className="product-preview tiny">
               <div className="product-preview-info">
                 <p className="product-preview-title">{"NFT"}</p>

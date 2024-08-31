@@ -55,7 +55,7 @@ function TradableTable({ token, vestID }) {
       await transferOwnership({
         takerAddress,
         vestID,
-        accountAddress: accountID
+        accountAddress: accountID,
       });
     } catch (error) {
       console.log(error);
