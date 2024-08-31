@@ -83,8 +83,8 @@ const WithdrawTable = ({
   return (
     <>
       <>
-        <div className="table-row medium">
-          <div className="table-column" key={lockID}>
+        <div className="table-row medium" key={lockID}>
+          <div className="table-column">
             <div className="product-preview tiny">
               <div className="product-preview-info">
                 <p className="table-title">{shortAddress(assetContact)}</p>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { TokenInfoCard } from "../TokenInfoCard";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -29,6 +29,8 @@ const CreateTokenFormFT = () => {
 
   const [buttonLoading, setButtonLoading] = useState(false);
 
+  const [needDynamicContractName, setNeedDynamicContractName] = useState(false);
+
   async function deployContract(abi, bytecode) {
     const accounts = await web3.eth.getAccounts();
     const contract = new web3.eth.Contract(abi);
@@ -53,14 +55,30 @@ const CreateTokenFormFT = () => {
           duration: 5000,
         }
       );
-      reset();
+
+      reset({
+        name: "",
+        symbol: "",
+        supply: "",
+        token: "",
+      });
     } catch (error) {
       console.error("Error deploying contract:", error);
-      alert("Error deploying contract. Check console for details.");
-    } finally {
-      setButtonLoading(false);
+      throw error;
     }
   }
+
+  const contractName = useMemo(() => {
+    const randomString = Math.random().toString(20).substring(4);
+    const contractName = `Token${randomString}${token}`;
+
+    return contractName;
+  }, [token]);
+
+  useEffect(() => {
+    if (needDynamicContractName && token)
+      reset((pre) => ({ ...pre, name: contractName }));
+  }, [contractName]);
 
   const onSubmit = async (data) => {
     try {
@@ -80,24 +98,6 @@ const CreateTokenFormFT = () => {
         },
       });
 
-      // (function() {
-      //   const originalWorker = window.Worker;
-      //   const workers = [];
-
-      //   window.Worker = function(...args) {
-      //     const worker = new originalWorker(...args);
-      //     workers.push(worker);
-      //     return worker;
-      //   };
-
-      //   window.terminateAllWorkers = function() {
-      //     workers.forEach(worker => worker.terminate());
-      //     workers.length = 0;
-      //   };
-      // })();
-
-      // console.log(output, "output");
-
       const contractComplied =
         output?.contracts?.["Compiled_Contracts"]?.[name];
 
@@ -116,6 +116,8 @@ const CreateTokenFormFT = () => {
       toast.error("Some error occurred", {
         position: "bottom-right",
       });
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -126,11 +128,27 @@ const CreateTokenFormFT = () => {
           <div className="widget-box">
             <div className="widget-box-content">
               <form className="form" onSubmit={handleSubmit(onSubmit)}>
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    setNeedDynamicContractName(e.target.checked);
+                  }}
+                  id="dynamic"
+                  name="dynamic"
+                />{" "}
+                {"   "}
+                <label for="dynamic">Create contract name automatically </label>
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
+                        disabled={needDynamicContractName}
                         placeholder="Contract Name"
+                        style={{
+                          cursor: needDynamicContractName
+                            ? "not-allowed"
+                            : "pointer",
+                        }}
                         type="text"
                         id="name"
                         name="name"
@@ -170,7 +188,6 @@ const CreateTokenFormFT = () => {
                   </div>
                 </div>
                 <br />
-
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">

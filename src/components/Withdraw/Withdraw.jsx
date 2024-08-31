@@ -1,13 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { WithdrawTable } from "./WithdrawTable";
-import { useFetchFtLockStats } from "../../hooks/useFetchFtLockStats";
-import { ContentLoader } from "../UI/ContentLoader";
 import { WithdrawTableNFT } from "./WitdrawTableNFT";
 import { TableHeading } from "./TableHeading";
-import { useStacks } from "../../providers/StacksProvider";
 import { IconRefresh } from "../UI/Icons";
 import { Skeleton } from "@mantine/core";
-import { SkeletonTabular } from "../UI/Skeletons";
 import { useTableData } from "../../store/table-data.store";
 import { getTokenList } from "../../services/lock.services";
 import { MetamaskContext } from "../../context/MetamaskContext";
@@ -63,8 +59,6 @@ const Withdraw = () => {
   //     .includes(search.toLowerCase());
   // });
 
-  //tokenAddress: '0x571ab8910f2931ee3e5a227936f85d3c8a2AfA88', tokenId: 1n, unlockTime: 1724926946n
-
   const fetchTokenList = async () => {
     let res = await getTokenList({ accountAddress: accountID });
 
@@ -72,7 +66,6 @@ const Withdraw = () => {
 
     setTokens((pre) => {
       return {
-        ...pre,
         nft: resNft,
         ft: res,
       };
@@ -187,7 +180,7 @@ const Withdraw = () => {
                                     assetContact={token?.erc20}
                                     amount={token?.amount}
                                     lockID={indx}
-                                    key={indx}
+                                    key={indx + Number(token?.unlockTime)}
                                     unlockTime={token?.unlockTime}
                                     lockedTime={token?.lockedTime}
                                   />
@@ -198,7 +191,7 @@ const Withdraw = () => {
                                     assetContact={token?.tokenAddress}
                                     lockID={Number(token?.tokenId)}
                                     unlockTime={Number(token?.unlockTime)}
-                                    key={Number(token?.tokenId)}
+                                    key={indx + Number(token?.tokenId)}
                                   />
                                 );
                               }

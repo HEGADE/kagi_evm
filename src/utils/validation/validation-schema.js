@@ -54,11 +54,12 @@ export const nftSchema = () =>
 export const CreateTokenSchemaFT = yup.object().shape({
   name: yup
     .string()
+
     .matches(
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
     )
-    .max(30, "Name should not be greater than 30 characters")
+    .max(40, "Name should not be greater than 30 characters")
     .test("forValidName", "name should not only contain number", (value) => {
       if (!isNaN(value)) {
         return false;
