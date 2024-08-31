@@ -17,11 +17,15 @@ export const NETWORK = "TESTNET";
 
 export const lockContractAddress = "0x95a82b11caa3f7a5445b848769af2980c0cedbdd";
 
-export const lockNftContractAddress = "0x561bf99e7e7493fd79f93c58a24a5890fb17e97d";
+export const lockNftContractAddress =
+  "0x561bf99e7e7493fd79f93c58a24a5890fb17e97d";
 
 // export const vestingContractAddress = "0x099d68fde7b94eb86577d66c9527e6ab82c8f95c";
-export const vestingContractAddress = "0xc66c578a865427ff41e029bbbf92b2ded1ab3966";
+export const vestingContractAddress =
+  "0xc66c578a865427ff41e029bbbf92b2ded1ab3966";
+
+export const testNetExplorerLink = "https://sepolia.etherscan.io/";
+
+// export const vestingContractAddress = "0x099d68fde7b94eb86577d66c9527e6ab82c8f95c";
 
 export const TradableVestingContractAddress = "0x39373996147bd50b92b5fb58f1415a71e75670f4"
-
-// export const vestingContractAddress = "0x099d68fde7b94eb86577d66c9527e6ab82c8f95c";

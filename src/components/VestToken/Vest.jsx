@@ -22,10 +22,8 @@ const VestToken = ({ data, tokenAddress }) => {
     resolver: yupResolver(VestTokenSchema(data?.balance)),
   });
 
-  // let { name, address, amount, cliff, vestingPeriod, taker } = watch();
 
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [includeTotalSupply, setIncludeTotalSupply] = useState(false);
   const { accountID } = useContext(MetamaskContext);
 
   useEffect(() => {
@@ -55,6 +53,8 @@ const VestToken = ({ data, tokenAddress }) => {
         duration: 4000,
         position: "bottom-right",
       });
+
+      reset();
     } catch (err) {
       toast.error("An error occurred, please try again", {
         duration: 4000,
@@ -150,7 +150,9 @@ const VestToken = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
-                  <label htmlFor="cliff" className="form-label">Cliff Period</label>
+                    <label htmlFor="cliff" className="form-label">
+                      Cliff Period
+                    </label>
                     <div className="form-input small">
                       <input
                         placeholder="Cliff Period"
@@ -168,7 +170,13 @@ const VestToken = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
+<<<<<<< HEAD
                   <label htmlFor="vestingPeriod" className="form-label">Vesting Start Time</label>
+=======
+                    <label htmlFor="vestingPeriod" className="form-label">
+                      Vesting Period
+                    </label>
+>>>>>>> 1c606e33667392a73537ef21132916f9b9e53c97
                     <div className="form-input small">
                       <input
                         placeholder="Vesting Start Time"

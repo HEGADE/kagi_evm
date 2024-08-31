@@ -8,7 +8,6 @@ export const Vesting = () => {
   const [margin, setMargin] = useState(false);
 
   const [moveToLockPage, setMoveToLockPage] = useState(false);
-  const [showTokenLockForm, setShowTokenLockForm] = useState(true);
   const [tokenAddress, setTokenAddress] = useState("");
   const [data, setData] = useState({
     assetName: "",

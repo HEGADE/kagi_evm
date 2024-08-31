@@ -99,7 +99,7 @@ const WithdrawTable = ({
                 display: "contents",
               }}
             >
-              {fromWei(Number(amount))}
+              {fromWei((amount))}
             </p>
           </div>
           <div className="table-column padded">

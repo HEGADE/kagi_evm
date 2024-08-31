@@ -28,7 +28,7 @@ const TokenInfoCard = ({
                     <span className="bold">Contract Name</span>
                   </p>
                 </div>
-                <p className="price-title">{contractName}</p>
+                <p className="price-title">{name}</p>
               </div>
               {
                 <div className="totals-line">
@@ -57,7 +57,7 @@ const TokenInfoCard = ({
                     <span className="bold">Token name</span>
                   </p>
                 </div>
-                <p className="price-title"> {name}</p>
+                <p className="price-title"> {token}</p>
               </div>
             </div>
           </div>

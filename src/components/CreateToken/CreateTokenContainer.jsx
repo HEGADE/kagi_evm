@@ -24,11 +24,7 @@ const CreateTokenContainer = () => {
 
           <div className="form-select">
             <label for="downloads-filter-order">Select Token To deploy</label>
-            <select
-              onChange={(e) => setCurrentForm(e.target.value)}
-              id="downloads-filter-order"
-              name="tokens_filter_order"
-            >
+            <select onChange={(e) => setCurrentForm(e.target.value)}>
               <option value="FT">FT</option>
               <option value="NFT">NFT</option>
             </select>

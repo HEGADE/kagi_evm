@@ -17,6 +17,7 @@ const CreateTokenFormFT = () => {
   const {
     register,
     watch,
+    reset,
     handleSubmit,
     formState: { errors, isValid },
   } = useForm({
@@ -52,6 +53,7 @@ const CreateTokenFormFT = () => {
           duration: 5000,
         }
       );
+      reset();
     } catch (error) {
       console.error("Error deploying contract:", error);
       alert("Error deploying contract. Check console for details.");

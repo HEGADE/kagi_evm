@@ -18,8 +18,8 @@ const ButtonWithLoading = ({
   marginLft = 0,
   ...rest
 }) => {
-  const {accountID} = useContext(MetamaskContext)
-  
+  const { accountID } = useContext(MetamaskContext);
+
   if (!accountID) {
     return <ConnectWalletMetamask />;
   }
@@ -54,6 +54,7 @@ const ButtonWithLoading = ({
           disabled={disabled}
           style={{
             cursor: disabled ? "not-allowed" : "pointer",
+            background: disabled ? "gray" : null,
           }}
         >
           {text}
