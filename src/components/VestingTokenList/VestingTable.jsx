@@ -87,12 +87,9 @@ function VestingTable({ token, vestID }) {
               isLoading={isButtonLoading || isPending}
               loaderColor="blue"
               disabled={!canUnlock || withdrawID}
-              style={{
-                width: "100px",
-              }}
               onClick={() =>
                 handleWithdraw({
-                  vestID,
+                  lockID: vestID,
                 })
               }
               text={"Release"}

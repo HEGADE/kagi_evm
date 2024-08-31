@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { TokenInfoCard } from "../TokenInfoCard";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -30,6 +30,19 @@ const CreateTokenFormNFT = ({ currentForm }) => {
   let { contractName, nftName, nftSymbol } = watch();
 
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [needDynamicContractName, setNeedDynamicContractName] = useState(false);
+
+  const name = useMemo(() => {
+    const randomString = Math.random().toString(20).substring(4);
+    const contractName = `Token${randomString}${nftName}`;
+
+    return contractName;
+  }, [nftName]);
+
+  useEffect(() => {
+    if (needDynamicContractName && nftName)
+      reset((pre) => ({ ...pre, contractName: name }));
+  }, [name]);
 
   async function deployContract(abi, bytecode) {
     const accounts = await web3.eth.getAccounts();
@@ -55,15 +68,17 @@ const CreateTokenFormNFT = ({ currentForm }) => {
         }
       );
 
-      reset();
+      reset({
+        contractName: "",
+        nftName: "",
+        nftSymbol: "",
+      });
     } catch (error) {
       console.error("Error deploying contract:", error);
 
       toast.error("Error deploying contract", {
         position: "bottom-right",
       });
-    } finally {
-      setButtonLoading(false);
     }
   }
 
@@ -115,10 +130,26 @@ const CreateTokenFormNFT = ({ currentForm }) => {
           <div className="widget-box">
             <div className="widget-box-content">
               <form className="form" onSubmit={handleSubmit(onSubmit)}>
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    setNeedDynamicContractName(e.target.checked);
+                  }}
+                  id="dynamic"
+                  name="dynamic"
+                />{" "}
+                {"   "}
+                <label for="dynamic">Create contract name automatically </label>
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
+                        disabled={needDynamicContractName}
+                        style={{
+                          cursor: needDynamicContractName
+                            ? "not-allowed"
+                            : "pointer",
+                        }}
                         placeholder="Enter the Contract Name"
                         type="text"
                         id="name"
