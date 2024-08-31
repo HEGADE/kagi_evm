@@ -11,7 +11,7 @@ function VestingHeading() {
           <p className="table-header-title">Token Amount</p>
         </div>
         <div className="table-header-column padded">
-          <p className="table-header-title">Cliff Period</p>
+          <p className="table-header-title">Cliff period end</p>
         </div>
         <div className="table-header-column padded">
           <p className="table-header-title">Vesting Period Start</p>

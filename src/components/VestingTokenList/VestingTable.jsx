@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import { releaseToken } from "../../services/vesting.services";
 import { isTimestampGreaterOrEqualToCurrentDateTime } from "../../helpers/time-compare";
+import { CountdownTimer } from "../UI/Ticker";
 
 function VestingTable({ token, vestID }) {
   let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
@@ -59,11 +60,15 @@ function VestingTable({ token, vestID }) {
               //     display: "contents",
               //   }}
             >
-              {fromWei((token?.amount))}
+              {fromWei(token?.amount)}
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{cliff}</p>
+            <div id="clockdiv">
+              <CountdownTimer
+                targetDateTime={new Date(Number(token?.cliffTime) * 1000)}
+              />
+            </div>
           </div>
           <div className="table-column padded">
             <p className="table-title">{vestingPeriodStart}</p>

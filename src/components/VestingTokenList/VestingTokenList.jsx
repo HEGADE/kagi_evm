@@ -5,37 +5,6 @@ import VestingTable from "./VestingTable";
 import { getVestingSchedules } from "../../services/vesting.services";
 import { MetamaskContext } from "../../context/MetamaskContext";
 
-const data = [
-  {
-    name: "Luffy",
-    tokenAddress: "0x120dasd3e0d0ed0s0ads0sd00e0dncnd63",
-    amount: 10000,
-    cliffPeriod: 8,
-    vestingPeriod: 7,
-  },
-  {
-    name: "Sanji",
-    tokenAddress: "0x1jhhkhjk7837982122233dfdsewql22d",
-    amount: 100,
-    cliffPeriod: 10,
-    vestingPeriod: 22,
-  },
-  {
-    name: "Blackbeard",
-    tokenAddress: "0x120dasd3e0d0ed0s0ads0sd00e0dncnd63",
-    amount: 2000,
-    cliffPeriod: 20,
-    vestingPeriod: 90,
-  },
-  {
-    name: "Zoro",
-    tokenAddress: "0x1jhhkhjk7837982122233dfdsewql22d",
-    amount: 10,
-    cliffPeriod: 7,
-    vestingPeriod: 2,
-  },
-];
-
 function VestingTokenList() {
   const { accountID } = useContext(MetamaskContext);
 

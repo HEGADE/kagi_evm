@@ -55,7 +55,7 @@ function TradableTable({ token, vestID }) {
       await transferOwnership({
         takerAddress,
         vestID,
-        accountAddress,
+        accountAddress: accountID
       });
     } catch (error) {
       console.log(error);
@@ -124,7 +124,12 @@ function TradableTable({ token, vestID }) {
               padding: "10px",
             }}
           >
-            {accountID && <ButtonWithLoading text={"Transfer"} className="button secondary" />}
+            {accountID && (
+              <ButtonWithLoading
+                text={"Transfer"}
+                className="button secondary"
+              />
+            )}
           </div>
         </div>
       </>
