@@ -260,3 +260,17 @@ export const TradableVestTokenSchema = (balance) =>
       .typeError(" Duration is required")
       .min(1, "Duration must be greater than  0"),
   });
+
+  export const addressValidationSchema = yup.object().shape({
+    newAddress: yup
+      .string()
+      .required("Address is required")
+      .test("forValidAddress", "Token address is invalid", (value) => {
+        try {
+          return Web3.utils.isAddress(value);
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      }),
+  });
