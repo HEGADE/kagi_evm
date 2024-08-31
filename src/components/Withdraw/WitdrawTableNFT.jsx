@@ -78,7 +78,9 @@ const WithdrawTableNFT = ({ lockID, assetContact, unlockTime }) => {
 
           <div className="table-column padded">
             <div id="clockdiv">
-              <CountdownTimer targetDateTime={unlockTime} />
+              <CountdownTimer
+                targetDateTime={new Date(Number(unlockTime) * 1000)}
+              />
             </div>
           </div>
 

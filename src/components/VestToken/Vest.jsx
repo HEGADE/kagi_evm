@@ -170,9 +170,7 @@ const VestToken = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
-                    <label htmlFor="vestingPeriod" className="form-label">
-                      Vesting Period
-                    </label>
+                  <label htmlFor="vestingPeriod" className="form-label">Vesting Start Time</label>
                     <div className="form-input small">
                       <input
                         placeholder="Vesting Start Time"

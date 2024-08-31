@@ -99,7 +99,7 @@ const WithdrawTable = ({
                 display: "contents",
               }}
             >
-              {fromWei((amount))}
+              {fromWei(amount)}
             </p>
           </div>
           <div className="table-column padded">
@@ -114,7 +114,11 @@ const WithdrawTable = ({
           <div className="table-column padded">
             <div className="table-column padded">
               <p className="table-title">
-                {format(fromUnixTimeStamp(Number(unlockTime)), "yyyy-MM-dd")}
+                <div id="clockdiv">
+                  <CountdownTimer
+                    targetDateTime={new Date(Number(unlockTime) * 1000)}
+                  />
+                </div>
               </p>
             </div>
           </div>
