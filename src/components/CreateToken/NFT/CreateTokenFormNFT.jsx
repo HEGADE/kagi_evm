@@ -9,9 +9,9 @@ import {
 import { ValidationError } from "../../UI/Errors";
 import { copy } from "../../../utils/copy-text";
 import toast from "react-hot-toast";
-import { solidityCompiler } from "@agnostico/browser-solidity-compiler";
 import { getContractNFT } from "../../../dynamic-contract/ft";
 import Web3 from "web3";
+import { compileCode } from "../../../helpers/solidity";
 
 const web3 = new Web3(window.ethereum);
 
@@ -34,7 +34,7 @@ const CreateTokenFormNFT = ({ currentForm }) => {
 
   const name = useMemo(() => {
     const randomString = Math.random().toString(20).substring(4);
-    const contractName = `Token${randomString}${nftName}`;
+    const contractName = `NFT${randomString}${nftName}`;
 
     return contractName;
   }, [nftName]);
@@ -79,6 +79,8 @@ const CreateTokenFormNFT = ({ currentForm }) => {
       toast.error("Error deploying contract", {
         position: "bottom-right",
       });
+    } finally {
+      setButtonLoading(false);
     }
   }
 
@@ -90,17 +92,9 @@ const CreateTokenFormNFT = ({ currentForm }) => {
     try {
       const contractToDeploy = getContractNFT(contractName, nftName, nftSymbol);
 
-      console.log("contractToDeploy nft", contractToDeploy);
-
-      const output = await solidityCompiler({
-        version: `https://binaries.soliditylang.org/bin/${version}`,
-        contractBody: contractToDeploy,
-        options: {
-          optimizer: {
-            enabled: true,
-            runs: 3000,
-          },
-        },
+      const output = await compileCode({
+        compilerVersion: version,
+        sourceCode: contractToDeploy,
       });
 
       const contractComplied =

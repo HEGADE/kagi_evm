@@ -10,6 +10,7 @@ import { solidityCompiler } from "@agnostico/browser-solidity-compiler";
 
 import Web3 from "web3";
 import { getContract } from "../../../dynamic-contract/ft";
+import { compileCode } from "../../../helpers/solidity";
 
 const web3 = new Web3(window.ethereum);
 
@@ -87,15 +88,9 @@ const CreateTokenFormFT = () => {
       const version = "soljson-v0.5.16+commit.9c3226ce.js";
       const contractToDeploy = getContract(name, token, symbol, supply);
 
-      const output = await solidityCompiler({
-        version: `https://binaries.soliditylang.org/bin/${version}`,
-        contractBody: contractToDeploy,
-        options: {
-          optimizer: {
-            enabled: true,
-            runs: 1000,
-          },
-        },
+      const output = await compileCode({
+        compilerVersion: version,
+        sourceCode: contractToDeploy,
       });
 
       const contractComplied =
