@@ -9,6 +9,32 @@ function VestingTokenList() {
   const { accountID } = useContext(MetamaskContext);
 
   const [tokenVestingList, settokenVestingList] = useState([]);
+  const [selectTokenSort, setSelectTokenSort] = useState("ds");
+
+  let sorted = [];
+
+  if (tokenVestingList?.length) {
+    sorted = tokenVestingList.sort((a, b) => {
+      const timeA = new Date(Number(a?.cliffTime) * 1000);
+      const timeB = new Date(Number(b?.cliffTime) * 1000);
+
+      if (selectTokenSort === "ds") {
+        if (timeA < timeB) {
+          return 1;
+        }
+        if (timeA > timeB) {
+          return -1;
+        }
+      } else {
+        if (timeA < timeB) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+      return 0;
+    });
+  }
 
   const fetchtokenVestingList = async () => {
     let res = await getVestingSchedules({ accountAddress: accountID });
@@ -39,7 +65,6 @@ function VestingTokenList() {
               <div className="form-select">
                 <label for="downloads-filter-category">Category</label>
                 <select
-                  // onChange={(e) => e}
                   id="downloads-filter-category"
                   name="tokens_filter_category"
                 >
@@ -52,7 +77,7 @@ function VestingTokenList() {
               <div className="form-select">
                 <label for="downloads-filter-order">Filer By Date</label>
                 <select
-                  // onChange={(e) => e}
+                  onChange={(e) => setSelectTokenSort(e.target.value)}
                   id="downloads-filter-order"
                   name="tokens_filter_order"
                 >
@@ -115,8 +140,8 @@ function VestingTokenList() {
                     <div className="table table-downloads table-responsive split-rows">
                       <VestingHeading />
                       <div className="table-body same-color-rows">
-                        {tokenVestingList?.length ? (
-                          tokenVestingList?.map((tokens, indx) => {
+                        {sorted?.length ? (
+                          sorted?.map((tokens, indx) => {
                             return (
                               <VestingTable token={tokens} vestID={indx} />
                             );

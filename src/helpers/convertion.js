@@ -18,7 +18,7 @@ export const fromUnixTimeStamp = (unixTimeStamp) => {
   return date;
 };
 
-function daysToFutureTimestamp(days) {
+export const daysToFutureTimestamp = (days) => {
   const currentDate = new Date();
 
   const futureDate = addDays(currentDate, days);
@@ -26,4 +26,4 @@ function daysToFutureTimestamp(days) {
   const unixTimestamp = getUnixTime(futureDate);
 
   return unixTimestamp;
-}
+};

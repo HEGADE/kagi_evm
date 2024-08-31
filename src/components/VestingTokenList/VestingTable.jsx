@@ -45,7 +45,6 @@ function VestingTable({ token, vestID }) {
     }
   };
 
-  console.log(token, "this is the token");
   return (
     <>
       <>

@@ -41,6 +41,7 @@ import { lockNFT } from "../../services/lock-nft.services.js";
 import { set } from "date-fns";
 import { LockNftForm } from "./LockNftForm.jsx";
 import { TokenInfo } from "./TokenInfo.jsx";
+import { daysToFutureTimestamp } from "../../helpers/convertion.js";
 
 const LockTokenInfo = ({
   tokenAddress,
@@ -116,7 +117,7 @@ const LockTokenInfo = ({
         accountAddress: accountID,
         nftAddress: tokenAddress?.address,
         tokenID: tokenAddress?.id,
-        lockingPeriod: days,
+        lockingPeriod: daysToFutureTimestamp(days),
       });
 
       toast.success("NFT locked successfully", {
@@ -432,7 +433,7 @@ const LockTokenAddress = ({
 
   return (
     <>
-      <TokenInfo data={data} />
+      <TokenInfo data={data} nft={nft} />
       <h2 className="form-box-title">{!nft ? tokens.ft : tokens.nft}</h2>
       <p className="text-center mt-10">
         {" "}
