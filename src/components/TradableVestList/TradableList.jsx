@@ -5,34 +5,45 @@ import TradableHeading from "./TradableHeading";
 import TradableTable from "./TradableTable";
 import { getVestingSchedules } from "../../services/tradable-vest.services";
 
+const dmDate = new Date()
+const dummyDate = dmDate.getDate()
+
+
 const data = [
   {
-    name: "Luffy",
-    tokenAddress: "0x120dasd3e0d0ed0s0ads0sd00e0dncnd63",
-    amount: 10000,
-    cliffPeriod: 8,
-    vestingPeriod: 7,
+    cliffTime: dummyDate,
+    tokenAddress: "0xAbC1234567890DEFabc1234567890defABC12345",
+    startTime: dummyDate,
+    amount: 1000,
+    duration: 365, // days
   },
   {
-    name: "Sanji",
-    tokenAddress: "0x1jhhkhjk7837982122233dfdsewql22d",
-    amount: 100,
-    cliffPeriod: 10,
-    vestingPeriod: 22,
+    cliffTime: dummyDate,
+    tokenAddress: "0x1234567890ABCdef1234567890abCDEf12345678",
+    startTime: dummyDate,
+    amount: 2500,
+    duration: 180, // days
   },
   {
-    name: "Blackbeard",
-    tokenAddress: "0x120dasd3e0d0ed0s0ads0sd00e0dncnd63",
-    amount: 2000,
-    cliffPeriod: 20,
-    vestingPeriod: 90,
+    cliffTime: dummyDate,
+    tokenAddress: "0xDEFaBC1234567890defABC1234567890abcdef12",
+    startTime: dummyDate,
+    amount: 500,
+    duration: 90, // days
   },
   {
-    name: "Zoro",
-    tokenAddress: "0x1jhhkhjk7837982122233dfdsewql22d",
-    amount: 10,
-    cliffPeriod: 7,
-    vestingPeriod: 2,
+    cliffTime: dummyDate,
+    tokenAddress: "0x9876543210FEDcba9876543210fedcBA98765432",
+    startTime: dummyDate,
+    amount: 1500,
+    duration: 120, // days
+  },
+  {
+    cliffTime: dummyDate,
+    tokenAddress: "0xABCDEF1234567890abcdef1234567890ABCDEF12",
+    startTime: dummyDate,
+    amount: 3000,
+    duration: 240, // days
   },
 ];
 
@@ -49,6 +60,9 @@ function TradableList() {
   useEffect(() => {
     fetchtokenVestingList();
   }, []);
+
+  console.log(tokenVestingList);
+  
 
   return (
     <div class="content-grid">
@@ -146,9 +160,9 @@ function TradableList() {
                     <div className="table table-downloads table-responsive split-rows">
                       <TradableHeading />
                       <div className="table-body same-color-rows">
-                        {tokenVestingList?.length ? (
-                          tokenVestingList?.map((tokens,indx) => {
-                            return <TradableTable token={tokens} vestID={indx} />;
+                        {data?.length ? (
+                          data?.map((tokens,indx) => {
+                            return <TradableTable token={data} vestID={indx} />;
                           })
                         ) : (
                           <div

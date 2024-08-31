@@ -38,6 +38,7 @@ const TradableVest = ({ data, tokenAddress }) => {
 
   const onSubmit = async (data) => {
     const { address, amount, cliff, vestingPeriod, taker, duration } = data;
+    
 
     setButtonLoading(true);
 
@@ -66,6 +67,9 @@ const TradableVest = ({ data, tokenAddress }) => {
       setButtonLoading(false);
     }
   };
+
+  console.log(errors);
+  
 
   return (
     <>
@@ -148,25 +152,6 @@ const TradableVest = ({ data, tokenAddress }) => {
                     <br />
                   </div>
                 </div>
-
-                <div className="form-row">
-                  <div className="form-item">
-                  <label htmlFor="cliff" className="form-label">Cliff Period</label>
-                    <div className="form-input small">
-                      <input
-                        placeholder="Cliff Period"
-                        type="date"
-                        id="cliff"
-                        name="cliff"
-                        className="date-input"
-                        {...register("cliff", { required: true })}
-                      />
-                      <ValidationError err={errors.cliff} />
-                    </div>
-                    <br />
-                  </div>
-                </div>
-
                 <div className="form-row">
                   <div className="form-item">
                   <label htmlFor="vestingPeriod" className="form-label">Vesting Start Time</label>
@@ -184,7 +169,23 @@ const TradableVest = ({ data, tokenAddress }) => {
                     </div>
                   </div>
                 </div>
-
+                <div className="form-row">
+                  <div className="form-item">
+                  <label htmlFor="cliff" className="form-label">Cliff Period</label>
+                    <div className="form-input small">
+                      <input
+                        placeholder="Cliff Period"
+                        type="date"
+                        id="cliff"
+                        name="cliff"
+                        className="date-input"
+                        {...register("cliff", { required: true })}
+                      />
+                      <ValidationError err={errors.cliff} />
+                    </div>
+                    <br />
+                  </div>
+                </div>
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">

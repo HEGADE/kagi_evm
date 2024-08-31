@@ -1,5 +1,21 @@
 export const tradableVestingAbi = [
   {
+    inputs: [
+      {
+        internalType: "string",
+        name: "message",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "scheduleId",
+        type: "uint256",
+      },
+    ],
+    name: "VestingScheduleError",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -23,6 +39,19 @@ export const tradableVestingAbi = [
     ],
     name: "OwnershipTransferred",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_scheduleId",
+        type: "uint256",
+      },
+    ],
+    name: "releaseTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     anonymous: false,
@@ -101,38 +130,6 @@ export const tradableVestingAbi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_user",
-        type: "address",
-      },
-    ],
-    name: "getUserVestingSchedules",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_scheduleId",
-        type: "uint256",
-      },
-    ],
-    name: "releaseTokens",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint256",
         name: "_scheduleId",
         type: "uint256",
@@ -146,30 +143,6 @@ export const tradableVestingAbi = [
     name: "transferVestingOwnership",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "userVestingSchedules",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -208,6 +181,122 @@ export const tradableVestingAbi = [
     name: "vestTokens",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_beneficiary",
+        type: "address",
+      },
+    ],
+    name: "getBasicVestingDetails",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "scheduleIds",
+        type: "uint256[]",
+      },
+      {
+        internalType: "address[]",
+        name: "tokenAddresses",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_scheduleId",
+        type: "uint256",
+      },
+    ],
+    name: "getSingleVestingSchedule",
+    outputs: [
+      {
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "beneficiary",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "startTime",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "cliffTime",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "released",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_user",
+        type: "address",
+      },
+    ],
+    name: "getUserVestingSchedules",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "userVestingSchedules",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

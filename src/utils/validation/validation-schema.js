@@ -180,7 +180,6 @@ export const VestTokenSchema = (balance) =>
           return false;
         }
       }),
-
     amount: yup
       .number()
       .required("Amount is required")
@@ -194,7 +193,6 @@ export const VestTokenSchema = (balance) =>
         yup.ref("vestingPeriod"),
         "cliff period must be greater than vestingPeriod period"
       ),
-
     vestingPeriod: yup
       .date()
       .required("Vesting Period is required")
@@ -206,11 +204,10 @@ export const VestTokenSchema = (balance) =>
       .min(1, "Duration must be greater than  0"),
   });
 
-
-  
 export const TradableVestTokenSchema = (balance) =>
   yup.object().shape({
     name: yup.string().required("Name is required"),
+
     address: yup
       .string()
       .required("Address is required")
@@ -223,6 +220,7 @@ export const TradableVestTokenSchema = (balance) =>
           return false;
         }
       }),
+
     taker: yup
       .string()
       .required("Taker address  is required")
@@ -242,18 +240,20 @@ export const TradableVestTokenSchema = (balance) =>
       .min(1, "Amount must be greater than 1")
       .max(balance, "Amount must be less than token balance")
       .typeError("Amount is required"),
+
     cliff: yup
       .date()
       .required("Cliff is required")
       .min(
         yup.ref("vestingPeriod"),
-        "cliff period must be greater than vestingPeriod period"
+        "cliff period must be greater than vesting start time"
       ),
 
     vestingPeriod: yup
       .date()
-      .required("Vesting Period is required")
-      .min(new Date(), "Vesting period must be greater than current date"),
+      .required("Vesting start time is required")
+      .min(new Date(), "Vesting time must be greater than current date"),
+
     duration: yup
       .number()
       .required("Duration  is required")

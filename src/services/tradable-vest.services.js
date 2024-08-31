@@ -19,7 +19,7 @@ export const vestToken = async ({
     TradableVestingContractAddress
   );
   console.log(contractInstance.methods);
-  
+
   const actualAmount = toWei(amount, "ether");
 
   let vestRes = await contractInstance.methods
@@ -52,6 +52,28 @@ export const releaseToken = async ({ accountAddress, vestID }) => {
 };
 
 export const getVestingSchedules = async ({ accountAddress }) => {
+  try {
+    const web3 = await initWeb3();
+    console.log(accountAddress);
+
+    const contractInstance = new web3.eth.Contract(
+      tradableVestingAbi,
+      TradableVestingContractAddress
+    );
+
+    let vestingList = await contractInstance.methods
+      .getBasicVestingDetails(accountAddress)
+      .call();
+
+    console.log(vestingList, "vestingList");
+
+    return vestingList;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const transferOwnership = async ({ newAddress, vestID, accountAddress }) => {
   const web3 = await initWeb3();
 
   const contractInstance = new web3.eth.Contract(
@@ -59,11 +81,7 @@ export const getVestingSchedules = async ({ accountAddress }) => {
     TradableVestingContractAddress
   );
 
-  let vestingList = await contractInstance.methods
-    .getUserVestingSchedules(accountAddress)
-    .call();
-
-  console.log(vestingList, "vestingList");
-
-  return vestingList;
+  const transfer = await contractInstance.methods
+    .transferVestingOwnership(vestID, newAddress)
+    .send({ from: accountAddress, to: TradableVestingContractAddress });
 };

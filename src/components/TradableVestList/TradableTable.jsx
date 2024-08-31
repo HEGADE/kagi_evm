@@ -6,16 +6,19 @@ import ButtonWithLoading from "../UI/LoaderButton";
 import toast from "react-hot-toast";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import { isTimestampGreaterOrEqualToCurrentDateTime } from "../../helpers/time-compare";
-import { releaseToken } from "../../services/tradable-vest.services";
+import {
+  releaseToken,
+  transferOwnership,
+} from "../../services/tradable-vest.services";
 
 function TradableTable({ token, vestID }) {
-  console.log(token?.cliffTime);
-  let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
-  
-  let vestingPeriodStart = format(
-    fromUnixTimeStamp(Number(token?.startTime)),
-    "yyyy-MM-dd"
-  );
+  console.log(token);
+  // let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
+
+  // let vestingPeriodStart = format(
+  //   fromUnixTimeStamp(Number(token?.startTime)),
+  //   "yyyy-MM-dd"
+  // );
 
   const canUnlock = isTimestampGreaterOrEqualToCurrentDateTime(
     Number(token?.cliffTime)
@@ -46,6 +49,21 @@ function TradableTable({ token, vestID }) {
     }
   };
 
+  const handleVestingTransfer = async ({ vestID, takerAddress }) => {
+    setIsButtonLoading(true);
+    try {
+      await transferOwnership({
+        takerAddress,
+        vestID,
+        accountAddress,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsButtonLoading(false);
+    }
+  };
+
   return (
     <>
       <>
@@ -60,17 +78,21 @@ function TradableTable({ token, vestID }) {
               //     display: "contents",
               //   }}
             >
-              {fromWei(Number(token?.amount))}
+              {/* {fromWei(Number(token?.amount))} */}
+              {token.amount}
             </p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{cliff}</p>
+            <p className="table-title">{token?.cliffTime}</p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{vestingPeriodStart}</p>
+            <p className="table-title">{token?.startTime}</p>
           </div>
           <div className="table-column padded">
-            <p className="table-title">{Number(token?.duration)} Months</p>
+            <p className="table-title">
+              {/* {Number(token?.duration)} Months */}
+              {token?.duration}
+            </p>
           </div>
 
           <div
@@ -94,6 +116,15 @@ function TradableTable({ token, vestID }) {
               text={"Release"}
               className="button secondary"
             />
+          </div>
+
+          <div
+            className="table-column padded"
+            style={{
+              padding: "10px",
+            }}
+          >
+            {accountID && <ButtonWithLoading text={"Transfer"} className="button secondary" />}
           </div>
         </div>
       </>
