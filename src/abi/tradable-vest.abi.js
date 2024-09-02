@@ -1,21 +1,5 @@
 export const tradableVestingAbi = [
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "message",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "scheduleId",
-        type: "uint256",
-      },
-    ],
-    name: "VestingScheduleError",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -187,21 +171,16 @@ export const tradableVestingAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "_beneficiary",
+        name: "_user",
         type: "address",
       },
     ],
-    name: "getBasicVestingDetails",
+    name: "getUserVestingSchedules",
     outputs: [
       {
         internalType: "uint256[]",
-        name: "scheduleIds",
+        name: "",
         type: "uint256[]",
-      },
-      {
-        internalType: "address[]",
-        name: "tokenAddresses",
-        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -215,7 +194,7 @@ export const tradableVestingAbi = [
         type: "uint256",
       },
     ],
-    name: "getSingleVestingSchedule",
+    name: "getVestingScheduleDetails",
     outputs: [
       {
         internalType: "address",
@@ -251,25 +230,6 @@ export const tradableVestingAbi = [
         internalType: "uint256",
         name: "released",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_user",
-        type: "address",
-      },
-    ],
-    name: "getUserVestingSchedules",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
       },
     ],
     stateMutability: "view",

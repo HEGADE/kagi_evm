@@ -13,7 +13,7 @@ import {
   transferOwnership,
 } from "../../services/tradable-vest.services";
 
-function VestingTable({ token, vestID }) {
+function VestingTable({ token, vestID, refreshTokenVestingList }) {
   let cliff = format(fromUnixTimeStamp(Number(token?.cliffTime)), "yyyy-MM-dd");
   let vestingPeriodStart = format(
     fromUnixTimeStamp(Number(token?.startTime)),
@@ -25,7 +25,6 @@ function VestingTable({ token, vestID }) {
   );
 
   const [withdrawID, setWithdrawID] = useState(false);
-
   const { accountID } = useContext(MetamaskContext);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
@@ -68,15 +67,17 @@ function VestingTable({ token, vestID }) {
     });
 
     try {
-      await transferOwnership({
+      const transfer = await transferOwnership({
         newAddress,
         vestID: tokenID,
         accountAddress: accountID,
       });
+      // console.log(transfer);
       console.log("Transfer confirmed");
       toast.success("Transfer successful", {
         position: "bottom-right",
       });
+      refreshTokenVestingList();
     } catch (error) {
       console.log(error);
     } finally {

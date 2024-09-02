@@ -59,7 +59,7 @@ function TradableList() {
 
   useEffect(() => {
     fetchtokenVestingList();
-  }, []);
+  }, [accountID]);
 
   console.log(tokenVestingList);
 
@@ -159,10 +159,10 @@ function TradableList() {
                     <div className="table table-downloads table-responsive split-rows">
                       <TradableHeading />
                       <div className="table-body same-color-rows">
-                        {data?.length ? (
-                          data?.map((datas, indx) => {
+                        {tokenVestingList?.length ? (
+                          tokenVestingList?.map((datas, indx) => {
                             return (
-                              <TradableTable token={datas} vestID={indx} />
+                              <TradableTable token={datas} vestID={indx} refreshTokenVestingList={fetchtokenVestingList} />
                             );
                           })
                         ) : (
