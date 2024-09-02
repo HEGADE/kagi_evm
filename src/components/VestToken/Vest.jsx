@@ -152,26 +152,6 @@ const VestToken = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
-                    <label htmlFor="cliff" className="form-label">
-                      Cliff Period
-                    </label>
-                    <div className="form-input small">
-                      <input
-                        placeholder="Cliff Period"
-                        type="date"
-                        id="cliff"
-                        name="cliff"
-                        className="date-input"
-                        {...register("cliff", { required: true })}
-                      />
-                      <ValidationError err={errors.cliff} />
-                    </div>
-                    <br />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-item">
                     <label htmlFor="vestingPeriod" className="form-label">
                       Vesting Start Time
                     </label>
@@ -190,11 +170,31 @@ const VestToken = ({ data, tokenAddress }) => {
                   </div>
                 </div>
 
+                <div className="form-row">
+                  <div className="form-item">
+                    <label htmlFor="cliff" className="form-label">
+                      Cliff Period
+                    </label>
+                    <div className="form-input small">
+                      <input
+                        placeholder="Cliff Period"
+                        type="date"
+                        id="cliff"
+                        name="cliff"
+                        className="date-input"
+                        {...register("cliff", { required: true })}
+                      />
+                      <ValidationError err={errors.cliff} />
+                    </div>
+                    <br />
+                  </div>
+                </div>
+
                 <div className="form-row split">
                   <div className="form-item">
                     <div className="form-input small">
                       <input
-                        placeholder="Duration (n The duration over which the tokens will be vested)"
+                        placeholder="Duration in months (The duration over which the tokens will be vested)"
                         type="text"
                         id="duration"
                         name="duration"

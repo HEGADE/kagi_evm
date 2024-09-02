@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SideNavBar from "../components/UI/SideNavBar";
 import { VestToken } from "../components/VestToken/Vest";
 import { Approve } from "../components/approve/Aprrove";
 import { vestingContractAddress } from "../lib/constants";
 
+import { MetamaskContext } from "../context/MetamaskContext";
+
 export const Vesting = () => {
   const [margin, setMargin] = useState(false);
+
+  const { accountID } = useContext(MetamaskContext);
 
   const [moveToLockPage, setMoveToLockPage] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -16,6 +20,11 @@ export const Vesting = () => {
     balance: 0,
     symbol: "",
   });
+
+  useEffect(() => {
+    setTokenAddress("");
+    setMoveToLockPage(false);
+  }, [accountID]);
 
   return (
     <>
