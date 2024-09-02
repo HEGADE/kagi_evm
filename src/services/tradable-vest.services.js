@@ -39,7 +39,7 @@ export const vestToken = async ({
 export const releaseToken = async ({ accountAddress, vestID }) => {
   const web3 = await initWeb3();
   console.log({ accountAddress, vestID });
-  
+
   const contractInstance = new web3.eth.Contract(
     tradableVestingAbi,
     TradableVestingContractAddress
@@ -52,7 +52,7 @@ export const releaseToken = async ({ accountAddress, vestID }) => {
   return releaseRes;
 };
 
-export const getVestingSchedules = async ({ accountAddress }) => {
+export const getUserVestingSchedules = async ({ accountAddress }) => {
   try {
     const web3 = await initWeb3();
     console.log(accountAddress);
@@ -63,10 +63,16 @@ export const getVestingSchedules = async ({ accountAddress }) => {
     );
 
     let vestingList = await contractInstance.methods
-      .getBasicVestingDetails(accountAddress)
+      .getUserVestingSchedules(accountAddress)
       .call();
 
     console.log(vestingList, "vestingList");
+
+    let vestPeriods = await contractInstance.methods
+      .getVestingScheduleDetails(0)
+      .call();
+
+    console.log(vestPeriods);
 
     return vestingList;
   } catch (error) {
@@ -74,16 +80,52 @@ export const getVestingSchedules = async ({ accountAddress }) => {
   }
 };
 
-export const transferOwnership = async ({ newAddress, vestID, accountAddress }) => {
-  const web3 = await initWeb3();
-  console.log({ newAddress, vestID, accountAddress });
-  
-  const contractInstance = new web3.eth.Contract(
-    tradableVestingAbi,
-    TradableVestingContractAddress
-  );
+export const getVestingSchedules = async ({ accountAddress }) => {
+  try {
+    const web3 = await initWeb3();
+    console.log(accountAddress);
 
-  const transfer = await contractInstance.methods
-    .transferVestingOwnership(vestID, newAddress)
-    .send({ from: accountAddress, to: TradableVestingContractAddress });
+    const contractInstance = new web3.eth.Contract(
+      tradableVestingAbi,
+      TradableVestingContractAddress
+    );
+
+    const vestScheduleList = await getUserVestingSchedules({ accountAddress });
+    console.log(vestScheduleList);
+
+    const vestPeriods = await Promise.all(
+      vestScheduleList.map((scheduleId) =>
+        contractInstance.methods.getVestingScheduleDetails(scheduleId).call()
+      )
+    );
+
+    console.log(vestPeriods);
+
+    return vestPeriods;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const transferOwnership = async ({
+  newAddress,
+  vestID,
+  accountAddress,
+}) => {
+  try {
+    const web3 = await initWeb3();
+    console.log({ newAddress, vestID, accountAddress });
+
+    const contractInstance = new web3.eth.Contract(
+      tradableVestingAbi,
+      TradableVestingContractAddress
+    );
+
+    const transfer = await contractInstance.methods
+      .transferVestingOwnership(vestID, newAddress)
+      .send({ from: accountAddress, to: TradableVestingContractAddress });
+    return transfer;
+  } catch (error) {
+    console.log(error);
+  }
 };

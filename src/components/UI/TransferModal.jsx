@@ -9,6 +9,8 @@ function TransferModal({ isVisible, onClose, onSubmit, vestID }) {
   const [error, setError] = useState("");
   const {accountID} = useContext(GlobalContext)
 
+  console.log(vestID);
+
   useEffect(() => {
     if (isVisible) {
       setNewAddress("");

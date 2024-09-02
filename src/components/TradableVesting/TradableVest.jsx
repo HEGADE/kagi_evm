@@ -57,6 +57,8 @@ const TradableVest = ({ data, tokenAddress }) => {
         duration: 4000,
         position: "bottom-right",
       });
+
+      reset();
     } catch (err) {
       toast.error("An error occurred, please try again", {
         duration: 4000,
@@ -66,10 +68,7 @@ const TradableVest = ({ data, tokenAddress }) => {
     } finally {
       setButtonLoading(false);
     }
-  };
-
-  console.log(errors);
-  
+  };  
 
   return (
     <>
