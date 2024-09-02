@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SideNavBar from "../components/UI/SideNavBar";
 import { Approve } from "../components/approve/Aprrove";
 import { TradableVestingContractAddress } from "../lib/constants";
 import { TradableVest } from "../components/TradableVesting/TradableVest";
+import { MetamaskContext } from "../context/MetamaskContext";
 
 function TradableVesting() {
   const [margin, setMargin] = useState(false);
-
   const [moveToLockPage, setMoveToLockPage] = useState(false);
   const [showTokenLockForm, setShowTokenLockForm] = useState(true);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -17,6 +17,13 @@ function TradableVesting() {
     balance: 0,
     symbol: "",
   });
+
+  const { accountID } = useContext(MetamaskContext);
+
+  useEffect(() => {
+    setTokenAddress("")
+    setMoveToLockPage(false)
+  }, [accountID])
 
   return (
     <>
