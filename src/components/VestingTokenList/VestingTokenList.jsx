@@ -4,12 +4,15 @@ import VestingHeading from "./VestingHeading";
 import VestingTable from "./VestingTable";
 import { getVestingSchedules } from "../../services/vesting.services";
 import { MetamaskContext } from "../../context/MetamaskContext";
+import { SkeletonTabular } from "../UI/Skeletons";
+import { rem } from "@mantine/core";
 
 function VestingTokenList() {
   const { accountID } = useContext(MetamaskContext);
 
   const [tokenVestingList, settokenVestingList] = useState([]);
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
+  const [loading, setLoading] = useState(true);
 
   let tokensWithIndex = tokenVestingList?.map((item, idx) => {
     return {
@@ -47,6 +50,12 @@ function VestingTokenList() {
     let res = await getVestingSchedules({ accountAddress: accountID });
     settokenVestingList(res);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, [accountID]);
 
   useEffect(() => {
     if (accountID) fetchtokenVestingList();
@@ -147,10 +156,18 @@ function VestingTokenList() {
                     <div className="table table-downloads table-responsive split-rows">
                       <VestingHeading />
                       <div className="table-body same-color-rows">
-                        {sorted?.length ? (
+                        {loading ? (
+                          <SkeletonTabular
+                            className="table-row medium padded"
+                            howMany={5}
+                            width="100%"
+                            height={rem(60)}
+                          />
+                        ) : sorted?.length ? (
                           sorted?.map((token, indx) => {
                             return (
                               <VestingTable
+                                key={indx}
                                 token={token}
                                 vestID={token?.vestID}
                               />

@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import ButtonWithLoading from "../UI/LoaderButton";
 
-
 import { shortAddress } from "../../utils/format/address.format";
-
 
 import { CountdownTimer } from "../UI/Ticker";
 import { IconCopy } from "@tabler/icons-react";
@@ -16,13 +14,14 @@ import { unlockToken } from "../../services/lock.services.js";
 import { MetamaskContext } from "../../context/MetamaskContext.js";
 import { format } from "date-fns";
 
-
 const WithdrawTable = ({
   lockID,
   assetName,
   amount,
+
   assetContact,
   lockedTime,
+
   unlockTime,
 }) => {
   const [withdrawID, setWithdrawID] = useState(false);

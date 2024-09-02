@@ -6,11 +6,17 @@ import { IconRefresh } from "../UI/Icons";
 import { getTokenList } from "../../services/lock.services";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import { getLockedNftList } from "../../services/lock-nft.services";
+import { SkeletonTabular } from "../UI/Skeletons";
+import { rem } from "@mantine/core";
+import { NotFound } from "./404-token";
+import { Render } from "../UI/Render";
 
 const Withdraw = () => {
   const [selectToken, setSelectToken] = useState("ft");
   const [selectTokenSort, setSelectTokenSort] = useState("ds");
   const [search, setSearch] = useState(null);
+
+  const [loading, setLoading] = useState(true);
 
   const [tokens, setTokens] = useState([]);
 
@@ -58,12 +64,9 @@ const Withdraw = () => {
   //     .includes(search.toLowerCase());
   // });
 
-  console.log(sorted, "this is the sorted data");
-
   const fetchTokenList = async () => {
     let res = await getTokenList({ accountAddress: accountID });
 
-    console.log(res, "this is the token list");
     let resNft = await getLockedNftList({ accountAddress: accountID });
 
     setTokens((pre) => {
@@ -73,6 +76,16 @@ const Withdraw = () => {
       };
     });
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => {
+      setLoading(true);
+    };
+  }, [accountID]);
 
   useEffect(() => {
     if (accountID) fetchTokenList();
@@ -174,7 +187,14 @@ const Withdraw = () => {
                       <div className="table table-downloads table-responsive split-rows">
                         <TableHeading type={selectToken} />
                         <div className="table-body same-color-rows">
-                          {sorted?.length > 0 ? (
+                          {loading ? (
+                            <SkeletonTabular
+                              className="table-row medium padded"
+                              howMany={5}
+                              width="100%"
+                              height={rem(60)}
+                            />
+                          ) : sorted?.length > 0 ? (
                             sorted?.map((token, indx) => {
                               if (selectToken === "ft") {
                                 return (
@@ -199,31 +219,7 @@ const Withdraw = () => {
                               }
                             })
                           ) : (
-                            <div
-                              className="table-row medium"
-                              style={{
-                                background: "transparent",
-                                position: "absolute",
-                                width: "100%",
-                              }}
-                            >
-                              <div
-                                className="table-column"
-                                style={{
-                                  position: "absolute",
-                                  width: "100%",
-                                  height: "100%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <h6>
-                                  No {selectToken?.toLocaleUpperCase()} lock
-                                  found
-                                </h6>
-                              </div>
-                            </div>
+                            <NotFound selectToken={selectToken} />
                           )}
                         </div>
                       </div>
