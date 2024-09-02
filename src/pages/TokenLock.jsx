@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import Header from "../components/Header/Header.component";
 import { LockTokenForm } from "../components/Vesting/LockTokenForm";
 import { MobileSideBar } from "../components/UI/SideNavBar";
 
@@ -7,8 +6,26 @@ const TokenLock = () => {
   const [margin, setMargin] = useState(false);
   const [moveToLockPage, setMoveToLockPage] = useState(false);
   const [showTokenLockForm, setShowTokenLockForm] = useState(true);
+
+  const [data, setData] = useState({
+    assetName: "",
+    decimals: "",
+    currentBlockHeight: 0,
+    balance: 0,
+    symbol: "",
+  });
   const ftRef = useRef(null);
   const nftRef = useRef(null);
+
+  const clearTokenDetails = () => {
+    setData({
+      assetName: "",
+      decimals: "",
+      currentBlockHeight: 0,
+      balance: 0,
+      symbol: "",
+    });
+  };
 
   const handlePageNFT = () => {
     nftRef.current.classList.add("active");
@@ -16,6 +33,7 @@ const TokenLock = () => {
     setMargin(false);
     setMoveToLockPage(false);
     setShowTokenLockForm(false);
+    clearTokenDetails();
   };
   const handlePageFT = () => {
     ftRef.current.classList.add("active");
@@ -23,6 +41,7 @@ const TokenLock = () => {
     setMargin(false);
     setShowTokenLockForm(true);
     setMoveToLockPage(false);
+    clearTokenDetails();
   };
   return (
     <>
@@ -66,6 +85,8 @@ const TokenLock = () => {
           {showTokenLockForm ? (
             <div className="form-box login-register-form-element">
               <LockTokenForm
+                data={data}
+                setData={setData}
                 handlePage={handlePageFT}
                 setMoveToLockPage={setMoveToLockPage}
                 moveToLockPage={moveToLockPage}
@@ -75,6 +96,8 @@ const TokenLock = () => {
           ) : (
             <div className="form-box login-register-form-element">
               <LockTokenForm
+                data={data}
+                setData={setData}
                 handlePage={handlePageNFT}
                 setMoveToLockPage={setMoveToLockPage}
                 moveToLockPage={moveToLockPage}

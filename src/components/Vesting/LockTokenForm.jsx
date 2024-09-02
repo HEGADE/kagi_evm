@@ -42,6 +42,7 @@ import { set } from "date-fns";
 import { LockNftForm } from "./LockNftForm.jsx";
 import { TokenInfo } from "./TokenInfo.jsx";
 import { daysToFutureTimestamp } from "../../helpers/convertion.js";
+import { openNewTab } from "../../helpers/new-tab.js";
 
 const LockTokenInfo = ({
   tokenAddress,
@@ -87,12 +88,14 @@ const LockTokenInfo = ({
 
     const { token, amount, days } = data;
     try {
-      await lockToken({
+      const res = await lockToken({
         accountAddress: accountID,
         ert20TokenAddress: token,
         amount,
         duration: days,
       });
+
+      openNewTab(res?.transactionHash);
 
       toast.success("Token locked successfully", {
         position: "bottom-right",
@@ -116,7 +119,7 @@ const LockTokenInfo = ({
 
     const { days } = data;
     try {
-      await lockNFT({
+      const res = await lockNFT({
         accountAddress: accountID,
         nftAddress: tokenAddress?.address,
         tokenID: tokenAddress?.id,
@@ -126,6 +129,8 @@ const LockTokenInfo = ({
       toast.success("NFT locked successfully", {
         position: "bottom-right",
       });
+
+      openNewTab(res?.transactionHash);
 
       nftReset({
         days: "",
@@ -504,18 +509,14 @@ const LockTokenForm = ({
   moveToLockPage,
   setMoveToLockPage,
   handlePage,
+  data,
+  setData,
 }) => {
   const [tokenAddress, setTokenAddress] = useState({
     address: "",
     id: 0,
   });
-  const [data, setData] = useState({
-    assetName: "",
-    decimals: "",
-    currentBlockHeight: 0,
-    balance: 0,
-    symbol: "",
-  });
+
   return (
     <>
       {!moveToLockPage ? (

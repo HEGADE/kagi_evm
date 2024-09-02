@@ -11,6 +11,7 @@ import { solidityCompiler } from "@agnostico/browser-solidity-compiler";
 import Web3 from "web3";
 import { getContract } from "../../../dynamic-contract/ft";
 import { compileCode } from "../../../helpers/solidity";
+import { openNewTab } from "../../../helpers/new-tab";
 
 const web3 = new Web3(window.ethereum);
 
@@ -49,6 +50,8 @@ const CreateTokenFormFT = () => {
         });
 
       copy(deployedContract?.options?.address);
+      console.log("Contract deployed at address:", deployedContract);
+      // openNewTab(deployContract?.options?)
       toast.success(
         "Contract deployed successfully,and address copied to clip board",
         {
@@ -95,6 +98,8 @@ const CreateTokenFormFT = () => {
 
       const contractComplied =
         output?.contracts?.["Compiled_Contracts"]?.[name];
+
+      console.log(contractToDeploy, "contractComplied");
 
       if (!contractComplied?.abi) {
         toast.error("Please Refresh the page and try again", {

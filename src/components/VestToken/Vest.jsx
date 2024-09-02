@@ -9,6 +9,7 @@ import ButtonWithLoading from "../UI/LoaderButton";
 import { MetamaskContext } from "../../context/MetamaskContext";
 import { vestToken } from "../../services/vesting.services";
 import { unixTimeStamp } from "../../helpers/convertion";
+import { openNewTab } from "../../helpers/new-tab";
 
 const VestToken = ({ data, tokenAddress }) => {
   const {
@@ -21,7 +22,6 @@ const VestToken = ({ data, tokenAddress }) => {
     mode: "onChange",
     resolver: yupResolver(VestTokenSchema(data?.balance)),
   });
-
 
   const [buttonLoading, setButtonLoading] = useState(false);
   const { accountID } = useContext(MetamaskContext);
@@ -39,7 +39,7 @@ const VestToken = ({ data, tokenAddress }) => {
     setButtonLoading(true);
 
     try {
-      await vestToken({
+      const res = await vestToken({
         accountAddress: accountID,
         takerAddress: taker,
         cliffPeriod: unixTimeStamp(cliff),
@@ -53,6 +53,8 @@ const VestToken = ({ data, tokenAddress }) => {
         duration: 4000,
         position: "bottom-right",
       });
+
+      openNewTab(res?.transactionHash);
 
       reset();
     } catch (err) {
@@ -170,7 +172,9 @@ const VestToken = ({ data, tokenAddress }) => {
 
                 <div className="form-row">
                   <div className="form-item">
-                  <label htmlFor="vestingPeriod" className="form-label">Vesting Start Time</label>
+                    <label htmlFor="vestingPeriod" className="form-label">
+                      Vesting Start Time
+                    </label>
                     <div className="form-input small">
                       <input
                         placeholder="Vesting Start Time"
