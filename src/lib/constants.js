@@ -28,4 +28,7 @@ export const testNetExplorerLink = "https://sepolia.etherscan.io/";
 
 // export const vestingContractAddress = "0x099d68fde7b94eb86577d66c9527e6ab82c8f95c";
 
-export const TradableVestingContractAddress = "0xc07835f2b6b5e89af68e4c318754022cf0d5870b"
+export const TradableVestingContractAddress =
+  "0xc07835f2b6b5e89af68e4c318754022cf0d5870b";
+export const bulkTransferContractAddress =
+  "0xaad3e4c302d4f81b13ad747f104b515ff5ca87e1";

@@ -1,45 +1,24 @@
-import { useState } from "react";
-import { openContractCall } from "@stacks/connect";
-import {
-  createAssetInfo,
-  FungibleConditionCode,
-  makeStandardFungiblePostCondition,
-  makeStandardSTXPostCondition,
-} from "@stacks/transactions";
-import {
-  listCV,
-  principalCV,
-  standardPrincipalCV,
-  tupleCV,
-  uintCV,
-} from "@stacks/transactions";
+import { useContext, useState } from "react";
+
+import { toWei } from "../../helpers/convertion";
+
 import Parser from "papaparse";
 import toast from "react-hot-toast";
-import {
-  appDetails,
-  bulkTokenDispatcherContractName,
-} from "../../lib/constants";
-import { useStacks } from "../../providers/StacksProvider";
-import { useTransactionToasts } from "../../providers/TransactionStatusProvider";
 
-import { fetchFromContractForBulkTransfer } from "../../lib/fetch-data";
 import ButtonWithLoading from "../UI/LoaderButton";
 import FileInput from "../UI/FileInput";
+import { MetamaskContext } from "../../context/MetamaskContext";
+import { sendTokensToMultipleAddresses } from "../../services/bulk-transfer";
+import Web3 from "web3";
 
 const allowedExtensions = ["csv"];
 
-export function Transfer() {
-  const [tokenAddress, setTokenAddress] = useState("");
-  const [fungibleToken, setFungibleToken] = useState("");
+export function Transfer({ data, setData, token }) {
+  const [tokenAddress, setTokenAddress] = useState(token);
   const [file, setFile] = useState(undefined);
-  const [recipientList, setRecipientList] = useState([]);
-  const [amountList, setAmountList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { network, address } = useStacks();
-  const { addTransactionToast } = useTransactionToasts({
-    success: "🎉 Tokens Transferred Successfully!",
-  });
+  const { accountID } = useContext(MetamaskContext);
 
   const handleFileChange = async (e) => {
     e.preventDefault();
@@ -74,12 +53,15 @@ export function Transfer() {
       complete: function (results) {
         const recipientLists = [];
         const amountList = [];
+        let finalAmount = 0;
 
         // Iterating data to get column name and their values
         let keys = results.meta.fields;
 
         results.data
-          .filter((d) => !(d[keys[0]] === address?.toString()))
+          .filter(
+            (d) => !(d[keys[0]]?.toLowerCase() === accountID?.toLowerCase())
+          )
           .map((d) => {
             recipientLists.push(d[keys[0]]);
             amountList.push(Number(d[keys[1]]));
@@ -88,15 +70,32 @@ export function Transfer() {
         try {
           recipientLists.forEach((recipient) => {
             InvalidAddress = recipient;
-            principalCV(recipient);
+            if (Web3.utils.isAddress(recipient) === false) {
+              throw new Error("Invalid Address");
+            }
           });
           amountList.forEach((amount) => {
             if (amount <= 0) {
               throw new Error("Amount Error");
             }
+            finalAmount += amount;
           });
+
+          if (finalAmount > data?.balance) {
+            toast.error(
+              `⛔️  Insufficient balance to transfer ${finalAmount} ${data?.symbol}`,
+
+              {
+                duration: 5000,
+                position: "bottom-right",
+              }
+            );
+            return;
+          }
+
           transferTokens(e, recipientLists, amountList);
         } catch (err) {
+          setFile(null);
           if (err.message === "Amount Error") {
             toast.error("⛔️  Amount should be greater than 0 in CSV fle", {
               duration: 5000,
@@ -119,7 +118,7 @@ export function Transfer() {
   const transferTokens = async (e, recipientList, amountList) => {
     e.preventDefault();
 
-    if (!address) {
+    if (!accountID) {
       toast.error("⛔️  Must be connected to a wallet\nto transfer tokens!");
       return;
     }
@@ -127,55 +126,16 @@ export function Transfer() {
     setLoading(true);
 
     try {
-      principalCV(tokenAddress);
-      const contractInfoResult = await fetchFromContractForBulkTransfer(
-        tokenAddress,
-        network,
-        address,
-        [
-          {
-            functionName: "get-symbol",
-          },
-          {
-            functionName: "get-decimals",
-          },
-          {
-            functionName: "get-balance",
-            functionArgs: [principalCV(address)],
-          },
-        ]
-      );
-
-      console.info("👓  contractInfoResult: ", contractInfoResult);
-
-      const tokenSymbol = contractInfoResult?.contractInfo[0]?.value;
-      const tokenDecimals = contractInfoResult?.contractInfo[1]?.value;
-      const tokenBalance = contractInfoResult?.contractInfo[2]?.value;
-      const tokenContractOwnerAddress =
-        contractInfoResult?.contractOwnerAddress;
-      const tokenContractName = contractInfoResult?.contractName;
-      console.info(
-        "👓  tokenContractName, tokenContractOwnerAddress, tokenSymbol, tokenDecimals, tokenBalance: ",
-        tokenContractName,
-        tokenContractOwnerAddress,
-        tokenSymbol,
-        tokenDecimals,
-        tokenBalance
-      );
-
-      let transactionInfo = [];
-      // let transactionInfo: TupleCV<TransactionInfo>[] = [];
+      let transactionInfoAddress = [];
+      let transactionInfoAmount = [];
       let totalTokens = 0;
 
       recipientList.map((recipient, index) => {
-        if (recipient !== address) {
+        if (recipient?.toLowerCase() !== accountID?.toLowerCase()) {
           const amount = amountList[index];
-          transactionInfo.push(
-            tupleCV({
-              recipient: standardPrincipalCV(recipient),
-              amount: uintCV(amount * 1000000),
-            })
-          );
+          transactionInfoAddress.push(recipient.toString());
+
+          transactionInfoAmount.push(toWei(amount, "ether"));
           totalTokens += amount;
         } else {
           console.warn(
@@ -184,40 +144,13 @@ export function Transfer() {
         }
       });
 
-      console.info("👓  totalTokens: ", totalTokens);
-
-      const tokenPostCondition = makeStandardFungiblePostCondition(
-        address,
-        FungibleConditionCode.Equal,
-        totalTokens * 10 ** Number(tokenDecimals),
-        createAssetInfo(
-          tokenContractOwnerAddress,
-          tokenContractName,
-          fungibleToken
-        ) // TODO: Fetch contractOwnerAdress, contractName and tokenName from entered tokenAddress
-      );
-
-      const stxPostCondition = makeStandardSTXPostCondition(
-        address,
-        FungibleConditionCode.Equal,
-        0
-      );
-
-      console.info("transactionInfo: ", transactionInfo);
-      // (contract-call? .bulk-token-dispatcher send-multiple-transaction-tuple-list .sip010-ft (list { 'St....9 u5000000 }))
-      const options = {
-        contractAddress: tokenContractOwnerAddress,
-        contractName: bulkTokenDispatcherContractName,
-        functionName: "send-multiple-transaction-tuple-list",
-        functionArgs: [principalCV(tokenAddress), listCV(transactionInfo)],
-        postConditions: [tokenPostCondition, stxPostCondition],
-        network,
-        appDetails,
-        onFinish: ({ txId }) =>
-          addTransactionToast(txId, `Transferring tokens...`),
-      };
-
-      await openContractCall(options);
+      await sendTokensToMultipleAddresses({
+        accountAddress: accountID,
+        tokenAddress,
+        addressArray: transactionInfoAddress,
+        amountArray: transactionInfoAmount,
+      });
+      setFile(null);
     } catch (err) {
       const actualErrorMsg = err?.message?.split(":")[0];
       if (actualErrorMsg === "Invalid c32 address") {
@@ -235,93 +168,13 @@ export function Transfer() {
         }
       }
       setTokenAddress(null);
+      setFile(null);
     } finally {
       setLoading(false);
     }
   };
 
-  // const transferTokens = async (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   e.preventDefault();
-
-  //   if (!address) {
-  //     toast.error('⛔️  Must be connected to a wallet\nto transfer tokens!');
-  //     return
-  //   }
-
-  //   // Parse file data
-  //   await handleParse();
-
-  //   const network = new StacksMocknet();
-
-  //   let recipientsListClarity: any = [];
-  //   recipientList.map((recipient) => {
-  //     // recipientsListClarity.push(principalCV(recipient));
-  //     recipientsListClarity.push(standardPrincipalCV(recipient));
-  //   });
-
-  //   let amountListClarity: any = [];
-  //   // let transferInfo: any = [];
-  //   let totalTokens: number = 0;
-  //   await amountList.map((amount, index) => {
-  //     // transferInfo.push(tupleCV({ recipient: standardPrincipalCV(recipientList[index]), amount: uintCV(amount * 1000000) }))
-  //     amountListClarity.push(uintCV(amount * 1000000));
-  //     totalTokens += Number(amount);
-  //   });
-
-  //   console.info("totalTokens: ", totalTokens);
-
-  //   const tokenPostCondition = makeStandardFungiblePostCondition(
-  //     address,
-  //     FungibleConditionCode.Equal,
-  //     totalTokens * 1000000,
-  //     createAssetInfo(contractOwnerAddress, 'sip010-ft', 'cryptic-ocean-coin'),
-  //   );
-
-  //   const stxPostCondition = makeStandardSTXPostCondition(
-  //     address,
-  //     FungibleConditionCode.Equal,
-  //     0,
-  //   );
-
-  //   // console.info("amountListClarity: ", amountListClarity);
-  //   // console.info("transferInfo: ", transferInfo);
-  //   // (contract-call? .bulk-token-dispatcher send-multiple-transactions .sip010-ft (list 'St....9) (list u5000000))
-  //   const options: ContractCallRegularOptions = {
-  //     contractAddress: contractOwnerAddress,
-  //     contractName: bulkTokenDispatcherContractName,
-  //     functionName: 'send-multiple-transactions',
-  //     functionArgs: [
-  //       principalCV(tokenAddress),
-  //       listCV(recipientsListClarity),
-  //       listCV(amountListClarity),
-  //     ],
-  //     postConditions: [tokenPostCondition, stxPostCondition],
-  //     network,
-  //     appDetails,
-  //     onFinish: ({ txId }) => addTransactionToast(txId, `Transfering tokens...`),
-  //   };
-
-  //   // const options: ContractCallRegularOptions = {
-  //   //   contractAddress: contractOwnerAddress,
-  //   //   contractName: bulkTokenDispatcherContractName,
-  //   //   functionName: 'send-multiple-transactions-2',
-  //   //   functionArgs: [
-  //   //     principalCV(tokenAddress),
-  //   //     listCV(transferInfo),
-  //   //   ],
-  //   //   postConditions: [tokenPostCondition, stxPostCondition],
-  //   //   network,
-  //   //   appDetails,
-  //   //   onFinish: ({ txId }) => addTransactionToast(txId, `Transfering tokens...`),
-  //   // };
-
-  //   await openContractCall(options);
-  // };
-
-  // console.info("recipientList: ", recipientList);
-  // console.info("amountList: ", amountList);
-
-  const isButtonDisabled = !tokenAddress || !file || !fungibleToken || loading;
+  const isButtonDisabled = !tokenAddress || !file || loading;
 
   return (
     <div className="content-grid">
@@ -332,20 +185,53 @@ export function Transfer() {
               htmlFor="fungible-token"
               className="block text-sm font-medium text-gray-700"
             >
-              Fungible Token
+              Available Balance {data?.balance} {data?.symbol}
             </label>
-            <div className="form-input small">
-              <input
-                type="text"
-                id="fungible-token"
-                onChange={(e) => setFungibleToken(e.target.value)}
-                className="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="some-fungible-token defined in : (define-fungible-token some-fungible-token)"
-              />
-            </div>
           </div>
           <br />
 
+          <div>
+            <label
+              htmlFor="token-address"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Token Name
+            </label>
+            <div className="form-input small">
+              <input
+                value={data?.assetName}
+                type="text"
+                disabled
+                style={{
+                  cursor: "not-allowed",
+                }}
+                id="token-address"
+                className="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="some-token-address"
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              htmlFor="token-address"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Token Symbol
+            </label>
+            <div className="form-input small">
+              <input
+                value={data?.symbol}
+                type="text"
+                disabled
+                style={{
+                  cursor: "not-allowed",
+                }}
+                id="token-address"
+                className="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="some-token-address"
+              />
+            </div>
+          </div>
           <div>
             <label
               htmlFor="token-address"
@@ -355,7 +241,12 @@ export function Transfer() {
             </label>
             <div className="form-input small">
               <input
+                value={tokenAddress}
                 type="text"
+                disabled
+                style={{
+                  cursor: "not-allowed",
+                }}
                 id="token-address"
                 onChange={(e) => setTokenAddress(e.target.value)}
                 className="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

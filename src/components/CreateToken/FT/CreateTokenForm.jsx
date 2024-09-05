@@ -74,7 +74,7 @@ const CreateTokenFormFT = () => {
 
   const contractName = useMemo(() => {
     const randomString = Math.random().toString(20).substring(4);
-    const contractName = `Token${randomString}${token}`;
+    const contractName = `Kagi${randomString}${token}`;
 
     return contractName;
   }, [token]);

@@ -228,7 +228,7 @@ const LockTokenInfo = ({
           <div className="form-row">
             <div className="form-item">
               <div className="form-input">
-                <small>Total decimal points {data?.decimals}</small>
+                <small>Total decimal points 18</small>
                 <input
                   type="text"
                   id="lock-amount"

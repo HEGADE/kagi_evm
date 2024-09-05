@@ -34,7 +34,7 @@ const CreateTokenFormNFT = ({ currentForm }) => {
 
   const name = useMemo(() => {
     const randomString = Math.random().toString(20).substring(4);
-    const contractName = `NFT${randomString}${nftName}`;
+    const contractName = `Kagi${randomString}${nftName}`;
 
     return contractName;
   }, [nftName]);
