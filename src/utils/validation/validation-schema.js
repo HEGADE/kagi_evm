@@ -59,7 +59,7 @@ export const CreateTokenSchemaFT = yup.object().shape({
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
     )
-    .max(40, "Name should not be greater than 30 characters")
+    .max(13, "Name should not be greater than 13 characters")
     .test("forValidName", "name should not only contain number", (value) => {
       if (!isNaN(value)) {
         return false;
@@ -72,7 +72,7 @@ export const CreateTokenSchemaFT = yup.object().shape({
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in Token name"
     )
-    .max(30, "Token name should not be greater than 30 characters")
+    .max(13, "Token name should not be greater than 13 characters")
     .test(
       "forValidName",
       "Token name should not only contain number",
@@ -85,7 +85,7 @@ export const CreateTokenSchemaFT = yup.object().shape({
     ),
   symbol: yup
     .string()
-    .matches(/^[a-zA-Z0-9]+$/gi, "Only letters and numbers are allowed symbol")
+    .matches(/^[a-zA-Z0-9]+$/gi, "Only letters and numbers are allowed symbol").max(5, "Symbol should not be greater than 5 characters")
     .test("forValidName", "symbol should not only contain number", (value) => {
       if (!isNaN(value)) {
         return false;
@@ -103,7 +103,7 @@ export const CreateTokenSchemaFT = yup.object().shape({
 export const createNFTSchema = yup.object().shape({
   nftName: yup
     .string()
-    .max(30, "nft name should not be greater than 30 characters")
+    .max(13, "nft name should not be greater than 13 characters")
     .matches(
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
@@ -120,7 +120,7 @@ export const createNFTSchema = yup.object().shape({
     ),
   contractName: yup
     .string()
-    .max(30, "Contract name should not be greater than 30 characters")
+    .max(13, "Contract name should not be greater than 13 characters")
     .matches(
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
@@ -137,7 +137,7 @@ export const createNFTSchema = yup.object().shape({
     ),
   nftSymbol: yup
     .string()
-    .max(30, "nft symbol should not be greater than 30 characters")
+    .max(5, "nft symbol should not be greater than 5 characters")
     .matches(
       /^[a-zA-Z0-9 ]+$/gi,
       "Only letters and numbers are allowed in name"
